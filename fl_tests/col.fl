@@ -9,7 +9,7 @@ class UserInterface {open
     Fl_Window {} {open selected
       xywh {190 213 510 360} type Double resizable visible
     } {
-      Fl_Button b {
+      Fl_Box b {
         label button
         image {../fltk-rs/screenshots/calc.jpg} xywh {25 25 220 145} box BORDER_BOX shortcut 0x4006e color 87 labeltype SHADOW_LABEL labelfont 11 when 1 resizable
       }

@@ -9,11 +9,14 @@ pub fn unbracket(word: &str) -> &str {
 }
 
 pub fn de_fl(word: &str) -> String {
-    let s: String;
+    let mut s: String;
     if let Some(stripped) = word.strip_prefix("Fl_") {
         s = String::from(stripped).replace("_", "");
     } else {
         s = String::from(word);
+    }
+    if s == "Box" {
+        s = "Frame".to_string();
     }
     s
 }
