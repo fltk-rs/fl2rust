@@ -32,6 +32,28 @@ fn main() {
 }
 ```
 
+```
+# src/myuifile.fl -> generated via fluid
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0400
+header_name {.h}
+code_name {.cxx}
+class UserInterface {open
+} {
+  Function {make_window()} {open
+  } {
+    Fl_Window {} {open selected
+      xywh {138 161 440 355} type Double visible
+    } {
+      Fl_Button but {
+        label {Click me}
+        xywh {175 230 95 45}
+      }
+    }
+  }
+}
+```
+
 ```rust
 // src/myuifile.rs
 include!(concat!(env!("OUT_DIR"), "/myuifile.rs"));
