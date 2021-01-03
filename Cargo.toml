@@ -8,7 +8,7 @@ repository = "https://github.com/MoAlyousef/fl2rust"
 documentation = "https://docs.rs/fl2rust"
 keywords = ["gui", "ui", "widgets", "bindings", "graphics"]
 categories = ["gui"]
-readme = "../README.md"
+readme = "README.md"
 license = "MIT"
 
 [lib]
