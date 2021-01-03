@@ -28,7 +28,7 @@ fn main() {
     println!("cargo:rerun-if-changed=src/myuifile.fl");
     let g = fl2rust::Generator::default();
     let out_path = PathBuf::from(env::var("OUT_DIR").unwrap());
-    g.in_out("src/myuifile.fl", out_path.join("myuifile.rs")).expect("Failed to generate rust from fl file!");
+    g.in_out("src/myuifile.fl", out_path.join("myuifile.rs").to_str().unwrap()).expect("Failed to generate rust from fl file!");
 }
 ```
 
@@ -56,6 +56,9 @@ class UserInterface {open
 
 ```rust
 // src/myuifile.rs
+#![allow(unused_variables)]
+#![allow(unused_mut)]
+#![allow(unused_imports)]
 include!(concat!(env!("OUT_DIR"), "/myuifile.rs"));
 ```
 

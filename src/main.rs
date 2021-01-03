@@ -21,14 +21,14 @@
 //! ```
 
 //! ```rust
-//! //! build.rs
+//! // build.rs
 //! fn main() {
 //!     use std::path::PathBuf;
 //!     use std::env;
 //!     println!("cargo:rerun-if-changed=src/myuifile.fl");
 //!     let g = fl2rust::Generator::default();
 //!     let out_path = PathBuf::from(env::var("OUT_DIR").unwrap());
-//!     g.in_out("src/myuifile.fl", out_path.join("myuifile.rs")).expect("Failed to generate rust from fl file!");
+//!     g.in_out("src/myuifile.fl", out_path.join("myuifile.rs").to_str().unwrap()).expect("Failed to generate rust from fl file!");
 //! }
 //! ```
 
@@ -55,15 +55,18 @@
 //! ```
 
 //! ```rust
-//! //! src/myuifile.rs
+//! // src/myuifile.rs
+//! #![allow(unused_variables)]
+//! #![allow(unused_mut)]
+//! #![allow(unused_imports)]
 //! include!(concat!(env!("OUT_DIR"), "/myuifile.rs"));
 //! ```
 
 //! ```rust
-//! //! src/main.rs
+//! // src/main.rs
 //! use fltk::*;
 //! mod myuifile;
-
+//! 
 //! fn main() {
 //!     let app = app::App::default();
 //!     let mut ui = myuifile::UserInterface::make_window();

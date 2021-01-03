@@ -2,10 +2,6 @@ use crate::parser;
 use crate::utils;
 
 const HEADER: &str = r#"
-#![allow(unused_variables)]
-#![allow(unused_mut)]
-#![allow(unused_imports)]
-
 use fltk::browser::*;
 use fltk::button::*;
 use fltk::dialog::*;
