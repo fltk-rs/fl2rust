@@ -1,0 +1,32 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0400
+header_name {.h}
+code_name {.cxx}
+class UserInterface {open
+} {
+  Function {make_window()} {open selected return_type Self
+  } {
+    Fl_Window dw {open
+      xywh {411 233 620 370} type Double visible
+    } {
+      Fl_Button but {
+        xywh {395 85 105 45}
+      }
+      Fl_Input inp {
+        label {input: adfa rewar}
+        xywh {195 85 185 45} labelsize 32 textsize 32
+      }
+      Fl_Group gr {open
+        xywh {411 233 620 370} type Double visible
+      } {
+        Fl_Button but2 {
+        xywh {395 85 105 45}
+        }
+      }
+      Fl_Input inp2 {
+        label {input: adfa rewar}
+        xywh {195 85 185 45} labelsize 32 textsize 32
+      }
+    }
+  }
+}

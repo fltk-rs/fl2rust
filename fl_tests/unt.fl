@@ -1,0 +1,23 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0400
+header_name {.h}
+code_name {.cxx}
+class UserInterface {open
+} {
+  Function {make_window()} {open
+  } {
+    Fl_Window {} {open
+      xywh {29 82 469 333} type Double visible
+    } {
+      Fl_Menu_Bar {} {open
+        xywh {0 0 350 35}
+      } {
+        MenuItem {} {
+          label item selected
+          xywh {0 0 31 20}
+        }
+      }
+    }
+  }
+}
+
