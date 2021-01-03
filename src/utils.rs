@@ -106,3 +106,29 @@ pub fn add_props(mut tokens: Vec<parser::Token>) -> Vec<parser::Token> {
     }
     tok_vec2
 }
+
+pub fn global_to_pascal(input: &str) -> String {
+    let mut s = String::from(input);
+    if input.contains("FL_WHEN_") {
+        s = s.replace("FL_WHEN_", "");
+    } else {
+        s = s.replace("FL_", "");
+    }
+    s = s.replace("_LABEL", "");
+    if s == "No" {
+        s = "None".to_string();
+    }
+    s = s.to_ascii_lowercase();
+    let mut v: Vec<char> = s.chars().collect();
+    if !v.is_empty() {
+        v[0] = v[0].to_ascii_uppercase();
+    }
+    for i in 0..v.len() - 1 {
+        if v[i] == '_' {
+            v[i + 1] = v[i + 1].to_ascii_uppercase();
+        }
+    }
+    let s: String = v.into_iter().collect();
+    let s = s.replace("_", "");
+    s
+}

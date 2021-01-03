@@ -1,0 +1,18 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0400
+header_name {.h}
+code_name {.cxx}
+class UserInterface {open
+} {
+  Function {make_window()} {open
+  } {
+    Fl_Window {} {open selected
+      xywh {190 213 510 360} type Double resizable visible
+    } {
+      Fl_Button b {
+        label button
+        image {../fltk-rs/screenshots/calc.jpg} xywh {25 25 220 145} box BORDER_BOX shortcut 0x4006e color 87 labeltype SHADOW_LABEL labelfont 11 when 1 resizable
+      }
+    }
+  }
+}

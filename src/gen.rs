@@ -22,7 +22,7 @@ use fltk::window::*;"#;
 
 pub fn generate(ast: &[parser::Token]) -> String {
     let mut s = "pub struct ".to_string();
-    let mut ctor = "Self { ".to_string();
+    let mut ctor = "    Self { ".to_string();
     let mut imp = "impl ".to_string();
     for elem in ast {
         use parser::TokenType::*;
@@ -83,7 +83,7 @@ pub fn generate(ast: &[parser::Token]) -> String {
                         }
                         "color" => {
                             imp += &format!(
-                                "\t{}.set_color({});\n",
+                                "\t{}.set_color(Color::from_u32({}));\n",
                                 &elem.ident,
                                 utils::unbracket(&props[i + 1])
                             );
@@ -92,7 +92,7 @@ pub fn generate(ast: &[parser::Token]) -> String {
                             imp += &format!(
                                 "\t{}.set_selection_color({});\n",
                                 &elem.ident,
-                                utils::unbracket(&props[i + 1])
+                                utils::global_to_pascal(utils::unbracket(&props[i + 1]))
                             );
                         }
                         "labelsize" => {
@@ -111,9 +111,9 @@ pub fn generate(ast: &[parser::Token]) -> String {
                         }
                         "labeltype" => {
                             imp += &format!(
-                                "\t{}.set_label_type({});\n",
+                                "\t{}.set_label_type(LabelType::{});\n",
                                 &elem.ident,
-                                utils::unbracket(&props[i + 1])
+                                utils::global_to_pascal(utils::unbracket(&props[i + 1]))
                             );
                         }
                         "labelcolor" => {
@@ -125,23 +125,23 @@ pub fn generate(ast: &[parser::Token]) -> String {
                         }
                         "labelfont" => {
                             imp += &format!(
-                                "\t{}.set_label_font({});\n",
+                                "\t{}.set_label_font(unsafe {{std::mem::transmute({})}});\n",
                                 &elem.ident,
                                 utils::unbracket(&props[i + 1])
                             );
                         }
                         "textfont" => {
                             imp += &format!(
-                                "\t{}.set_text_font({});\n",
+                                "\t{}.set_text_font(unsafe {{std::mem::transmute({})}});\n",
                                 &elem.ident,
                                 utils::unbracket(&props[i + 1])
                             );
                         }
                         "box" => {
                             imp += &format!(
-                                "\t{}.set_frame({});\n",
+                                "\t{}.set_frame(FrameType::{});\n",
                                 &elem.ident,
-                                utils::unbracket(&props[i + 1])
+                                utils::global_to_pascal(utils::unbracket(&props[i + 1]))
                             );
                         }
                         // "down_box" => {
@@ -153,7 +153,7 @@ pub fn generate(ast: &[parser::Token]) -> String {
                         // },
                         "when" => {
                             imp += &format!(
-                                "\t{}.set_trigger({});\n",
+                                "\t{}.set_trigger(unsafe {{std::mem::transmute({})}});\n",
                                 &elem.ident,
                                 utils::unbracket(&props[i + 1])
                             );
@@ -196,9 +196,10 @@ pub fn generate(ast: &[parser::Token]) -> String {
                         "type" => {
                             if props[i + 1] != "Double" {
                                 imp += &format!(
-                                    "\t{}.set_type({});\n",
+                                    "\t{}.set_type({}Type::{});\n",
                                     &elem.ident,
-                                    utils::unbracket(&props[i + 1])
+                                    t,
+                                    utils::global_to_pascal(utils::unbracket(&props[i + 1]))
                                 );
                             }
                         }
@@ -211,7 +212,7 @@ pub fn generate(ast: &[parser::Token]) -> String {
                         }
                         "shortcut" => {
                             imp += &format!(
-                                "\t{}.set_shortcut({});\n",
+                                "\t{}.set_shortcut(unsafe {{std::mem::transmute({})}});\n",
                                 &elem.ident,
                                 utils::unbracket(&props[i + 1])
                             );
@@ -229,6 +230,11 @@ pub fn generate(ast: &[parser::Token]) -> String {
                         "modal" => {
                             imp += &format!("\t{}.make_modal(true);\n", &elem.ident,);
                         }
+                        "resizable" => {
+                            if *is_parent {
+                                imp += &format!("\t{}.make_resizable(true);\n", &elem.ident,);
+                            }
+                        },
                         _ => (),
                     }
                 }

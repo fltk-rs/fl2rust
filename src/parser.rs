@@ -57,8 +57,7 @@ pub fn parse(file: &str) -> Vec<Token> {
                 "}" => {
                     if let Some(w) = words.get(1) {
                         if w == "{" {
-                            ast.typ =
-                                TokenType::Scope(true, Some(parent.clone()));
+                            ast.typ = TokenType::Scope(true, Some(parent.clone()));
                         }
                     } else {
                         ast.typ = TokenType::Scope(false, None);
@@ -81,13 +80,11 @@ pub fn parse(file: &str) -> Vec<Token> {
                                     name,
                                     utils::unbracket(&words[i + 1]).to_string()
                                 );
-                                ast.typ =
-                                    TokenType::Function(Some(parent.clone()));
+                                ast.typ = TokenType::Function(Some(parent.clone()));
                                 break;
                             } else {
                                 ast.ident = name.clone();
-                                ast.typ =
-                                    TokenType::Function(Some(parent.clone()));
+                                ast.typ = TokenType::Function(Some(parent.clone()));
                             }
                         }
                         parent.push(ast.ident.clone());
@@ -115,10 +112,11 @@ pub fn parse(file: &str) -> Vec<Token> {
                                 utils::de_fl(first),
                                 Some(parent.clone()),
                                 is_parent,
-                                vec![]
+                                vec![],
                             );
                         } else {
-                            ast.typ = TokenType::Member(utils::de_fl(first), None, is_parent, vec![]);
+                            ast.typ =
+                                TokenType::Member(utils::de_fl(first), None, is_parent, vec![]);
                         }
                     } else if reserved::is_widget_prop(first) {
                         if let Some(curr) = curr_widget.clone() {
@@ -138,10 +136,10 @@ pub fn parse(file: &str) -> Vec<Token> {
         last = ast.clone();
         tok_vec.push(ast.clone());
         if let TokenType::Member(_, _, _, _) = ast.typ {
-                tok_vec.push(Token {
-                    ident: String::from(""),
-                    typ: TokenType::Scope(true, Some(parent.clone())),
-                })
+            tok_vec.push(Token {
+                ident: String::from(""),
+                typ: TokenType::Scope(true, Some(parent.clone())),
+            })
         }
     }
     utils::add_props(tok_vec)
