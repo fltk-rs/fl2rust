@@ -72,7 +72,7 @@
 //!     let mut ui = myuifile::UserInterface::make_window();
 //!     ui.but.set_callback(|| {
 //!         println!("Works!");
-//!     })
+//!     });
 //!     app.run().unwrap();
 //! }
 //! ```
