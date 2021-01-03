@@ -3,6 +3,13 @@ name = "fl2rust"
 version = "0.1.0"
 authors = ["Mohammed Alyousef <mohammed.alyousef@neurosrg.com>"]
 edition = "2018"
+description = "A fluid (fltk ui designer) file to Rust transpiler"
+repository = "https://github.com/MoAlyousef/fl2rust"
+documentation = "https://docs.rs/fl2rust"
+keywords = ["gui", "ui", "widgets", "bindings", "graphics"]
+categories = ["gui"]
+readme = "../README.md"
+license = "MIT"
 
 [lib]
 name = "fl2rust"
