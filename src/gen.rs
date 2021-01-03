@@ -83,14 +83,14 @@ pub fn generate(ast: &[parser::Token]) -> String {
                         }
                         "color" => {
                             imp += &format!(
-                                "\t{}.set_color(Color::from_u32({}));\n",
+                                "\t{}.set_color(unsafe {{std::mem::transmute({})}});\n",
                                 &elem.ident,
                                 utils::unbracket(&props[i + 1])
                             );
                         }
                         "selection_color" => {
                             imp += &format!(
-                                "\t{}.set_selection_color({});\n",
+                                "\t{}.set_selection_color(unsafe {{std::mem::transmute({})}});\n",
                                 &elem.ident,
                                 utils::global_to_pascal(utils::unbracket(&props[i + 1]))
                             );
