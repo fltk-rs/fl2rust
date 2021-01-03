@@ -101,7 +101,7 @@ pub fn parse(file: &str) -> Vec<Token> {
                             COUNTER.store(val + 1, atomic::Ordering::Relaxed);
                         }
                         let mut is_parent = false;
-                        if words[word_cnt - 1] == "{open" {
+                        if words.contains(&"{open".to_string()) {
                             is_parent = true;
                             parent.push(temp.clone());
                         }
