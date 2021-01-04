@@ -4,7 +4,7 @@
 //! To run on the command-line, install using cargo-install:
 //! ```
 //! $ cargo install fl2rust
-//! ``` 
+//! ```
 //! Then run:
 //! ```
 //! $ fl2rust <fl file>.fl > <output file>.rs
@@ -66,17 +66,16 @@
 //! // src/main.rs
 //! use fltk::*;
 //! mod myuifile;
-//! 
+//!
 //! fn main() {
 //!     let app = app::App::default();
 //!     let mut ui = myuifile::UserInterface::make_window();
-//!     ui.but.set_callback(|| {
+//!     ui.but.set_callback(move || {
 //!         println!("Works!");
 //!     });
 //!     app.run().unwrap();
 //! }
 //! ```
-
 
 pub mod gen;
 pub mod parser;
@@ -91,10 +90,15 @@ use std::path::*;
 pub struct Generator {}
 
 impl Generator {
-    pub fn in_out<P: AsRef<Path>>(&self, inpath: P, outpath: P) -> Result<(), Box<dyn error::Error>> {
-        fs::write(outpath, gen::generate(&parser::parse(&fs::read_to_string(
-            inpath,
-        )?)))?;
+    pub fn in_out<P: AsRef<Path>>(
+        &self,
+        inpath: P,
+        outpath: P,
+    ) -> Result<(), Box<dyn error::Error>> {
+        fs::write(
+            outpath,
+            gen::generate(&parser::parse(&fs::read_to_string(inpath)?)),
+        )?;
         Ok(())
     }
 }
@@ -105,8 +109,11 @@ mod tests {
     fn it_works() {
         use super::*;
         let g = Generator::default();
-        g.in_out("fl_tests/fl.fl", "fl_tests/fl.rs").expect("Failed to generate rust from fl file!");
-        g.in_out("fl_tests/fl2.fl", "fl_tests/fl2.rs").expect("Failed to generate rust from fl file!");
-        g.in_out("fl_tests/unt.fl", "fl_tests/unt.rs").expect("Failed to generate rust from fl file!");
+        g.in_out("fl_tests/fl.fl", "fl_tests/fl.rs")
+            .expect("Failed to generate rust from fl file!");
+        g.in_out("fl_tests/fl2.fl", "fl_tests/fl2.rs")
+            .expect("Failed to generate rust from fl file!");
+        g.in_out("fl_tests/unt.fl", "fl_tests/unt.rs")
+            .expect("Failed to generate rust from fl file!");
     }
 }

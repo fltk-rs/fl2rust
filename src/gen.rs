@@ -219,7 +219,7 @@ pub fn generate(ast: &[parser::Token]) -> String {
                         }
                         "image" => {
                             imp += &format!(
-                                "\t{}.set_image(Some(SharedImage::load(\"{}\").unwrap()));\n",
+                                "\t{}.set_image(Some(SharedImage::load(\"{}\").expect(\"Could not fid image\")));\n",
                                 &elem.ident,
                                 utils::unbracket(&props[i + 1])
                             );
@@ -234,7 +234,7 @@ pub fn generate(ast: &[parser::Token]) -> String {
                             if *is_parent {
                                 imp += &format!("\t{}.make_resizable(true);\n", &elem.ident,);
                             }
-                        },
+                        }
                         _ => (),
                     }
                 }

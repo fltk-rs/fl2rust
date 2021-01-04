@@ -4,7 +4,7 @@
 //! To run on the command-line, install using cargo-install:
 //! ```
 //! $ cargo install fl2rust
-//! ``` 
+//! ```
 //! Then run:
 //! ```
 //! $ fl2rust <fl file>.fl > <output file>.rs
@@ -66,17 +66,16 @@
 //! // src/main.rs
 //! use fltk::*;
 //! mod myuifile;
-//! 
+//!
 //! fn main() {
 //!     let app = app::App::default();
 //!     let mut ui = myuifile::UserInterface::make_window();
-//!     ui.but.set_callback(|| {
+//!     ui.but.set_callback(move || {
 //!         println!("Works!");
 //!     });
 //!     app.run().unwrap();
 //! }
 //! ```
-
 
 use std::error;
 use std::fs;

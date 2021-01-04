@@ -2,6 +2,8 @@
 
 ## WORK IN PROGRESS
 
+## Usage
+
 A fluid (fltk ui designer) file to Rust transpiler.
 
 To run on the command-line, install using cargo-install:
@@ -73,9 +75,17 @@ mod myuifile;
 fn main() {
     let app = app::App::default();
     let mut ui = myuifile::UserInterface::make_window();
-    ui.but.set_callback(|| {
+    ui.but.set_callback(move || {
         println!("Works!");
     });
     app.run().unwrap();
 }
 ```
+
+## Known limitations
+- Adding arbitrary code or declaring global/member variables is unsupported.
+- For the moment only a single constructor method per struct is supported.
+- CheckBrowser widget is currently unsupported.
+
+## Tutorial
+- [Use FLUID (RAD tool) with Rust](https://www.youtube.com/watch?v=k_P0wG3-dNk)
