@@ -220,9 +220,9 @@ pub fn generate(ast: &[parser::Token]) -> String {
                         }
                         "image" => {
                             imp += &format!(
-                                "\t{}.set_image(Some(SharedImage::load(\"{}\").expect(\"Could not fid image\")));\n",
+                                "\t{0}.set_image(Some(SharedImage::load(\"{1}\").expect(\"Could not find image: {1}\")));\n",
                                 &elem.ident,
-                                utils::unbracket(&props[i + 1])
+                                utils::unbracket(&props[i + 1]),
                             );
                         }
                         "hide" => {

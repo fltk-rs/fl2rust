@@ -85,10 +85,10 @@ fn main() -> Result<(), Box<dyn error::Error>> {
     let f = fs::read_to_string(&args[1])?;
     let ast = fl2rust::parser::parse(&f);
     println!("{}", fl2rust::gen::generate(&ast.clone()));
-    // if args.contains(&"--print-ast".to_string()) {
-    //     for elem in ast {
-    //         println!("{:?}", elem);
-    //     }
-    // }
+    if args.contains(&"--print-ast".to_string()) {
+        for elem in ast {
+            println!("{:?}", elem);
+        }
+    }
     Ok(())
 }

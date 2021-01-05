@@ -61,8 +61,8 @@ pub fn parse(file: &str) -> Vec<Token> {
                             last_scope = ast.typ.clone();
                         }
                     } else {
-                        ast.typ = TokenType::Scope(false, None);
                         parent.pop();
+                        ast.typ = TokenType::Scope(false, Some(parent.clone()));
                     }
                 }
                 "class" => {
