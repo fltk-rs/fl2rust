@@ -9,8 +9,8 @@ class UserInterface {open
     Fl_Window {} {open
       xywh {109 132 545 326} type Double visible
     } {
-      Fl_Choice {} {open
-        label {choice:}
+      Fl_Choice {} {
+        label {choice:} open
         xywh {235 100 105 55} down_box BORDER_BOX
       } {
         MenuItem {} {

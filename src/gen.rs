@@ -240,16 +240,8 @@ pub fn generate(ast: &[parser::Token]) -> String {
                     }
                 }
                 if let Some(parent) = p {
-                    if !parent.is_empty() {
-                        let parent = if parent[parent.len() - 1] != elem.ident {
-                            parent[parent.len() - 1].clone()
-                        } else {
-                            if !parent[parent.len() - 2].contains("(") {
-                                parent[parent.len() - 2].clone()
-                            } else {
-                                continue;
-                            }
-                        };
+                    if !parent.is_empty() && !parent[parent.len() - 1].contains('(') {
+                        let parent = parent[parent.len() - 1].clone();
                         if t != "MenuItem" {
                             imp += &format!("\t{}.add(&{});\n", parent, &elem.ident);
                         } else {

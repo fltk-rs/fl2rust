@@ -37,6 +37,7 @@ pub fn parse(file: &str) -> Vec<Token> {
     let mut tok_vec: Vec<Token> = vec![];
     let mut parent: Vec<String> = vec![];
     let mut curr_widget: Option<String> = None;
+    let mut last_scope = TokenType::Scope(false, None);
     let mut last = Token::new("".to_string(), TokenType::Global);
     let lines = file.lines();
     for line in lines {
@@ -57,20 +58,22 @@ pub fn parse(file: &str) -> Vec<Token> {
                     if let Some(w) = words.get(1) {
                         if w == "{" {
                             ast.typ = TokenType::Scope(true, Some(parent.clone()));
+                            last_scope = ast.typ.clone();
                         }
                     } else {
                         ast.typ = TokenType::Scope(false, None);
+                        parent.pop();
                     }
                 }
                 "class" => {
-                    if words.len() > 2 && line.contains("{open") {
+                    if words.len() > 2 && line.contains("{") {
                         ast.ident = words[1].to_string();
                         ast.typ = TokenType::Class;
                         parent.push(ast.ident.clone());
                     }
                 }
                 "Function" => {
-                    if words.len() > 2 && line.contains("{open") {
+                    if words.len() > 2 && line.contains("{") {
                         for i in 0..words.len() {
                             let name = utils::unbracket(&words[1]).to_string();
                             if words[i] == "return_type" {
@@ -100,24 +103,21 @@ pub fn parse(file: &str) -> Vec<Token> {
                             temp = format!("widget_{}", val);
                             COUNTER.store(val + 1, atomic::Ordering::Relaxed);
                         }
-                        let mut is_parent = false;
-                        if line.contains("{open") {
-                            is_parent = true;
-                            parent.push(temp.clone());
-                        }
                         curr_widget = Some(temp.clone());
+                        parent.push(temp.clone());
                         ast.ident = temp.clone();
-                        if !parent.is_empty() && !parent[parent.len() - 1].contains('(') {
-                            ast.typ = TokenType::Member(
-                                utils::de_fl(first),
-                                Some(parent.clone()),
-                                is_parent,
-                                vec![],
-                            );
+                        if let TokenType::Scope(true, p) = &last_scope {
+                            if let Some(parent_vec) = p {
+                                ast.typ = TokenType::Member(
+                                    utils::de_fl(first),
+                                    Some(parent_vec.clone()),
+                                    false,
+                                    vec![],
+                                );
+                            }
                         } else {
-                            ast.typ =
-                                TokenType::Member(utils::de_fl(first), None, is_parent, vec![]);
-                        }
+                            ast.typ = TokenType::Member(utils::de_fl(first), None, false, vec![]);
+                        }          
                     } else if reserved::is_widget_prop(first) {
                         if let Some(curr) = curr_widget.clone() {
                             ast.ident = curr.clone();
@@ -142,5 +142,77 @@ pub fn parse(file: &str) -> Vec<Token> {
             })
         }
     }
-    utils::add_props(tok_vec)
+    add_props(tok_vec)
+}
+
+pub fn add_props(mut tokens: Vec<Token>) -> Vec<Token> {
+    let mut tok_vec: Vec<Token> = vec![];
+    for i in 0..tokens.len() {
+        if let TokenType::Property(v) = &tokens[i].typ {
+            if let Some(p) = tokens.get(i + 1) {
+                if let TokenType::Property(v1) = &p.typ {
+                    let mut v = v.clone();
+                    v.append(&mut v1.clone());
+                    tokens[i].typ = TokenType::Property(v.to_vec());
+                }
+            }
+        }
+    }
+    for i in 0..tokens.len() {
+        if let TokenType::Property(v) = &tokens[i].typ {
+            let mut elem = Token::new("".to_string(), TokenType::Global);
+            elem.ident = tokens[i - 2].ident.clone();
+            if let TokenType::Member(parent_typ, parent, is_parent, _) = &tokens[i - 2].typ
+            {
+                elem.typ = TokenType::Member(
+                    parent_typ.clone(),
+                    parent.clone(),
+                    *is_parent,
+                    v.clone(),
+                );
+                tok_vec.push(elem);
+            }
+        } else {
+            tok_vec.push(tokens[i].clone());
+        }
+    }
+    let mut tok_vec2: Vec<Token> = vec![];
+    let mut i = 0;
+    while i < tok_vec.len() {
+        if let TokenType::Member(t, v, _, props) = &tok_vec[i].typ {
+            if !props.is_empty() {
+                if let TokenType::Scope(true, _) = &tok_vec[i + 1].typ {
+                    let old = tok_vec[i].ident.clone(); 
+                    let tok = Token {
+                        ident: old,
+                        typ: TokenType::Member(t.clone(), v.clone(), true, props.clone()),
+                    };
+                    tok_vec2.push(tok);
+                } else {
+                    tok_vec2.push(tok_vec[i].clone());
+                }
+            } else {
+                //
+            }
+        } else if let TokenType::Scope(_, vec) = &tok_vec[i].typ {
+            if let Some(v) = vec {
+                let len = v.len();
+                if v.len() > 2 {
+                    if v[len - 1] == v[len - 2] {
+                        //
+                    } else {
+                        tok_vec2.push(tok_vec[i].clone());
+                    } 
+                } else {
+                    tok_vec2.push(tok_vec[i].clone());
+                }
+            } else {
+                tok_vec2.push(tok_vec[i].clone());
+            }
+        } else {
+            tok_vec2.push(tok_vec[i].clone());
+        }
+        i += 1;
+    }
+    tok_vec2
 }
