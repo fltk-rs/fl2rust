@@ -4,7 +4,7 @@ header_name {.h}
 code_name {.cxx}
 class UserInterface {open
 } {
-  Function {make_window()} {open selected return_type Self
+  Function {make_window()} {open selected return_type i32
   } {
     Fl_Window dw {open
       xywh {411 233 620 370} type Double visible

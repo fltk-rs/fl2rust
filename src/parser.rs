@@ -42,7 +42,6 @@ pub fn parse(file: &str) -> Vec<Token> {
     for line in lines {
         let words: Vec<&str> = line.split_whitespace().collect();
         let words = utils::sanitize_words(words);
-        let word_cnt = words.len();
         let mut ast = Token::new("".to_string(), TokenType::Global);
         if let Some(first) = words.get(0) {
             assert!(
@@ -64,7 +63,7 @@ pub fn parse(file: &str) -> Vec<Token> {
                     }
                 }
                 "class" => {
-                    if words.len() > 2 && words[word_cnt - 1] == "{open" {
+                    if words.len() > 2 && line.contains("{open") {
                         ast.ident = words[1].to_string();
                         ast.typ = TokenType::Class;
                         parent.push(ast.ident.clone());
@@ -76,9 +75,10 @@ pub fn parse(file: &str) -> Vec<Token> {
                             let name = utils::unbracket(&words[1]).to_string();
                             if words[i] == "return_type" {
                                 ast.ident = format!(
-                                    "{} -> {}",
+                                    // "{} -> {}",
+                                    "{} -> Self", // just support Self for the time being
                                     name,
-                                    utils::unbracket(&words[i + 1]).to_string()
+                                    // utils::unbracket(&words[i + 1]).to_string()
                                 );
                                 ast.typ = TokenType::Function(Some(parent.clone()));
                                 break;
@@ -101,7 +101,7 @@ pub fn parse(file: &str) -> Vec<Token> {
                             COUNTER.store(val + 1, atomic::Ordering::Relaxed);
                         }
                         let mut is_parent = false;
-                        if words.contains(&"{open".to_string()) {
+                        if line.contains("{open") {
                             is_parent = true;
                             parent.push(temp.clone());
                         }

@@ -49,6 +49,7 @@ pub fn generate(ast: &[parser::Token]) -> String {
                 }
                 let xywh = props.iter().position(|x| x == "xywh").unwrap();
                 let label = props.iter().position(|x| x == "label");
+                let typ = props.iter().position(|x| x == "type");
                 if !is_parent {
                     if t != "MenuItem" {
                         imp += &format!(
@@ -194,7 +195,7 @@ pub fn generate(ast: &[parser::Token]) -> String {
                             );
                         }
                         "type" => {
-                            if props[i + 1] != "Double" {
+                            if props[i + 1] != "Double" && t != "MenuItem" {
                                 imp += &format!(
                                     "\t{}.set_type({}Type::{});\n",
                                     &elem.ident,
@@ -253,13 +254,18 @@ pub fn generate(ast: &[parser::Token]) -> String {
                             imp += &format!("\t{}.add(&{});\n", parent, &elem.ident);
                         } else {
                             imp += &format!(
-                                "\t{}.add(\"{}\", Shortcut::None, MenuFlag::Normal, || {{}});\n",
+                                "\t{}.add(\"{}\", Shortcut::None, MenuFlag::{}, || {{}});\n",
                                 parent,
                                 if let Some(l) = label {
                                     utils::unbracket(&props[l + 1])
                                 } else {
                                     ""
                                 },
+                                if let Some(ty) = typ {
+                                    &props[ty + 1]
+                                } else {
+                                    "Normal"
+                                }
                             );
                         }
                     }

@@ -28,14 +28,15 @@ pub fn sanitize_words(words: Vec<&str>) -> Vec<String> {
     while i < words.len() {
         if words[i].starts_with('{') && !words[i].ends_with('}') {
             s.push_str(words[i]);
-            for j in i..words.len() {
-                if words[j].ends_with('}') {
-                    for elem in words.iter().take(j + 1).skip(i + 1) {
-                        s.push(' ');
-                        s.push_str(elem);
-                        i += 1;
-                    }
-                }
+            i += 1;
+            while i < words.len() && !words[i].ends_with('}') {
+                s.push(' ');
+                s.push_str(words[i]);
+                i += 1;
+            }
+            if i < words.len() && words[i].ends_with('}') {
+                s.push(' ');
+                s.push_str(words[i]);
             }
         } else {
             s.push_str(words[i]);
@@ -83,7 +84,7 @@ pub fn add_props(mut tokens: Vec<parser::Token>) -> Vec<parser::Token> {
     while i < tok_vec.len() {
         if let parser::TokenType::Member(_, _, _, v) = &tok_vec[i].typ {
             if !v.is_empty() {
-               tok_vec2.push(tok_vec[i].clone()); 
+                tok_vec2.push(tok_vec[i].clone());
             } else {
                 //
             }
@@ -94,14 +95,14 @@ pub fn add_props(mut tokens: Vec<parser::Token>) -> Vec<parser::Token> {
                     if v[len - 1] == v[len - 2] {
                         //
                     } else {
-                        tok_vec2.push(tok_vec[i].clone()); 
+                        tok_vec2.push(tok_vec[i].clone());
                     }
                 } else {
-                    tok_vec2.push(tok_vec[i].clone()); 
+                    tok_vec2.push(tok_vec[i].clone());
                 }
-             } else {
-                tok_vec2.push(tok_vec[i].clone()); 
-             }
+            } else {
+                tok_vec2.push(tok_vec[i].clone());
+            }
         } else {
             tok_vec2.push(tok_vec[i].clone());
         }
@@ -133,5 +134,12 @@ pub fn global_to_pascal(input: &str) -> String {
     }
     let s: String = v.into_iter().collect();
     let s = s.replace("_", "");
-    s
+    let ret = match s.as_str() {
+        "Vert fill" => "VerticalFill",
+        "Horz fill" => "HorizontalFill",
+        "Vert knob" => "VerticalNice",
+        "Horz knob" => "HorizontalNice",
+        _ => s.as_str(),
+    };
+    ret.to_string()
 }
