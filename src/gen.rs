@@ -236,6 +236,13 @@ pub fn generate(ast: &[parser::Token]) -> String {
                                 imp += &format!("\t{}.make_resizable(true);\n", &elem.ident,);
                             }
                         }
+                        "size_range" => {
+                            imp += &format!(
+                                "\t{}.size_range({});\n",
+                                &elem.ident,
+                                utils::unbracket(&props[i + 1].replace(" ", ", "))
+                            );
+                        }
                         _ => (),
                     }
                 }
