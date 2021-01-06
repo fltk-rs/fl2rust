@@ -84,7 +84,7 @@ fn main() -> Result<(), Box<dyn error::Error>> {
     let args: Vec<String> = std::env::args().collect();
     let f = fs::read_to_string(&args[1])?;
     let ast = fl2rust::parser::parse(&f);
-    println!("{}", fl2rust::gen::generate(&ast.clone()));
+    println!("{}", fl2rust::gen::generate(&ast));
     if args.contains(&"--print-ast".to_string()) {
         for elem in ast {
             println!("{:?}", elem);

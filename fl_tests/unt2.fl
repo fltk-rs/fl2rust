@@ -6,12 +6,12 @@ class UserInterface {open
 } {
   Function {make_window()} {open
   } {
-    Fl_Window {} {open selected
-      xywh {138 161 440 355} type Double visible
+    Fl_Window {} {open
+      xywh {164 187 460 325} type Double resizable visible
     } {
-      Fl_Button but {
-        label {Click me}
-        xywh {175 230 95 45}
+      Fl_Button {} {
+        label button selected
+        xywh {25 25 70 20} resizable hotspot
       }
     }
   }

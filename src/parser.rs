@@ -66,14 +66,14 @@ pub fn parse(file: &str) -> Vec<Token> {
                     }
                 }
                 "class" => {
-                    if words.len() > 2 && line.contains("{") {
+                    if words.len() > 2 && line.contains('{') {
                         ast.ident = words[1].to_string();
                         ast.typ = TokenType::Class;
                         parent.push(ast.ident.clone());
                     }
                 }
                 "Function" => {
-                    if words.len() > 2 && line.contains("{") {
+                    if words.len() > 2 && line.contains('{') {
                         for i in 0..words.len() {
                             let name = utils::unbracket(&words[1]).to_string();
                             if words[i] == "return_type" {

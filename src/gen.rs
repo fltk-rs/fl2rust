@@ -21,15 +21,17 @@ use fltk::widget::*;
 use fltk::window::*;"#;
 
 pub fn generate(ast: &[parser::Token]) -> String {
-    let mut s = "pub struct ".to_string();
-    let mut ctor = "    Self { ".to_string();
-    let mut imp = "impl ".to_string();
+    let mut s = "".to_string();
+    let mut ctor = "\tSelf { ".to_string();
+    let mut imp = "".to_string();
     for elem in ast {
         use parser::TokenType::*;
         match &elem.typ {
             Class => {
+                s += "pub struct ";
                 s += &elem.ident;
                 s += "{\n";
+                imp += "impl ";
                 imp += &elem.ident;
                 imp += "{\n";
             }
@@ -145,13 +147,13 @@ pub fn generate(ast: &[parser::Token]) -> String {
                                 utils::global_to_pascal(utils::unbracket(&props[i + 1]))
                             );
                         }
-                        // "down_box" => {
-                        //     imp += &format!(
-                        //         "\t{}.set_frame({});\n",
-                        //         &elem.ident,
-                        //         utils::unbracket(&props[i + 1])
-                        //     );
-                        // },
+                        "down_box" => {
+                            imp += &format!(
+                                "\t{}.set_frame({});\n",
+                                &elem.ident,
+                                utils::unbracket(&props[i + 1])
+                            );
+                        }
                         "when" => {
                             imp += &format!(
                                 "\t{}.set_trigger(unsafe {{std::mem::transmute({})}});\n",
@@ -251,6 +253,12 @@ pub fn generate(ast: &[parser::Token]) -> String {
                         let parent = parent[parent.len() - 1].clone();
                         if t != "MenuItem" {
                             imp += &format!("\t{}.add(&{});\n", parent, &elem.ident);
+                            if props.contains(&"resizable".to_string()) {
+                                imp += &format!("\t{}.resizable(&{});\n", parent, &elem.ident);
+                            }
+                            if props.contains(&"hotspot".to_string())  {
+                                imp += &format!("\t{}.hotspot(&{});\n", parent, &elem.ident);
+                            }
                         } else {
                             imp += &format!(
                                 "\t{}.add(\"{}\", Shortcut::None, MenuFlag::{}, || {{}});\n",
@@ -270,9 +278,23 @@ pub fn generate(ast: &[parser::Token]) -> String {
                     }
                 }
             }
+            Scope(op, p) => {
+                if !*op {
+                    if let Some(parent) = p {
+                        if let Some(p) = parent.last() {
+                            if p.contains('(') {
+                                ctor += "}";
+                                imp += &ctor;
+                                imp += "\n    }\n";
+                                ctor.clear();
+                                ctor += "\tSelf {"
+                            }
+                        }
+                    }
+                }
+            }
             _ => (),
         }
     }
-    ctor += "}";
-    format!("{}\n\n{}}}\n\n{}    {}\n    }}\n}}\n", HEADER, s, imp, ctor)
+    format!("{}\n\n{}}}\n\n{}\n}}\n", HEADER, s, imp)
 }

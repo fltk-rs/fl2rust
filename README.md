@@ -84,8 +84,7 @@ fn main() {
 
 ## Known limitations
 - Adding arbitrary code or declaring global/member variables is unsupported.
-- For the moment only a single constructor method per struct is supported.
-- CheckBrowser widget is currently unsupported.
+- For the moment only a single constructor method per struct per file is supported.
 
 ## Tutorial
 - [Use FLUID (RAD tool) with Rust](https://www.youtube.com/watch?v=k_P0wG3-dNk)
