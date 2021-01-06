@@ -22,7 +22,7 @@ use fltk::window::*;"#;
 
 pub fn generate(ast: &[parser::Token]) -> String {
     let mut s = "".to_string();
-    let mut ctor = "\tSelf { ".to_string();
+    let mut ctor = "".to_string();
     let mut imp = "".to_string();
     for elem in ast {
         use parser::TokenType::*;
@@ -30,16 +30,17 @@ pub fn generate(ast: &[parser::Token]) -> String {
             Class => {
                 s += "pub struct ";
                 s += &elem.ident;
-                s += "{\n";
+                s += " {\n";
                 imp += "impl ";
                 imp += &elem.ident;
-                imp += "{\n";
+                imp += " {\n";
+                ctor += "\tSelf { ";
             }
             Function(_) => {
                 imp += "    pub fn ";
                 imp += &elem.ident;
                 if !elem.ident.contains("-> Self") {
-                    imp += "-> Self";
+                    imp += " -> Self";
                 }
                 imp += " {\n";
             }
@@ -249,7 +250,7 @@ pub fn generate(ast: &[parser::Token]) -> String {
                     }
                 }
                 if let Some(parent) = p {
-                    if !parent.is_empty() && !parent[parent.len() - 1].contains('(') {
+                    if !parent.is_empty() && !parent[parent.len() - 1].contains("Function") {
                         let parent = parent[parent.len() - 1].clone();
                         if t != "MenuItem" {
                             imp += &format!("\t{}.add(&{});\n", parent, &elem.ident);
@@ -282,13 +283,16 @@ pub fn generate(ast: &[parser::Token]) -> String {
                 if !*op {
                     if let Some(parent) = p {
                         if let Some(p) = parent.last() {
-                            if p.contains('(') {
+                            if p.contains("Function") {
                                 ctor += "}";
                                 imp += &ctor;
                                 imp += "\n    }\n";
                                 ctor.clear();
                                 ctor += "\tSelf {"
                             }
+                        } else {
+                            imp += "}\n\n";
+                            s += "}\n\n";
                         }
                     }
                 }
@@ -296,5 +300,5 @@ pub fn generate(ast: &[parser::Token]) -> String {
             _ => (),
         }
     }
-    format!("{}\n\n{}}}\n\n{}\n}}\n", HEADER, s, imp)
+    format!("{}\n\n{}\n{}\n", HEADER, s, imp)
 }
