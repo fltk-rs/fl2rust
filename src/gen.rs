@@ -28,6 +28,7 @@ pub fn generate(ast: &[parser::Token]) -> String {
         use parser::TokenType::*;
         match &elem.typ {
             Class => {
+                s += "#[derive(Debug, Clone, Default)]\n";
                 s += "pub struct ";
                 s += &elem.ident;
                 s += " {\n";
@@ -46,9 +47,11 @@ pub fn generate(ast: &[parser::Token]) -> String {
             }
             Member(t, p, is_parent, props) => {
                 if t != "MenuItem" {
-                    s += &format!("    pub {}: {},\n", &elem.ident, t);
-                    ctor += &elem.ident;
-                    ctor += ", ";
+                    if !elem.ident.contains("fl2rust_gen_widget_") {
+                        s += &format!("    pub {}: {},\n", &elem.ident, t);
+                        ctor += &elem.ident;
+                        ctor += ", ";
+                    }
                 }
                 let xywh = props.iter().position(|x| x == "xywh").unwrap();
                 let label = props.iter().position(|x| x == "label");
@@ -150,9 +153,9 @@ pub fn generate(ast: &[parser::Token]) -> String {
                         }
                         "down_box" => {
                             imp += &format!(
-                                "\t{}.set_frame({});\n",
+                                "\t{}.set_down_frame(FrameType::{});\n",
                                 &elem.ident,
-                                utils::unbracket(&props[i + 1])
+                                utils::global_to_pascal(utils::unbracket(&props[i + 1]))
                             );
                         }
                         "when" => {
@@ -284,7 +287,7 @@ pub fn generate(ast: &[parser::Token]) -> String {
                     if let Some(parent) = p {
                         if let Some(p) = parent.last() {
                             if p.contains("Function") {
-                                ctor += "}";
+                                ctor += "..Default::default() }";
                                 imp += &ctor;
                                 imp += "\n    }\n";
                                 ctor.clear();

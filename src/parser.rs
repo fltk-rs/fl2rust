@@ -100,7 +100,7 @@ pub fn parse(file: &str) -> Vec<Token> {
                             temp = words[1].to_string();
                         } else {
                             let val = COUNTER.load(atomic::Ordering::Relaxed);
-                            temp = format!("widget_{}", val);
+                            temp = format!("fl2rust_gen_widget_{}", val);
                             COUNTER.store(val + 1, atomic::Ordering::Relaxed);
                         }
                         curr_widget = Some(temp.clone());
