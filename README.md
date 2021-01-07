@@ -86,6 +86,7 @@ fn main() {
 - Adding arbitrary code or declaring global/member variables is unsupported.
 - Only constructor methods are supported.
 - fl2rust doesn't check the generated Rust code for correctness.
+- Supports fltk-rs >= 0.12.10.
 
 ## Tutorial
 - [Use FLUID (RAD tool) with Rust](https://www.youtube.com/watch?v=k_P0wG3-dNk)
