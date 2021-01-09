@@ -88,10 +88,12 @@ use std::error;
 use std::fs;
 use std::path::*;
 
+/// Generator struct
 #[derive(Default)]
 pub struct Generator {}
 
 impl Generator {
+    /// Takes an input and output files
     pub fn in_out<P: AsRef<Path>>(
         &self,
         inpath: P,

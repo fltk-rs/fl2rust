@@ -20,6 +20,7 @@ use fltk::valuator::*;
 use fltk::widget::*;
 use fltk::window::*;"#;
 
+/// Generate the output Rust string/file 
 pub fn generate(ast: &[parser::Token]) -> String {
     let mut s = "".to_string();
     let mut ctor = "".to_string();
@@ -27,6 +28,7 @@ pub fn generate(ast: &[parser::Token]) -> String {
     let mut subs = vec![];
     let mut last_scope = None;
     let mut last_ast = parser::TokenType::Global;
+    let mut gparent: Vec<String> = vec![];
     for elem in ast {
         use parser::TokenType::*;
         match &elem.typ {
@@ -40,7 +42,7 @@ pub fn generate(ast: &[parser::Token]) -> String {
                 imp += " {\n";
                 ctor += "\tSelf { ";
             }
-            Function(_) => {
+            Function => {
                 imp += "    pub fn ";
                 imp += &elem.ident;
                 if !elem.ident.contains("-> Self") {
@@ -48,8 +50,8 @@ pub fn generate(ast: &[parser::Token]) -> String {
                 }
                 imp += " {\n";
             }
-            Member(t, p, is_parent, props) => {
-                if t != "MenuItem" && t != "Submenu" && !elem.ident.contains("fl2rust_gen_widget_") {
+            Member(t, is_parent, props) => {
+                if t != "MenuItem" && t != "Submenu" && !elem.ident.contains("fl2rust_widget_") {
                     s += &format!("    pub {}: {},\n", &elem.ident, t);
                     ctor += &elem.ident;
                     ctor += ", ";
@@ -253,10 +255,10 @@ pub fn generate(ast: &[parser::Token]) -> String {
                         _ => (),
                     }
                 }
-                if let Some(parent) = p {
-                    if !parent.is_empty() && !parent[parent.len() - 1].contains("Function") {
+                // if let Some(parent) = p {
+                    if !gparent.is_empty() && !gparent[gparent.len() - 1].contains("Function") {
                         if t != "MenuItem" && t != "Submenu" {
-                            let parent = parent[parent.len() - 1].clone();
+                            let parent = gparent[gparent.len() - 1].clone();
                             let parent: Vec<&str> = parent.split_whitespace().collect();
                             let parent = parent[1];
                             imp += &format!("\t{}.add(&{});\n", parent, &elem.ident);
@@ -268,7 +270,7 @@ pub fn generate(ast: &[parser::Token]) -> String {
                             }
                         } else if t == "MenuItem" {
                             let mut menu_parent = "".to_string();
-                            for p in parent.iter().rev() {
+                            for p in gparent.iter().rev() {
                                 if !p.contains("Submenu") {
                                     menu_parent = p.clone();
                                     break;
@@ -297,40 +299,38 @@ pub fn generate(ast: &[parser::Token]) -> String {
                             //
                         }
                     }
-                }
+                // }
             }
             Scope(op, p) => {
                 if !*op {
-                    if let Some(parent) = p {
-                        if let Some(p) = parent.last() {
-                            if p.contains("Function") {
-                                ctor += "..Default::default() }";
-                                imp += &ctor;
-                                imp += "\n    }\n";
-                                ctor.clear();
-                                ctor += "\tSelf {"
-                            }
-                            if let parser::TokenType::Scope(false, _) = last_ast {
-                                if let Some(last_scope) = last_scope {
-                                    if let parser::TokenType::Scope(false, last_parent) = last_scope
-                                    {
-                                        if let Some(l) = last_parent {
-                                            if let Some(l) = l.last() {
-                                                if l.contains("Submenu") {
-                                                    println!("{:?}", l);
-                                                    subs.pop();
-                                                }
-                                            }
+                    if let Some(p) = p.last() {
+                        if p.contains("Function") {
+                            ctor += "..Default::default() }";
+                            imp += &ctor;
+                            imp += "\n    }\n";
+                            ctor.clear();
+                            ctor += "\tSelf {"
+                        }
+                        if let parser::TokenType::Scope(false, _) = last_ast {
+                            if let Some(last_scope) = last_scope {
+                                if let parser::TokenType::Scope(false, last_parent) = last_scope
+                                {
+                                    if let Some(l) = last_parent.last() {
+                                        if l.contains("Submenu") || l.contains("Fl_") {
+                                            subs.pop();
+                                            gparent.pop();
                                         }
                                     }
                                 }
                             }
-                        } else {
-                            imp += "}\n\n";
-                            s += "}\n\n";
                         }
+                    } else {
+                        imp += "}\n\n";
+                        s += "}\n\n";
                     }
                     last_scope = Some(parser::TokenType::Scope(false, p.clone()));
+                } else {
+                    gparent = p.clone();
                 }
             }
             _ => (),
