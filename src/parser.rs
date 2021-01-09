@@ -49,6 +49,7 @@ pub fn parse(file: &str) -> Vec<Token> {
                 reserved::is_fluid_reserved(&first)
                     || first.starts_with("Fl_")
                     || first.contains("MenuItem")
+                    || first.contains("Submenu")
             );
             match first.as_str() {
                 // comment
@@ -94,7 +95,7 @@ pub fn parse(file: &str) -> Vec<Token> {
                     }
                 }
                 _ => {
-                    if first.starts_with("Fl_") || *first == "MenuItem" {
+                    if first.starts_with("Fl_") || *first == "MenuItem" || *first == "Submenu" {
                         let temp: String;
                         if !words[1].starts_with('{') {
                             temp = words[1].to_string();
@@ -104,7 +105,7 @@ pub fn parse(file: &str) -> Vec<Token> {
                             COUNTER.store(val + 1, atomic::Ordering::Relaxed);
                         }
                         curr_widget = Some(temp.clone());
-                        parent.push(temp.clone());
+                        parent.push(format!("{} {}", first.clone(), temp.clone()));
                         ast.ident = temp.clone();
                         if let TokenType::Scope(true, p) = &last_scope {
                             if let Some(parent_vec) = p {
