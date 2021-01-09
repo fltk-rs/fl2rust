@@ -255,51 +255,49 @@ pub fn generate(ast: &[parser::Token]) -> String {
                         _ => (),
                     }
                 }
-                // if let Some(parent) = p {
-                    if !gparent.is_empty() && !gparent[gparent.len() - 1].contains("Function") {
-                        if t != "MenuItem" && t != "Submenu" {
-                            let parent = gparent[gparent.len() - 1].clone();
-                            let parent: Vec<&str> = parent.split_whitespace().collect();
-                            let parent = parent[1];
-                            imp += &format!("\t{}.add(&{});\n", parent, &elem.ident);
-                            if props.contains(&"resizable".to_string()) {
-                                imp += &format!("\t{}.resizable(&{});\n", parent, &elem.ident);
-                            }
-                            if props.contains(&"hotspot".to_string()) {
-                                imp += &format!("\t{}.hotspot(&{});\n", parent, &elem.ident);
-                            }
-                        } else if t == "MenuItem" {
-                            let mut menu_parent = "".to_string();
-                            for p in gparent.iter().rev() {
-                                if !p.contains("Submenu") {
-                                    menu_parent = p.clone();
-                                    break;
-                                }
-                            }
-                            let parent: Vec<&str> = menu_parent.split_whitespace().collect();
-                            let parent = parent[1];
-                            imp += &format!(
-                                "\t{}.add(\"{}{}\", Shortcut::None, MenuFlag::{}, || {{}});\n",
-                                parent,
-                                utils::vec2menu(&subs),
-                                if let Some(l) = label {
-                                    utils::unbracket(&props[l + 1])
-                                } else {
-                                    ""
-                                },
-                                if let Some(ty) = typ {
-                                    &props[ty + 1]
-                                } else {
-                                    "Normal"
-                                }
-                            );
-                        } else if t == "Submenu" {
-                            subs.push(&elem.ident);
-                        } else {
-                            //
+                if !gparent.is_empty() && !gparent.last().unwrap().contains("Function") {
+                    if t != "MenuItem" && t != "Submenu" {
+                        let parent = gparent.last().unwrap().clone();
+                        let parent: Vec<&str> = parent.split_whitespace().collect();
+                        let parent = parent[1];
+                        imp += &format!("\t{}.add(&{});\n", parent, &elem.ident);
+                        if props.contains(&"resizable".to_string()) {
+                            imp += &format!("\t{}.resizable(&{});\n", parent, &elem.ident);
                         }
+                        if props.contains(&"hotspot".to_string()) {
+                            imp += &format!("\t{}.hotspot(&{});\n", parent, &elem.ident);
+                        }
+                    } else if t == "MenuItem" {
+                        let mut menu_parent = "".to_string();
+                        for p in gparent.iter().rev() {
+                            if !p.contains("Submenu") {
+                                menu_parent = p.clone();
+                                break;
+                            }
+                        }
+                        let parent: Vec<&str> = menu_parent.split_whitespace().collect();
+                        let parent = parent[1];
+                        imp += &format!(
+                            "\t{}.add(\"{}{}\", Shortcut::None, MenuFlag::{}, || {{}});\n",
+                            parent,
+                            utils::vec2menu(&subs),
+                            if let Some(l) = label {
+                                utils::unbracket(&props[l + 1])
+                            } else {
+                                ""
+                            },
+                            if let Some(ty) = typ {
+                                &props[ty + 1]
+                            } else {
+                                "Normal"
+                            }
+                        );
+                    } else if t == "Submenu" {
+                        subs.push(&elem.ident);
+                    } else {
+                        //
                     }
-                // }
+                }
             }
             Scope(op, p) => {
                 if !*op {
