@@ -77,6 +77,8 @@
 //! }
 //! ```
 
+#![allow(clippy::needless_doctest_main)]
+
 use std::error;
 use std::fs;
 

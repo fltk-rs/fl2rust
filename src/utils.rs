@@ -46,7 +46,6 @@ pub fn sanitize_words(words: Vec<&str>) -> Vec<String> {
     v
 }
 
-
 pub fn global_to_pascal(input: &str) -> String {
     let mut s = String::from(input);
     if input.contains("FL_WHEN_") {
@@ -78,4 +77,14 @@ pub fn global_to_pascal(input: &str) -> String {
         _ => s.as_str(),
     };
     ret.to_string()
+}
+
+pub fn vec2menu(v: &[&str]) -> String {
+    // println!("{:?}", v);
+    let mut s: String = String::new();
+    for elem in v {
+        s += elem;
+        s += "/";
+    }
+    s
 }

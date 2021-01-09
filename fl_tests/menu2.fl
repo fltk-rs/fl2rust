@@ -17,12 +17,25 @@ class UserInterface {open
           xywh {0 0 62 20}
         } {
           MenuItem {} {
-            label item
+            label item1
             xywh {0 0 31 20}
+          }
+          MenuItem {} {
+            label item2
+            xywh {0 0 36 21}
+          }
+          Submenu {} {
+            label subsub1 open
+            xywh {0 0 70 21}
+          } {
+            MenuItem {} {
+              label ssitem1
+              xywh {0 0 36 21}
+            }
           }
         }
         Submenu {} {
-          label sub2 open
+          label submenu2 open
           xywh {0 0 62 20}
         } {
           MenuItem {} {
@@ -31,7 +44,7 @@ class UserInterface {open
           }
         }
         MenuItem {} {
-          label item3
+          label tog
           xywh {0 0 31 20} type Toggle
         }
       }

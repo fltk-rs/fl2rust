@@ -24,7 +24,9 @@ pub fn generate(ast: &[parser::Token]) -> String {
     let mut s = "".to_string();
     let mut ctor = "".to_string();
     let mut imp = "".to_string();
-    let mut curr_submenu = "".to_string();
+    let mut subs = vec![];
+    let mut last_scope = None;
+    let mut last_ast = parser::TokenType::Global;
     for elem in ast {
         use parser::TokenType::*;
         match &elem.typ {
@@ -47,12 +49,10 @@ pub fn generate(ast: &[parser::Token]) -> String {
                 imp += " {\n";
             }
             Member(t, p, is_parent, props) => {
-                if t != "MenuItem" && t != "Submenu" {
-                    if !elem.ident.contains("fl2rust_gen_widget_") {
-                        s += &format!("    pub {}: {},\n", &elem.ident, t);
-                        ctor += &elem.ident;
-                        ctor += ", ";
-                    }
+                if t != "MenuItem" && t != "Submenu" && !elem.ident.contains("fl2rust_gen_widget_") {
+                    s += &format!("    pub {}: {},\n", &elem.ident, t);
+                    ctor += &elem.ident;
+                    ctor += ", ";
                 }
                 let xywh = props.iter().position(|x| x == "xywh").unwrap();
                 let label = props.iter().position(|x| x == "label");
@@ -71,24 +71,18 @@ pub fn generate(ast: &[parser::Token]) -> String {
                             }
                         );
                     }
-                } else {
-                    if t != "Submenu" {
-                        imp += &format!(
-                            "\tlet mut {0} = {1}::new({2}, \"{3}\");\n\t{0}.end();\n",
-                            &elem.ident,
-                            &t,
-                            utils::unbracket(&props[xywh + 1].replace(" ", ", ")),
-                            if let Some(l) = label {
-                                utils::unbracket(&props[l + 1])
-                            } else {
-                                ""
-                            }
-                        );
-                    } else {
+                } else if t != "Submenu" {
+                    imp += &format!(
+                        "\tlet mut {0} = {1}::new({2}, \"{3}\");\n\t{0}.end();\n",
+                        &elem.ident,
+                        &t,
+                        utils::unbracket(&props[xywh + 1].replace(" ", ", ")),
                         if let Some(l) = label {
-                            curr_submenu = format!("{}/", utils::unbracket(&props[l + 1]));
+                            utils::unbracket(&props[l + 1])
+                        } else {
+                            ""
                         }
-                    }
+                    );
                 }
                 for i in 0..props.len() {
                     match props[i].as_str() {
@@ -208,7 +202,7 @@ pub fn generate(ast: &[parser::Token]) -> String {
                             );
                         }
                         "type" => {
-                        if props[i + 1] != "Double" && t != "MenuItem" && t != "Submenu" {
+                            if props[i + 1] != "Double" && t != "MenuItem" && t != "Submenu" {
                                 imp += &format!(
                                     "\t{}.set_type({}Type::{});\n",
                                     &elem.ident,
@@ -269,7 +263,7 @@ pub fn generate(ast: &[parser::Token]) -> String {
                             if props.contains(&"resizable".to_string()) {
                                 imp += &format!("\t{}.resizable(&{});\n", parent, &elem.ident);
                             }
-                            if props.contains(&"hotspot".to_string())  {
+                            if props.contains(&"hotspot".to_string()) {
                                 imp += &format!("\t{}.hotspot(&{});\n", parent, &elem.ident);
                             }
                         } else if t == "MenuItem" {
@@ -285,7 +279,7 @@ pub fn generate(ast: &[parser::Token]) -> String {
                             imp += &format!(
                                 "\t{}.add(\"{}{}\", Shortcut::None, MenuFlag::{}, || {{}});\n",
                                 parent,
-                                curr_submenu,
+                                utils::vec2menu(&subs),
                                 if let Some(l) = label {
                                     utils::unbracket(&props[l + 1])
                                 } else {
@@ -297,7 +291,11 @@ pub fn generate(ast: &[parser::Token]) -> String {
                                     "Normal"
                                 }
                             );
-                        } else {}
+                        } else if t == "Submenu" {
+                            subs.push(&elem.ident);
+                        } else {
+                            //
+                        }
                     }
                 }
             }
@@ -311,20 +309,33 @@ pub fn generate(ast: &[parser::Token]) -> String {
                                 imp += "\n    }\n";
                                 ctor.clear();
                                 ctor += "\tSelf {"
-                            } else if p.contains("Submenu") {
-                                curr_submenu.clear();
-                            } else {
-                                //
+                            }
+                            if let parser::TokenType::Scope(false, _) = last_ast {
+                                if let Some(last_scope) = last_scope {
+                                    if let parser::TokenType::Scope(false, last_parent) = last_scope
+                                    {
+                                        if let Some(l) = last_parent {
+                                            if let Some(l) = l.last() {
+                                                if l.contains("Submenu") {
+                                                    println!("{:?}", l);
+                                                    subs.pop();
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         } else {
                             imp += "}\n\n";
                             s += "}\n\n";
                         }
                     }
+                    last_scope = Some(parser::TokenType::Scope(false, p.clone()));
                 }
             }
             _ => (),
         }
+        last_ast = elem.typ.clone();
     }
     format!("{}\n\n{}\n{}\n", HEADER, s, imp)
 }

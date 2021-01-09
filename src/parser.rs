@@ -38,7 +38,6 @@ pub fn parse(file: &str) -> Vec<Token> {
     let mut parent: Vec<String> = vec![];
     let mut curr_widget: Option<String> = None;
     let mut last_scope = TokenType::Scope(false, None);
-    let mut last = Token::new("".to_string(), TokenType::Global);
     let lines = file.lines();
     for line in lines {
         let words: Vec<&str> = line.split_whitespace().collect();
@@ -117,8 +116,13 @@ pub fn parse(file: &str) -> Vec<Token> {
                                 );
                             }
                         } else {
-                            ast.typ = TokenType::Member(utils::de_fl(first), None, false, vec![]);
-                        }          
+                            ast.typ = TokenType::Member(
+                                utils::de_fl(first),
+                                None,
+                                false,
+                                vec![],
+                            );
+                        }
                     } else if reserved::is_widget_prop(first) {
                         if let Some(curr) = curr_widget.clone() {
                             ast.ident = curr.clone();
@@ -131,10 +135,6 @@ pub fn parse(file: &str) -> Vec<Token> {
             }
         }
         assert!(!reserved::is_rust_reserved(&ast.ident));
-        if ast.typ == TokenType::Scope(false, None) && last.typ == TokenType::Scope(false, None) {
-            parent.pop();
-        }
-        last = ast.clone();
         tok_vec.push(ast.clone());
         if let TokenType::Member(_, _, _, _) = ast.typ {
             tok_vec.push(Token {
@@ -148,6 +148,7 @@ pub fn parse(file: &str) -> Vec<Token> {
 
 pub fn add_props(mut tokens: Vec<Token>) -> Vec<Token> {
     let mut tok_vec: Vec<Token> = vec![];
+    // appends token lines
     for i in 0..tokens.len() {
         if let TokenType::Property(v) = &tokens[i].typ {
             if let Some(p) = tokens.get(i + 1) {
@@ -159,18 +160,19 @@ pub fn add_props(mut tokens: Vec<Token>) -> Vec<Token> {
             }
         }
     }
+    // add props to Member token, remove property tokens
     for i in 0..tokens.len() {
         if let TokenType::Property(v) = &tokens[i].typ {
             let mut elem = Token::new("".to_string(), TokenType::Global);
             elem.ident = tokens[i - 2].ident.clone();
-            if let TokenType::Member(parent_typ, parent, is_parent, _) = &tokens[i - 2].typ
-            {
-                elem.typ = TokenType::Member(
-                    parent_typ.clone(),
-                    parent.clone(),
-                    *is_parent,
-                    v.clone(),
-                );
+            let label = v.iter().position(|x| x == "label");
+            if let TokenType::Member(parent_typ, parent, is_parent, _) = &tokens[i - 2].typ {
+                if parent_typ == "Submenu" {
+                    elem.ident = v[label.unwrap() + 1].to_string();
+                }
+                elem.typ =
+                    TokenType::Member(parent_typ.clone(), parent.clone(), *is_parent, v.clone());
+                tok_vec.pop();
                 tok_vec.push(elem);
             }
         } else {
@@ -182,8 +184,8 @@ pub fn add_props(mut tokens: Vec<Token>) -> Vec<Token> {
     while i < tok_vec.len() {
         if let TokenType::Member(t, v, _, props) = &tok_vec[i].typ {
             if !props.is_empty() {
+                let old = tok_vec[i].ident.clone();
                 if let TokenType::Scope(true, _) = &tok_vec[i + 1].typ {
-                    let old = tok_vec[i].ident.clone(); 
                     let tok = Token {
                         ident: old,
                         typ: TokenType::Member(t.clone(), v.clone(), true, props.clone()),
@@ -192,10 +194,8 @@ pub fn add_props(mut tokens: Vec<Token>) -> Vec<Token> {
                 } else {
                     tok_vec2.push(tok_vec[i].clone());
                 }
-            } else {
-                //
             }
-        } else if let TokenType::Scope(_, vec) = &tok_vec[i].typ {
+        } else if let TokenType::Scope(true, vec) = &tok_vec[i].typ {
             if let Some(v) = vec {
                 let len = v.len();
                 if v.len() > 2 {
@@ -203,12 +203,10 @@ pub fn add_props(mut tokens: Vec<Token>) -> Vec<Token> {
                         //
                     } else {
                         tok_vec2.push(tok_vec[i].clone());
-                    } 
+                    }
                 } else {
                     tok_vec2.push(tok_vec[i].clone());
                 }
-            } else {
-                tok_vec2.push(tok_vec[i].clone());
             }
         } else {
             tok_vec2.push(tok_vec[i].clone());

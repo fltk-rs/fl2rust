@@ -77,6 +77,8 @@
 //! }
 //! ```
 
+#![allow(clippy::needless_doctest_main)]
+
 pub mod gen;
 pub mod parser;
 mod reserved;
