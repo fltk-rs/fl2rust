@@ -19,6 +19,21 @@ class UserInterface {open selected
       }
     }
   }
+  Function {make_window4()} {open
+  } {
+    Fl_Window {} {open
+      xywh {186 209 229 214} type Double hide
+    } {
+      Fl_Button {} {
+        label button
+        xywh {90 90 60 15}
+      }
+      Fl_Slider fds4 {
+        label fds
+        xywh {25 35 175 35} type {Horz Knob}
+      }
+    }
+  }
 }
 class UserInterface2 {open selected
 } {
@@ -32,6 +47,21 @@ class UserInterface2 {open selected
         xywh {90 90 60 15}
       }
       Fl_Slider fds2 {
+        label fds
+        xywh {25 35 175 35} type {Horz Knob}
+      }
+    }
+  }
+  Function {make_window3()} {open
+  } {
+    Fl_Window {} {open
+      xywh {186 209 229 214} type Double hide
+    } {
+      Fl_Button {} {
+        label button
+        xywh {90 90 60 15}
+      }
+      Fl_Slider fds3 {
         label fds
         xywh {25 35 175 35} type {Horz Knob}
       }

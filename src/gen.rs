@@ -40,7 +40,6 @@ pub fn generate(ast: &[parser::Token]) -> String {
                 imp += "impl ";
                 imp += &elem.ident;
                 imp += " {\n";
-                ctor += "\tSelf { ";
             }
             Function => {
                 imp += "    pub fn ";
@@ -49,6 +48,7 @@ pub fn generate(ast: &[parser::Token]) -> String {
                     imp += " -> Self";
                 }
                 imp += " {\n";
+                ctor += "\tSelf { ";
             }
             Member(t, is_parent, props) => {
                 if t != "MenuItem" && t != "Submenu" && !elem.ident.contains("fl2rust_widget_") {
@@ -307,7 +307,6 @@ pub fn generate(ast: &[parser::Token]) -> String {
                             imp += &ctor;
                             imp += "\n    }\n";
                             ctor.clear();
-                            ctor += "\tSelf {"
                         }
                         if let parser::TokenType::Scope(false, _) = last_ast {
                             if let Some(last_scope) = last_scope {
