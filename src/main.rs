@@ -1,25 +1,27 @@
 //! # fl2rust
 //! A fluid (fltk ui designer) file to Rust transpiler.
-
-//! To run on the command-line, install using cargo-install:
+//!
+//! ### As an executable
+//! You can run fl2rust on the command-line by installing using cargo-install:
 //! ```
 //! $ cargo install fl2rust
 //! ```
 //! Then run:
 //! ```
-//! $ fl2rust <fl file>.fl > <output file>.rs
+//! $ fl2rust <fl-file>.fl > <output-file>.rs
 //! ```
-
+//!
+//! ### As a library
 //! To automate through cargo, you can use fl2rust as a library by adding it to your build-dependencies:
 //! ```toml
 //! # Cargo.toml
 //! [dependencies]
-//! fltk = "0.12"
-
+//! fltk = "0.13"
+//!
 //! [build-dependencies]
-//! fl2rust = "0.1"
+//! fl2rust = "0.2"
 //! ```
-
+//!
 //! ```rust
 //! // build.rs
 //! fn main() {
@@ -31,7 +33,7 @@
 //!     g.in_out("src/myuifile.fl", out_path.join("myuifile.rs").to_str().unwrap()).expect("Failed to generate rust from fl file!");
 //! }
 //! ```
-
+//!
 //! ```
 //! # src/myuifile.fl -> generated via fluid
 //! # data file for the Fltk User Interface Designer (fluid)
@@ -53,7 +55,7 @@
 //!   }
 //! }
 //! ```
-
+//!
 //! ```rust
 //! // src/myuifile.rs
 //! #![allow(unused_variables)]
@@ -61,7 +63,7 @@
 //! #![allow(unused_imports)]
 //! include!(concat!(env!("OUT_DIR"), "/myuifile.rs"));
 //! ```
-
+//!
 //! ```rust
 //! // src/main.rs
 //! use fltk::*;

@@ -4,7 +4,9 @@
 
 A fluid (fltk ui designer) file to Rust transpiler.
 
-To run on the command-line, install using cargo-install:
+### As an executable
+
+You can run fl2rust on the command-line by installing using cargo-install:
 ```
 $ cargo install fl2rust
 ``` 
@@ -13,7 +15,9 @@ Then run:
 $ fl2rust <fl file>.fl > <output file>.rs
 ```
 
-To automate through cargo, you can use fl2rust as a library by adding it to your build-dependencies:
+### As a library
+
+To automate things through cargo, you can use fl2rust as a library by adding it to your build-dependencies:
 ```toml
 # Cargo.toml
 [dependencies]
