@@ -1,7 +1,5 @@
 # fl2rust
 
-## WORK IN PROGRESS
-
 ## Usage
 
 A fluid (fltk ui designer) file to Rust transpiler.

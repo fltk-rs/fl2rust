@@ -93,14 +93,14 @@ pub fn generate(ast: &[parser::Token]) -> String {
                         }
                         "color" => {
                             imp += &format!(
-                                "\t{}.set_color(unsafe {{std::mem::transmute({})}});\n",
+                                "\t{}.set_color(Color::by_index({}));\n",
                                 &elem.ident,
                                 utils::unbracket(&props[i + 1])
                             );
                         }
                         "selection_color" => {
                             imp += &format!(
-                                "\t{}.set_selection_color(unsafe {{std::mem::transmute({})}});\n",
+                                "\t{}.set_selection_color(Color::by_index({}));\n",
                                 &elem.ident,
                                 utils::global_to_pascal(utils::unbracket(&props[i + 1]))
                             );
@@ -128,21 +128,21 @@ pub fn generate(ast: &[parser::Token]) -> String {
                         }
                         "labelcolor" => {
                             imp += &format!(
-                                "\t{}.set_label_color({});\n",
+                                "\t{}.set_label_color(Color::by_index({}));\n",
                                 &elem.ident,
                                 utils::unbracket(&props[i + 1])
                             );
                         }
                         "labelfont" => {
                             imp += &format!(
-                                "\t{}.set_label_font(unsafe {{std::mem::transmute({})}});\n",
+                                "\t{}.set_label_font(Font::by_index({}));\n",
                                 &elem.ident,
                                 utils::unbracket(&props[i + 1])
                             );
                         }
                         "textfont" => {
                             imp += &format!(
-                                "\t{}.set_text_font(unsafe {{std::mem::transmute({})}});\n",
+                                "\t{}.set_text_font(Font::by_index({}));\n",
                                 &elem.ident,
                                 utils::unbracket(&props[i + 1])
                             );

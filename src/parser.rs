@@ -1,5 +1,3 @@
-#![allow(dead_code)]
-
 use crate::reserved;
 use crate::utils;
 use std::sync::atomic;

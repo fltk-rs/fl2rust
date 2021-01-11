@@ -8,8 +8,8 @@ pub fn unbracket(word: &str) -> &str {
 
 pub fn de_fl(word: &str) -> String {
     let mut s: String;
-    if let Some(stripped) = word.strip_prefix("Fl_") {
-        s = String::from(stripped).replace("_", "");
+    if let Some(stripped) = strip_prefix(word, "Fl_") {
+        s = stripped.replace("_", "");
     } else {
         s = String::from(word);
     }
@@ -86,4 +86,17 @@ pub fn vec2menu(v: &[&str]) -> String {
         s += "/";
     }
     s
+}
+
+pub fn strip_prefix(s: &str, pat: &str) -> Option<String> {
+    match s.find(pat) {
+        Some(idx) => {
+            if idx == 0 {
+                Some(s[pat.len()..].to_string())
+            } else {
+                None
+            }
+        }
+        _ => None,
+    }
 }
