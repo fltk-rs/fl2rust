@@ -1,0 +1,99 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0400
+header_name {.h}
+code_name {.cxx}
+class UserInterface {open
+} {
+  Function {make_window()} {open
+  } {
+    Fl_Window {} {open
+      xywh {616 196 628 505} type Double visible
+    } {
+      Fl_Tabs {} {open
+        xywh {8 10 630 515}
+      } {
+        Fl_Group {} {
+          label Tab1 open selected
+          xywh {10 30 620 480}
+        } {
+          Fl_Button {} {
+            label button
+            xywh {35 56 119 32}
+          }
+          Fl_Round_Button {} {
+            label Round
+            xywh {35 99 119 30} down_box ROUND_DOWN_BOX
+          }
+          Fl_Check_Button {} {
+            label Check
+            xywh {35 141 119 30} down_box DOWN_BOX
+          }
+          Fl_Light_Button {} {
+            label Light
+            xywh {35 182 119 30}
+          }
+          Fl_Menu_Button {} {
+            label menu open
+            xywh {35 224 119 30}
+          } {}
+          Fl_Return_Button {} {
+            label Return
+            xywh {35 265 119 30}
+          }
+          Fl_Choice {} {
+            label Choice open
+            xywh {35 307 119 30} down_box BORDER_BOX align 16
+          } {}
+          Fl_Input {} {
+            xywh {35 348 119 30}
+          }
+          Fl_Output {} {
+            xywh {35 390 119 30}
+          }
+          Fl_Counter {} {
+            label {counter:}
+            xywh {35 449 211 22}
+          }
+          Fl_Slider {} {
+            label {slider:}
+            xywh {185 55 40 331}
+          }
+          Fl_Scrollbar {} {
+            label Scrollbar
+            xywh {252 56 30 331}
+          }
+          Fl_Roller {} {
+            label Roller
+            xywh {310 56 40 331}
+          }
+          Fl_Dial {} {
+            label Dial
+            xywh {405 141 120 94} type Line color 183
+          }
+          Fl_Clock {} {
+            label Clock
+            xywh {465 36 120 99}
+          }
+          Fl_Value_Slider {} {
+            label {slider:}
+            xywh {375 451 211 22} type {Horz Knob}
+          }
+          Fl_Scrollbar {} {
+            xywh {170 410 415 25} type Horizontal
+          }
+          Fl_File_Browser {} {
+            xywh {392 255 190 150} type Multi
+          }
+        }
+        Fl_Group {} {
+          label Tab2
+          xywh {30 35 600 470} hide
+        } {}
+        Fl_Group {} {
+          label Tab3 open
+          xywh {20 36 605 468} hide
+        } {}
+      }
+    }
+  }
+}

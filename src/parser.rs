@@ -55,6 +55,9 @@ pub fn parse(file: &str) -> Vec<Token> {
                     if let Some(w) = words.get(1) {
                         if w == "{" {
                             ast.typ = TokenType::Scope(true, parent.clone());
+                        } else if w == "{}" {
+                            parent.pop();
+                            ast.typ = TokenType::Scope(false, parent.clone());
                         }
                     } else {
                         parent.pop();

@@ -208,7 +208,7 @@ pub fn generate(ast: &[parser::Token]) -> String {
                                 imp += &format!(
                                     "\t{}.set_type({}Type::{});\n",
                                     &elem.ident,
-                                    t,
+                                    utils::fix_type(t),
                                     utils::global_to_pascal(utils::unbracket(&props[i + 1]))
                                 );
                             }

@@ -100,3 +100,19 @@ pub fn strip_prefix(s: &str, pat: &str) -> Option<String> {
         _ => None,
     }
 }
+
+pub fn fix_type(s: &str) -> &str {
+    if s.contains("Slider") {
+        return "Slider";
+    }
+    if s.contains("Browser") {
+        return "Browser";
+    }
+    if s.contains("Button") {
+        return "Button";
+    }
+    if s.contains("Input") {
+        return "Input";
+    }
+    s
+}
