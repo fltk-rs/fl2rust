@@ -79,6 +79,7 @@ pub const WIDGET_PROPS: &[&str] = &[
     "hide",
     "visible",
     "modal",
+    "private",
 ];
 
 pub const RUST_RESERVED: &[&str] = &[

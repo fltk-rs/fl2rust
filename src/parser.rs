@@ -32,6 +32,7 @@ static COUNTER: atomic::AtomicUsize = atomic::AtomicUsize::new(0);
 
 /// Parses fl files to generate a token stream
 pub fn parse(file: &str) -> Vec<Token> {
+    let file = utils::fix_long_props(file);
     let mut tok_vec: Vec<Token> = vec![];
     let mut parent: Vec<String> = vec![];
     let mut curr_widget: Option<String> = None;
@@ -41,12 +42,6 @@ pub fn parse(file: &str) -> Vec<Token> {
         let words = utils::sanitize_words(words);
         let mut ast = Token::new("".to_string(), TokenType::Global);
         if let Some(first) = words.get(0) {
-            assert!(
-                reserved::is_fluid_reserved(&first)
-                    || first.starts_with("Fl_")
-                    || first.contains("MenuItem")
-                    || first.contains("Submenu")
-            );
             match first.as_str() {
                 // comment
                 "#" => ast.typ = TokenType::Comment,
@@ -105,11 +100,7 @@ pub fn parse(file: &str) -> Vec<Token> {
                         curr_widget = Some(temp.clone());
                         parent.push(format!("{} {}", first.clone(), temp.clone()));
                         ast.ident = temp.clone();
-                        ast.typ = TokenType::Member(
-                            utils::de_fl(first),
-                            false,
-                            vec![],
-                        );
+                        ast.typ = TokenType::Member(utils::de_fl(first), false, vec![]);
                     } else if reserved::is_widget_prop(first) {
                         if let Some(curr) = curr_widget.clone() {
                             ast.ident = curr.clone();
@@ -158,8 +149,7 @@ pub fn add_props(mut tokens: Vec<Token>) -> Vec<Token> {
                 if parent_typ == "Submenu" {
                     elem.ident = v[label.unwrap() + 1].to_string();
                 }
-                elem.typ =
-                    TokenType::Member(parent_typ.clone(), *is_parent, v.clone());
+                elem.typ = TokenType::Member(parent_typ.clone(), *is_parent, v.clone());
                 tok_vec.pop();
                 tok_vec.push(elem);
             }

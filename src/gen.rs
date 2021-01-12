@@ -20,7 +20,7 @@ use fltk::valuator::*;
 use fltk::widget::*;
 use fltk::window::*;"#;
 
-/// Generate the output Rust string/file 
+/// Generate the output Rust string/file
 pub fn generate(ast: &[parser::Token]) -> String {
     let mut s = "".to_string();
     let mut ctor = "".to_string();
@@ -56,13 +56,40 @@ pub fn generate(ast: &[parser::Token]) -> String {
                     ctor += &elem.ident;
                     ctor += ", ";
                 }
-                let xywh = props.iter().position(|x| x == "xywh").unwrap();
+                let xywh = props.iter().position(|x| x == "xywh");
                 let label = props.iter().position(|x| x == "label");
                 let typ = props.iter().position(|x| x == "type");
                 if !is_parent {
                     if t != "MenuItem" {
+                        if let Some(xywh) = xywh {
+                            imp += &format!(
+                                "\tlet mut {} = {}::new({}, \"{}\");\n",
+                                &elem.ident,
+                                &t,
+                                utils::unbracket(&props[xywh + 1].replace(" ", ", ")),
+                                if let Some(l) = label {
+                                    utils::unbracket(&props[l + 1])
+                                } else {
+                                    ""
+                                }
+                            );
+                        } else {
+                            imp += &format!(
+                                "\tlet mut {} = {}::default(){};\n",
+                                &elem.ident,
+                                &t,
+                                if let Some(l) = label {
+                                    format!(".with_label(\"{}\")", utils::unbracket(&props[l + 1]))
+                                } else {
+                                    "".to_string()
+                                }
+                            );
+                        }
+                    }
+                } else if t != "Submenu" {
+                    if let Some(xywh) = xywh {
                         imp += &format!(
-                            "\tlet mut {} = {}::new({}, \"{}\");\n",
+                            "\tlet mut {0} = {1}::new({2}, \"{3}\");\n\t{0}.end();\n",
                             &elem.ident,
                             &t,
                             utils::unbracket(&props[xywh + 1].replace(" ", ", ")),
@@ -72,19 +99,18 @@ pub fn generate(ast: &[parser::Token]) -> String {
                                 ""
                             }
                         );
+                    } else {
+                        imp += &format!(
+                            "\tlet mut {0} = {1}::default(){2};\n\t{0}.end();\n",
+                            &elem.ident,
+                            &t,
+                            if let Some(l) = label {
+                                format!(".with_label(\"{}\")", utils::unbracket(&props[l + 1]))
+                            } else {
+                                "".to_string()
+                            }
+                        );
                     }
-                } else if t != "Submenu" {
-                    imp += &format!(
-                        "\tlet mut {0} = {1}::new({2}, \"{3}\");\n\t{0}.end();\n",
-                        &elem.ident,
-                        &t,
-                        utils::unbracket(&props[xywh + 1].replace(" ", ", ")),
-                        if let Some(l) = label {
-                            utils::unbracket(&props[l + 1])
-                        } else {
-                            ""
-                        }
-                    );
                 }
                 for i in 0..props.len() {
                     match props[i].as_str() {
@@ -310,8 +336,7 @@ pub fn generate(ast: &[parser::Token]) -> String {
                         }
                         if let parser::TokenType::Scope(false, _) = last_ast {
                             if let Some(last_scope) = last_scope {
-                                if let parser::TokenType::Scope(false, last_parent) = last_scope
-                                {
+                                if let parser::TokenType::Scope(false, last_parent) = last_scope {
                                     if let Some(l) = last_parent.last() {
                                         if l.contains("Submenu") || l.contains("Fl_") {
                                             subs.pop();

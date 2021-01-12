@@ -1,3 +1,5 @@
+use crate::reserved;
+
 pub fn unbracket(word: &str) -> &str {
     if word.starts_with('{') && word.ends_with('}') {
         &word[1..word.len() - 1]
@@ -115,4 +117,28 @@ pub fn fix_type(s: &str) -> &str {
         return "Input";
     }
     s
+}
+
+pub fn fix_long_props(s: &str) -> String {
+    let mut temp = "".to_string();
+    let lines: Vec<&str> = s.lines().map(|l| l).collect();
+    let mut i = 0;
+    while i < lines.len() - 1 {
+        temp.push_str(lines[i]);
+        let words: Vec<&str> = lines[i + 1].split_whitespace().collect();
+        if let Some(first) = words.get(0) {
+            if reserved::is_fluid_reserved(&first)
+                || first.starts_with("Fl_")
+                || first.contains("MenuItem")
+                || first.contains("Submenu")
+            {
+                temp.push('\n');
+            } else {
+                temp.push(' ');
+            }
+        }
+        i += 1;
+    }
+    temp.push_str(lines[lines.len() - 1]);
+    temp
 }
