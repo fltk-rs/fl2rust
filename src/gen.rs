@@ -92,31 +92,29 @@ pub fn generate(ast: &[parser::Token]) -> String {
                             );
                         }
                     }
+                } else if let Some(xywh) = xywh {
+                    imp += &format!(
+                        "\tlet mut {0} = {1}::new({2}, \"{3}\");\n\t{0}.end();\n",
+                        &elem.ident,
+                        &t,
+                        utils::unbracket(&props[xywh + 1].replace(" ", ", ")),
+                        if let Some(l) = label {
+                            utils::unbracket(&props[l + 1])
+                        } else {
+                            ""
+                        }
+                    );
                 } else {
-                    if let Some(xywh) = xywh {
-                        imp += &format!(
-                            "\tlet mut {0} = {1}::new({2}, \"{3}\");\n\t{0}.end();\n",
-                            &elem.ident,
-                            &t,
-                            utils::unbracket(&props[xywh + 1].replace(" ", ", ")),
-                            if let Some(l) = label {
-                                utils::unbracket(&props[l + 1])
-                            } else {
-                                ""
-                            }
-                        );
-                    } else {
-                        imp += &format!(
-                            "\tlet mut {0} = {1}::default(){2};\n\t{0}.end();\n",
-                            &elem.ident,
-                            &t,
-                            if let Some(l) = label {
-                                format!(".with_label(\"{}\")", utils::unbracket(&props[l + 1]))
-                            } else {
-                                "".to_string()
-                            }
-                        );
-                    }
+                    imp += &format!(
+                        "\tlet mut {0} = {1}::default(){2};\n\t{0}.end();\n",
+                        &elem.ident,
+                        &t,
+                        if let Some(l) = label {
+                            format!(".with_label(\"{}\")", utils::unbracket(&props[l + 1]))
+                        } else {
+                            "".to_string()
+                        }
+                    );
                 }
                 for i in 0..props.len() {
                     match props[i].as_str() {

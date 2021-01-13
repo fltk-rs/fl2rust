@@ -121,7 +121,7 @@ pub fn fix_type(s: &str) -> &str {
 
 pub fn fix_long_props(s: &str) -> String {
     let mut temp = "".to_string();
-    let lines: Vec<&str> = s.lines().map(|l| l).collect();
+    let lines: Vec<&str> = s.lines().collect();
     let mut i = 0;
     while i < lines.len() - 1 {
         temp.push_str(lines[i]);
