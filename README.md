@@ -17,7 +17,10 @@ $ fl2rust <fl file>.fl > <output file>.rs
 
 ### As a library
 
+(A template repo usable via [cargo-generate](https://crates.io/crates/cargo-generate) can be found [here](https://github.com/MoAlyousef/fl2rust-template))
+
 To automate things through cargo, you can use fl2rust as a library by adding it to your build-dependencies:
+
 ```toml
 # Cargo.toml
 [dependencies]
