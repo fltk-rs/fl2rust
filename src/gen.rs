@@ -50,7 +50,7 @@ pub fn generate(ast: &[parser::Token]) -> String {
                 imp += " {\n";
                 ctor += "\tSelf { ";
             }
-            Member(t, is_parent, props) => {
+            Member(t, props) => {
                 if t != "MenuItem" && t != "Submenu" && !elem.ident.contains("fl2rust_widget_") {
                     s += &format!("    pub {}: {},\n", &elem.ident, t);
                     ctor += &elem.ident;
@@ -59,8 +59,14 @@ pub fn generate(ast: &[parser::Token]) -> String {
                 let xywh = props.iter().position(|x| x == "xywh");
                 let label = props.iter().position(|x| x == "label");
                 let typ = props.iter().position(|x| x == "type");
+                let is_parent = match t.as_str() {
+                    "Window" | "Group" | "Pack" | "Tabs" | "Scroll" | "Table" | "Tile"
+                    | "Wizard" => true,
+                    "MenuBar" | "MenuButton" | "Choice" | "InputChoice" => true,
+                    _ => false,
+                };
                 if !is_parent {
-                    if t != "MenuItem" {
+                    if t != "MenuItem" && t != "Submenu" {
                         if let Some(xywh) = xywh {
                             imp += &format!(
                                 "\tlet mut {} = {}::new({}, \"{}\");\n",
@@ -86,7 +92,7 @@ pub fn generate(ast: &[parser::Token]) -> String {
                             );
                         }
                     }
-                } else if t != "Submenu" {
+                } else {
                     if let Some(xywh) = xywh {
                         imp += &format!(
                             "\tlet mut {0} = {1}::new({2}, \"{3}\");\n\t{0}.end();\n",
@@ -267,7 +273,7 @@ pub fn generate(ast: &[parser::Token]) -> String {
                             imp += &format!("\t{}.make_modal(true);\n", &elem.ident,);
                         }
                         "resizable" => {
-                            if *is_parent {
+                            if is_parent {
                                 imp += &format!("\t{}.make_resizable(true);\n", &elem.ident,);
                             }
                         }

@@ -11,7 +11,7 @@ pub enum TokenType {
     Class,
     Function,
     ///  widget_type, is_parent, props
-    Member(String, bool, Vec<String>),
+    Member(String, Vec<String>),
     /// props
     Property(Vec<String>),
 }
@@ -108,7 +108,7 @@ pub fn parse(file: &str) -> Vec<Token> {
                         curr_widget = Some(temp.clone());
                         parent.push(format!("{} {}", first.clone(), temp.clone()));
                         ast.ident = temp.clone();
-                        ast.typ = TokenType::Member(utils::de_fl(first), false, vec![]);
+                        ast.typ = TokenType::Member(utils::de_fl(first), vec![]);
                     } else if reserved::is_widget_prop(first) {
                         if let Some(curr) = curr_widget.clone() {
                             ast.ident = curr.clone();
@@ -122,7 +122,7 @@ pub fn parse(file: &str) -> Vec<Token> {
         }
         assert!(!reserved::is_rust_reserved(&ast.ident));
         tok_vec.push(ast.clone());
-        if let TokenType::Member(_, _, _) = ast.typ {
+        if let TokenType::Member(_, _) = ast.typ {
             tok_vec.push(Token {
                 ident: String::from(""),
                 typ: TokenType::Scope(true, parent.clone()),
@@ -153,11 +153,11 @@ pub fn add_props(mut tokens: Vec<Token>) -> Vec<Token> {
             let mut elem = Token::new("".to_string(), TokenType::Global);
             elem.ident = tokens[i - 2].ident.clone();
             let label = v.iter().position(|x| x == "label");
-            if let TokenType::Member(parent_typ, is_parent, _) = &tokens[i - 2].typ {
+            if let TokenType::Member(parent_typ, _) = &tokens[i - 2].typ {
                 if parent_typ == "Submenu" {
                     elem.ident = v[label.unwrap() + 1].to_string();
                 }
-                elem.typ = TokenType::Member(parent_typ.clone(), *is_parent, v.clone());
+                elem.typ = TokenType::Member(parent_typ.clone(), v.clone());
                 tok_vec.pop();
                 tok_vec.push(elem);
             }
@@ -168,13 +168,13 @@ pub fn add_props(mut tokens: Vec<Token>) -> Vec<Token> {
     let mut tok_vec2: Vec<Token> = vec![];
     let mut i = 0;
     while i < tok_vec.len() {
-        if let TokenType::Member(t, _, props) = &tok_vec[i].typ {
+        if let TokenType::Member(t, props) = &tok_vec[i].typ {
             if !props.is_empty() {
                 let old = tok_vec[i].ident.clone();
                 if let TokenType::Scope(true, _) = &tok_vec[i + 1].typ {
                     let tok = Token {
                         ident: old,
-                        typ: TokenType::Member(t.clone(), true, props.clone()),
+                        typ: TokenType::Member(t.clone(), props.clone()),
                     };
                     tok_vec2.push(tok);
                 } else {
