@@ -45,7 +45,11 @@ pub fn parse(file: &str) -> Vec<Token> {
             match first.as_str() {
                 // comment
                 "#" => ast.typ = TokenType::Comment,
-                "decl" => ast.typ = TokenType::Decl,
+                "decl" => {
+                    ast.typ = TokenType::Decl;
+                    parent.push(format!("decl {}", ast.ident.clone()));
+                    ast.typ = TokenType::Scope(true, parent.clone());
+                }
                 "}" => {
                     if let Some(w) = words.get(1) {
                         if w == "{" {
@@ -55,8 +59,12 @@ pub fn parse(file: &str) -> Vec<Token> {
                             ast.typ = TokenType::Scope(false, parent.clone());
                         }
                     } else {
-                        parent.pop();
-                        ast.typ = TokenType::Scope(false, parent.clone());
+                        let temp = parent.pop();
+                        if let Some(p) = temp {
+                            if !p.contains("decl") {
+                                ast.typ = TokenType::Scope(false, parent.clone());
+                            }
+                        }
                     }
                 }
                 "class" => {
