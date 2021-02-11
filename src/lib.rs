@@ -16,10 +16,10 @@
 //! ```toml
 //! # Cargo.toml
 //! [dependencies]
-//! fltk = "0.13"
+//! fltk = "0.14"
 //! 
 //! [build-dependencies]
-//! fl2rust = "0.2"
+//! fl2rust = "0.3"
 //! ```
 //!
 //! ```rust

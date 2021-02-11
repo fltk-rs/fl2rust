@@ -7,82 +7,74 @@ class UserInterface {open
   Function {make_window()} {open
   } {
     Fl_Window {} {open
-      xywh {616 196 628 505} type Double visible
+      xywh {616 196 628 505} type Double hide
     } {
       Fl_Tabs {} {open
-        xywh {8 10 630 515}
+        xywh {4 10 634 515}
       } {
         Fl_Group {} {
           label Tab1 open selected
-          xywh {10 30 620 480}
+          xywh {5 30 620 480}
         } {
           Fl_Button {} {
             label button
-            xywh {35 56 119 32}
+            xywh {30 56 119 32}
           }
           Fl_Round_Button {} {
             label Round
-            xywh {35 99 119 30} down_box ROUND_DOWN_BOX
+            xywh {30 99 119 30} down_box ROUND_DOWN_BOX
           }
           Fl_Check_Button {} {
             label Check
-            xywh {35 141 119 30} down_box DOWN_BOX
+            xywh {30 141 119 30} down_box DOWN_BOX
           }
           Fl_Light_Button {} {
             label Light
-            xywh {35 182 119 30}
+            xywh {30 182 119 30}
           }
           Fl_Menu_Button {} {
             label menu open
-            xywh {35 224 119 30}
+            xywh {30 224 119 30}
           } {}
           Fl_Return_Button {} {
             label Return
-            xywh {35 265 119 30}
+            xywh {30 265 119 30}
           }
           Fl_Choice {} {
             label Choice open
-            xywh {35 307 119 30} down_box BORDER_BOX align 16
+            xywh {30 307 119 30} down_box BORDER_BOX align 16
           } {}
           Fl_Input {} {
-            xywh {35 348 119 30}
+            xywh {30 348 119 30}
           }
           Fl_Output {} {
-            xywh {35 390 119 30}
+            xywh {30 390 119 30}
           }
           Fl_Counter {} {
             label {counter:}
-            xywh {35 449 211 22}
+            xywh {30 438 120 22}
           }
           Fl_Slider {} {
             label {slider:}
-            xywh {185 55 40 331}
+            xywh {180 55 25 331} type {Vert Knob}
           }
           Fl_Scrollbar {} {
             label Scrollbar
-            xywh {252 56 30 331}
+            xywh {253 56 23 331}
           }
           Fl_Roller {} {
             label Roller
-            xywh {310 56 40 331}
+            xywh {315 59 19 331}
           }
           Fl_Dial {} {
             label Dial
-            xywh {405 141 120 94} type Line color 183
-          }
-          Fl_Clock {} {
-            label Clock
-            xywh {465 36 120 99}
-          }
-          Fl_Value_Slider {} {
-            label {slider:}
-            xywh {375 451 211 22} type {Horz Knob}
+            xywh {405 76 155 139} type Line color 183
           }
           Fl_Scrollbar {} {
-            xywh {170 410 415 25} type Horizontal
+            xywh {180 440 415 20} type Horizontal
           }
           Fl_File_Browser {} {
-            xywh {392 255 190 150} type Multi
+            xywh {390 240 190 150} type Multi
           }
         }
         Fl_Group {} {
