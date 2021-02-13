@@ -7,7 +7,7 @@ class UserInterface {open
   Function {make_window()} {open
   } {
     Fl_Window {} {open
-      xywh {616 196 628 505} type Double hide
+      xywh {616 196 628 505} type Double visible
     } {
       Fl_Tabs {} {open
         xywh {4 10 634 515}
