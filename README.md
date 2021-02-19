@@ -24,7 +24,7 @@ To automate things through cargo, you can use fl2rust as a library by adding it 
 ```toml
 # Cargo.toml
 [dependencies]
-fltk = "0.14"
+fltk = "0.15"
 
 [build-dependencies]
 fl2rust = "0.3"
