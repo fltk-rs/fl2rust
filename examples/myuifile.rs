@@ -3,6 +3,7 @@
 #![allow(unused_variables)]
 #![allow(unused_mut)]
 #![allow(unused_imports)]
+#![allow(clippy::needless_update)]
 
 use fltk::browser::*;
 use fltk::button::*;

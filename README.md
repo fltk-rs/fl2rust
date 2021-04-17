@@ -69,6 +69,8 @@ class UserInterface {open
 #![allow(unused_variables)]
 #![allow(unused_mut)]
 #![allow(unused_imports)]
+#![allow(clippy::needless_update)]
+
 include!(concat!(env!("OUT_DIR"), "/myuifile.rs"));
 ```
 
@@ -80,7 +82,7 @@ mod myuifile;
 fn main() {
     let app = app::App::default();
     let mut ui = myuifile::UserInterface::make_window();
-    ui.but.set_callback(move || {
+    ui.but.set_callback(move |_| {
         println!("Works!");
     });
     app.run().unwrap();
@@ -91,7 +93,6 @@ fn main() {
 - Adding arbitrary code or declaring global/member variables is unsupported.
 - Only constructor methods are supported.
 - fl2rust doesn't check the generated Rust code for correctness.
-- Supports fltk-rs > 0.13.
 
 ## Where can you get FLUID?
 There are several options:
