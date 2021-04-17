@@ -5,6 +5,7 @@ const HEADER: &str = r#"
 use fltk::browser::*;
 use fltk::button::*;
 use fltk::dialog::*;
+use fltk::enums::*;
 use fltk::frame::*;
 use fltk::group::*;
 use fltk::image::*;

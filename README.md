@@ -24,10 +24,10 @@ To automate things through cargo, you can use fl2rust as a library by adding it 
 ```toml
 # Cargo.toml
 [dependencies]
-fltk = "0.15"
+fltk = "1"
 
 [build-dependencies]
-fl2rust = "0.3"
+fl2rust = "0.4"
 ```
 
 ```rust
@@ -92,6 +92,13 @@ fn main() {
 - Only constructor methods are supported.
 - fl2rust doesn't check the generated Rust code for correctness.
 - Supports fltk-rs > 0.13.
+
+## Where can you get FLUID?
+There are several options:
+1- cargo install fltk-fluid​
+2- Fluid is built when building fltk-rs, where it'll be in the OUT_DIR.
+2- Through a package manager.
+3- By building the fltk library yourself using cmake.
 
 ## Tutorial
 - [Use FLUID (RAD tool) with Rust](https://www.youtube.com/watch?v=k_P0wG3-dNk)
