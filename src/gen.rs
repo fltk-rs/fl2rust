@@ -151,10 +151,16 @@ pub fn generate(ast: &[parser::Token]) -> String {
                             );
                         }
                         "labeltype" => {
+                            let temp = utils::global_to_pascal(utils::unbracket(&props[i + 1]));
+                            let temp = if temp == "No" {
+                                "None"
+                            } else {
+                                temp.as_str()
+                            };
                             imp += &format!(
                                 "\t{}.set_label_type(LabelType::{});\n",
                                 &elem.ident,
-                                utils::global_to_pascal(utils::unbracket(&props[i + 1]))
+                                temp,
                             );
                         }
                         "labelcolor" => {
@@ -179,10 +185,18 @@ pub fn generate(ast: &[parser::Token]) -> String {
                             );
                         }
                         "box" => {
+                            let temp = utils::global_to_pascal(utils::unbracket(&props[i + 1]));
+                            let temp = match temp.as_str() {
+                                "OflatBox" => "OFlatFrame",
+                                "OshadowBox" => "OShadowBox",
+                                "RflatBox" => "RFlatBox",
+                                "RshadowBox" => "RShadowBox",
+                                _ => temp.as_str(),
+                            };
                             imp += &format!(
                                 "\t{}.set_frame(FrameType::{});\n",
                                 &elem.ident,
-                                utils::global_to_pascal(utils::unbracket(&props[i + 1]))
+                                temp,
                             );
                         }
                         "down_box" => {
@@ -208,21 +222,21 @@ pub fn generate(ast: &[parser::Token]) -> String {
                         }
                         "maximum" => {
                             imp += &format!(
-                                "\t{}.set_maximum({});\n",
+                                "\t{}.set_maximum({} as _);\n",
                                 &elem.ident,
                                 utils::unbracket(&props[i + 1])
                             );
                         }
                         "minimum" => {
                             imp += &format!(
-                                "\t{}.set_minimum({});\n",
+                                "\t{}.set_minimum({} as _);\n",
                                 &elem.ident,
                                 utils::unbracket(&props[i + 1])
                             );
                         }
                         "step" => {
                             imp += &format!(
-                                "\t{}.set_step({});\n",
+                                "\t{}.set_step({} as _, 1);\n",
                                 &elem.ident,
                                 utils::unbracket(&props[i + 1])
                             );
