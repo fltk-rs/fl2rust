@@ -76,7 +76,7 @@ include!(concat!(env!("OUT_DIR"), "/myuifile.rs"));
 
 ```rust
 // src/main.rs
-use fltk::*;
+use fltk::{prelude::*, *};
 mod myuifile;
 
 fn main() {
