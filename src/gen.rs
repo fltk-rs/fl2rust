@@ -91,9 +91,15 @@ pub fn generate(ast: &[parser::Token]) -> String {
                                 &t,
                                 if let Some(l) = label {
                                     if unsafe { crate::parser::PROGRAM.i18n } {
-                                        format!(".with_label(tr!(\"{}\"));", utils::unbracket(&props[l + 1]))
+                                        format!(
+                                            ".with_label(tr!(\"{}\"));",
+                                            utils::unbracket(&props[l + 1])
+                                        )
                                     } else {
-                                        format!(".with_label(\"{}\");", utils::unbracket(&props[l + 1]))
+                                        format!(
+                                            ".with_label(\"{}\");",
+                                            utils::unbracket(&props[l + 1])
+                                        )
                                     }
                                 } else {
                                     "".to_string()
@@ -124,7 +130,10 @@ pub fn generate(ast: &[parser::Token]) -> String {
                         &t,
                         if let Some(l) = label {
                             if unsafe { crate::parser::PROGRAM.i18n } {
-                                format!(".with_label(tr!(\"{}\"));", utils::unbracket(&props[l + 1]))
+                                format!(
+                                    ".with_label(tr!(\"{}\"));",
+                                    utils::unbracket(&props[l + 1])
+                                )
                             } else {
                                 format!(".with_label(\"{}\");", utils::unbracket(&props[l + 1]))
                             }
@@ -168,15 +177,10 @@ pub fn generate(ast: &[parser::Token]) -> String {
                         }
                         "labeltype" => {
                             let temp = utils::global_to_pascal(utils::unbracket(&props[i + 1]));
-                            let temp = if temp == "No" {
-                                "None"
-                            } else {
-                                temp.as_str()
-                            };
+                            let temp = if temp == "No" { "None" } else { temp.as_str() };
                             imp += &format!(
                                 "\t{}.set_label_type(LabelType::{});\n",
-                                &elem.ident,
-                                temp,
+                                &elem.ident, temp,
                             );
                         }
                         "labelcolor" => {
@@ -209,11 +213,7 @@ pub fn generate(ast: &[parser::Token]) -> String {
                                 "RshadowBox" => "RShadowBox",
                                 _ => temp.as_str(),
                             };
-                            imp += &format!(
-                                "\t{}.set_frame(FrameType::{});\n",
-                                &elem.ident,
-                                temp,
-                            );
+                            imp += &format!("\t{}.set_frame(FrameType::{});\n", &elem.ident, temp,);
                         }
                         "down_box" => {
                             imp += &format!(
@@ -351,9 +351,17 @@ pub fn generate(ast: &[parser::Token]) -> String {
                             parent,
                             if let Some(l) = label {
                                 if unsafe { crate::parser::PROGRAM.i18n } {
-                                    format!("tr!(\"{}{}\")", utils::vec2menu(&subs), utils::unbracket(&props[l + 1]))
+                                    format!(
+                                        "tr!(\"{}{}\")",
+                                        utils::vec2menu(&subs),
+                                        utils::unbracket(&props[l + 1])
+                                    )
                                 } else {
-                                    format!("\"{}{}\"", utils::vec2menu(&subs), utils::unbracket(&props[l + 1]))
+                                    format!(
+                                        "\"{}{}\"",
+                                        utils::vec2menu(&subs),
+                                        utils::unbracket(&props[l + 1])
+                                    )
                                 }
                             } else {
                                 "\"\"".to_string()
