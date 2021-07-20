@@ -70,14 +70,18 @@ pub fn generate(ast: &[parser::Token]) -> String {
                     if t != "MenuItem" && t != "Submenu" {
                         if let Some(xywh) = xywh {
                             imp += &format!(
-                                "\tlet mut {} = {}::new({}, \"{}\");\n",
+                                "\tlet mut {} = {}::new({}, {});\n",
                                 &elem.ident,
                                 &t,
                                 utils::unbracket(&props[xywh + 1].replace(" ", ", ")),
                                 if let Some(l) = label {
-                                    utils::unbracket(&props[l + 1])
+                                    if unsafe { crate::parser::PROGRAM.i18n } {
+                                        format!("tr!(\"{}\")", utils::unbracket(&props[l + 1]))
+                                    } else {
+                                        format!("\"{}\"", utils::unbracket(&props[l + 1]))
+                                    }
                                 } else {
-                                    ""
+                                    "None".to_string()
                                 }
                             );
                         } else {
@@ -86,7 +90,11 @@ pub fn generate(ast: &[parser::Token]) -> String {
                                 &elem.ident,
                                 &t,
                                 if let Some(l) = label {
-                                    format!(".with_label(\"{}\")", utils::unbracket(&props[l + 1]))
+                                    if unsafe { crate::parser::PROGRAM.i18n } {
+                                        format!(".with_label(tr!(\"{}\"));", utils::unbracket(&props[l + 1]))
+                                    } else {
+                                        format!(".with_label(\"{}\");", utils::unbracket(&props[l + 1]))
+                                    }
                                 } else {
                                     "".to_string()
                                 }
@@ -95,14 +103,18 @@ pub fn generate(ast: &[parser::Token]) -> String {
                     }
                 } else if let Some(xywh) = xywh {
                     imp += &format!(
-                        "\tlet mut {0} = {1}::new({2}, \"{3}\");\n\t{0}.end();\n",
+                        "\tlet mut {0} = {1}::new({2}, {3});\n\t{0}.end();\n",
                         &elem.ident,
                         &t,
                         utils::unbracket(&props[xywh + 1].replace(" ", ", ")),
                         if let Some(l) = label {
-                            utils::unbracket(&props[l + 1])
+                            if unsafe { crate::parser::PROGRAM.i18n } {
+                                format!("tr!(\"{}\")", utils::unbracket(&props[l + 1]))
+                            } else {
+                                format!("\"{}\"", utils::unbracket(&props[l + 1]))
+                            }
                         } else {
-                            ""
+                            "None".to_string()
                         }
                     );
                 } else {
@@ -111,7 +123,11 @@ pub fn generate(ast: &[parser::Token]) -> String {
                         &elem.ident,
                         &t,
                         if let Some(l) = label {
-                            format!(".with_label(\"{}\")", utils::unbracket(&props[l + 1]))
+                            if unsafe { crate::parser::PROGRAM.i18n } {
+                                format!(".with_label(tr!(\"{}\"));", utils::unbracket(&props[l + 1]))
+                            } else {
+                                format!(".with_label(\"{}\");", utils::unbracket(&props[l + 1]))
+                            }
                         } else {
                             "".to_string()
                         }
@@ -215,9 +231,13 @@ pub fn generate(ast: &[parser::Token]) -> String {
                         }
                         "tooltip" => {
                             imp += &format!(
-                                "\t{}.set_tooltip(\"{}\");\n",
+                                "\t{}.set_tooltip({});\n",
                                 &elem.ident,
-                                utils::unbracket(&props[i + 1])
+                                if unsafe { crate::parser::PROGRAM.i18n } {
+                                    format!("tr!(\"{}\")", utils::unbracket(&props[i + 1]))
+                                } else {
+                                    format!("\"{}\"", utils::unbracket(&props[i + 1]))
+                                }
                             );
                         }
                         "maximum" => {
@@ -243,9 +263,13 @@ pub fn generate(ast: &[parser::Token]) -> String {
                         }
                         "value" => {
                             imp += &format!(
-                                "\t{}.set_value(\"{}\");\n",
+                                "\t{}.set_value({});\n",
                                 &elem.ident,
-                                utils::unbracket(&props[i + 1])
+                                if unsafe { crate::parser::PROGRAM.i18n } {
+                                    format!("tr!(\"{}\")", utils::unbracket(&props[i + 1]))
+                                } else {
+                                    format!("\"{}\"", utils::unbracket(&props[i + 1]))
+                                }
                             );
                         }
                         "type" => {
@@ -323,13 +347,16 @@ pub fn generate(ast: &[parser::Token]) -> String {
                         let parent: Vec<&str> = menu_parent.split_whitespace().collect();
                         let parent = parent[1];
                         imp += &format!(
-                            "\t{}.add(\"{}{}\", Shortcut::None, MenuFlag::{}, || {{}});\n",
+                            "\t{}.add({}, Shortcut::None, MenuFlag::{}, || {{}});\n",
                             parent,
-                            utils::vec2menu(&subs),
                             if let Some(l) = label {
-                                utils::unbracket(&props[l + 1])
+                                if unsafe { crate::parser::PROGRAM.i18n } {
+                                    format!("tr!(\"{}{}\")", utils::vec2menu(&subs), utils::unbracket(&props[l + 1]))
+                                } else {
+                                    format!("\"{}{}\"", utils::vec2menu(&subs), utils::unbracket(&props[l + 1]))
+                                }
                             } else {
-                                ""
+                                "\"\"".to_string()
                             },
                             if let Some(ty) = typ {
                                 &props[ty + 1]

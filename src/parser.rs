@@ -2,6 +2,13 @@ use crate::reserved;
 use crate::utils;
 use std::sync::atomic;
 
+#[derive(Debug, Copy, Clone)]
+pub struct Program {
+    pub(crate) i18n: bool,
+}
+
+pub static mut PROGRAM: Program = Program { i18n: false };
+
 #[derive(Debug, Clone, PartialEq)]
 pub enum TokenType {
     Global,
@@ -45,6 +52,9 @@ pub fn parse(file: &str) -> Vec<Token> {
             match first.as_str() {
                 // comment
                 "#" => ast.typ = TokenType::Comment,
+                "i18n_type" => unsafe {
+                    PROGRAM.i18n = true;
+                },
                 "decl" => {
                     ast.typ = TokenType::Decl;
                     parent.push(format!("decl {}", ast.ident.clone()));

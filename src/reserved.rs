@@ -4,6 +4,7 @@ pub const FLUID_RESERVED: &[&str] = &[
     "comment",
     "snap",
     "version",
+    "i18n_type",
     "gridx",
     "gridy",
     "Function",
