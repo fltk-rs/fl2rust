@@ -70,18 +70,18 @@ pub fn generate(ast: &[parser::Token]) -> String {
                     if t != "MenuItem" && t != "Submenu" {
                         if let Some(xywh) = xywh {
                             imp += &format!(
-                                "\tlet mut {} = {}::new({}, {});\n",
+                                "\tlet mut {} = {}::new({}, {}\n",
                                 &elem.ident,
                                 &t,
                                 utils::unbracket(&props[xywh + 1].replace(" ", ", ")),
                                 if let Some(l) = label {
                                     if unsafe { crate::parser::PROGRAM.i18n } {
-                                        format!("tr!(\"{}\")", utils::unbracket(&props[l + 1]))
+                                        format!("None).with_label(&tr!(\"{}\"));\n", utils::unbracket(&props[l + 1]))
                                     } else {
-                                        format!("\"{}\"", utils::unbracket(&props[l + 1]))
+                                        format!("\"{}\");", utils::unbracket(&props[l + 1]))
                                     }
                                 } else {
-                                    "None".to_string()
+                                    "None);".to_string()
                                 }
                             );
                         } else {
@@ -92,7 +92,7 @@ pub fn generate(ast: &[parser::Token]) -> String {
                                 if let Some(l) = label {
                                     if unsafe { crate::parser::PROGRAM.i18n } {
                                         format!(
-                                            ".with_label(tr!(\"{}\"));",
+                                            ".with_label(&tr!(\"{}\"));",
                                             utils::unbracket(&props[l + 1])
                                         )
                                     } else {
@@ -109,18 +109,18 @@ pub fn generate(ast: &[parser::Token]) -> String {
                     }
                 } else if let Some(xywh) = xywh {
                     imp += &format!(
-                        "\tlet mut {0} = {1}::new({2}, {3});\n\t{0}.end();\n",
+                        "\tlet mut {0} = {1}::new({2}, {3}\n\t{0}.end();\n",
                         &elem.ident,
                         &t,
                         utils::unbracket(&props[xywh + 1].replace(" ", ", ")),
                         if let Some(l) = label {
                             if unsafe { crate::parser::PROGRAM.i18n } {
-                                format!("tr!(\"{}\")", utils::unbracket(&props[l + 1]))
+                                format!("None).with_label(&tr!(\"{}\"));", utils::unbracket(&props[l + 1]))
                             } else {
-                                format!("\"{}\"", utils::unbracket(&props[l + 1]))
+                                format!("\"{}\");", utils::unbracket(&props[l + 1]))
                             }
                         } else {
-                            "None".to_string()
+                            "None);".to_string()
                         }
                     );
                 } else {
@@ -234,7 +234,7 @@ pub fn generate(ast: &[parser::Token]) -> String {
                                 "\t{}.set_tooltip({});\n",
                                 &elem.ident,
                                 if unsafe { crate::parser::PROGRAM.i18n } {
-                                    format!("tr!(\"{}\")", utils::unbracket(&props[i + 1]))
+                                    format!("&tr!(\"{}\")", utils::unbracket(&props[i + 1]))
                                 } else {
                                     format!("\"{}\"", utils::unbracket(&props[i + 1]))
                                 }
@@ -266,7 +266,7 @@ pub fn generate(ast: &[parser::Token]) -> String {
                                 "\t{}.set_value({});\n",
                                 &elem.ident,
                                 if unsafe { crate::parser::PROGRAM.i18n } {
-                                    format!("tr!(\"{}\")", utils::unbracket(&props[i + 1]))
+                                    format!("&tr!(\"{}\")", utils::unbracket(&props[i + 1]))
                                 } else {
                                     format!("\"{}\"", utils::unbracket(&props[i + 1]))
                                 }
@@ -352,7 +352,7 @@ pub fn generate(ast: &[parser::Token]) -> String {
                             if let Some(l) = label {
                                 if unsafe { crate::parser::PROGRAM.i18n } {
                                     format!(
-                                        "tr!(\"{}{}\")",
+                                        "&tr!(\"{}{}\")",
                                         utils::vec2menu(&subs),
                                         utils::unbracket(&props[l + 1])
                                     )

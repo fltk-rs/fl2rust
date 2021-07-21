@@ -89,6 +89,19 @@ fn main() {
 }
 ```
 
+## i18n support
+Version 0.4.4 adds i18n support via the `tr!` macro from the [tr crate](https://crates.io/crates/tr). 
+To enable it:
+- In fluid, go to Edit->Project Settings...->Internationalization.
+- Change the dropdown to use GNU gettext (which the tr crate supports in both forms gettext-rs and gettext).
+- Add tr to you dependencies in you Cargo.toml.
+- Add to your main.rs file:
+```rust
+#[macro_use]
+extern crate tr;
+```
+- Initialize tr as described in the tr crate's documentation.
+
 ## Known limitations
 - Adding arbitrary code or declaring global/member variables is unsupported.
 - Only constructor methods are supported.
