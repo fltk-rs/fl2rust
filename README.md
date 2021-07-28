@@ -89,6 +89,13 @@ fn main() {
 }
 ```
 
+## Where you can get FLUID?
+There are several options:
+- `cargo install fltk-fluid`
+- Through a package manager.
+- By building the fltk library yourself using cmake.
+- Fluid is built when building fltk-rs, where it'll be in the OUT_DIR.
+
 ## i18n support
 Version 0.4.4 adds i18n support via the `tr!` macro from the [tr crate](https://crates.io/crates/tr). 
 To enable it:
@@ -106,13 +113,6 @@ extern crate tr;
 - Adding arbitrary code or declaring global/member variables is unsupported.
 - Only constructor methods are supported.
 - fl2rust doesn't check the generated Rust code for correctness.
-
-## Where can you get FLUID?
-There are several options:
-- `cargo install fltk-fluid`
-- Through a package manager.
-- By building the fltk library yourself using cmake.
-- Fluid is built when building fltk-rs, where it'll be in the OUT_DIR.
 
 ## Tutorial
 - [Use FLUID (RAD tool) with Rust](https://www.youtube.com/watch?v=k_P0wG3-dNk)
