@@ -109,10 +109,10 @@ extern crate tr;
 
 ## Where can you get FLUID?
 There are several options:
-1- cargo install fltk-fluid​
-2- Fluid is built when building fltk-rs, where it'll be in the OUT_DIR.
-2- Through a package manager.
-3- By building the fltk library yourself using cmake.
+- `cargo install fltk-fluid`
+- Through a package manager.
+- By building the fltk library yourself using cmake.
+- Fluid is built when building fltk-rs, where it'll be in the OUT_DIR.
 
 ## Tutorial
 - [Use FLUID (RAD tool) with Rust](https://www.youtube.com/watch?v=k_P0wG3-dNk)
