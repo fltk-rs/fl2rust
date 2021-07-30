@@ -347,7 +347,7 @@ pub fn generate(ast: &[parser::Token]) -> String {
                         let parent: Vec<&str> = menu_parent.split_whitespace().collect();
                         let parent = parent[1];
                         imp += &format!(
-                            "\t{}.add({}, Shortcut::None, MenuFlag::{}, || {{}});\n",
+                            "\t{}.add({}, Shortcut::None, MenuFlag::{}, |_| {{}});\n",
                             parent,
                             if let Some(l) = label {
                                 if unsafe { crate::parser::PROGRAM.i18n } {
