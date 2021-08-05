@@ -274,12 +274,19 @@ pub fn generate(ast: &[parser::Token]) -> String {
                         }
                         "type" => {
                             if props[i + 1] != "Double" && t != "MenuItem" && t != "Submenu" {
-                                imp += &format!(
-                                    "\t{}.set_type({}Type::{});\n",
-                                    &elem.ident,
-                                    utils::fix_type(t),
-                                    utils::global_to_pascal(utils::unbracket(&props[i + 1]))
-                                );
+                                if t != "Output" {
+                                    imp += &format!(
+                                        "\t{}.set_type({}Type::{});\n",
+                                        &elem.ident,
+                                        utils::fix_type(t),
+                                        utils::global_to_pascal(utils::unbracket(&props[i + 1]))
+                                    );
+                                } else {
+                                    imp += &format!(
+                                        "\t{}.set_type(InputType::from_i32(12));\n",
+                                        &elem.ident,
+                                    );
+                                }
                             }
                         }
                         "align" => {

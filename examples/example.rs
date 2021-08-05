@@ -1,4 +1,4 @@
-use fltk::*;
+use fltk::{prelude::*, *};
 
 #[path = "myuifile.rs"]
 mod myuifile;
