@@ -81,6 +81,12 @@ pub const WIDGET_PROPS: &[&str] = &[
     "visible",
     "modal",
     "private",
+    "callback",
+    "code0",
+    "code1",
+    "code2",
+    "code3",
+    "code4",
 ];
 
 pub const RUST_RESERVED: &[&str] = &[

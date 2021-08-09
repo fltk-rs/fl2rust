@@ -44,10 +44,17 @@ pub fn parse(file: &str) -> Vec<Token> {
     let mut parent: Vec<String> = vec![];
     let mut curr_widget: Option<String> = None;
     let lines = file.lines();
+    let mut temp = vec![];
     for line in lines {
         let words: Vec<&str> = line.split_whitespace().collect();
         let words = utils::sanitize_words(words);
+        temp.push(words);
+    }
+    let count = temp.len();
+    let mut i = 0;
+    while i < count {
         let mut ast = Token::new("".to_string(), TokenType::Global);
+        let words = temp.get(i).unwrap();
         if let Some(first) = words.get(0) {
             match first.as_str() {
                 // comment
@@ -120,10 +127,15 @@ pub fn parse(file: &str) -> Vec<Token> {
                         ast.ident = temp.clone();
                         ast.typ = TokenType::Member(utils::de_fl(first), vec![]);
                     } else if reserved::is_widget_prop(first) {
+                        let mut props = vec![];
                         if let Some(curr) = curr_widget.clone() {
                             ast.ident = curr.clone();
-                            ast.typ = TokenType::Property(words);
                         }
+                        while temp.get(i).unwrap().get(0).unwrap() != "}" {
+                            props.append(&mut temp.get(i).unwrap().to_vec());
+                            i += 1;
+                        }
+                        ast.typ = TokenType::Property(props);
                     } else {
                         //
                     }
@@ -138,6 +150,7 @@ pub fn parse(file: &str) -> Vec<Token> {
                 typ: TokenType::Scope(true, parent.clone()),
             })
         }
+        i += 1;
     }
     add_props(tok_vec)
 }

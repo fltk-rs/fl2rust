@@ -328,6 +328,16 @@ pub fn generate(ast: &[parser::Token]) -> String {
                                 utils::unbracket(&props[i + 1].replace(" ", ", "))
                             );
                         }
+                        "callback" => {
+                            imp += &format!(
+                                "\t{0}.callback(move |{0}| {{\n\t    {1}\n\t}});\n",
+                                &elem.ident,
+                                utils::unbracket(&props[i + 1])
+                            );
+                        },
+                        "code0" | "code1" | "code2" | "code3" | "code4" => {
+                            imp += &format!("\t{}\n", utils::unbracket(&props[i + 1]));
+                        },
                         _ => (),
                     }
                 }
