@@ -330,7 +330,7 @@ pub fn generate(ast: &[parser::Token]) -> String {
                         }
                         "callback" => {
                             imp += &format!(
-                                "\t{0}.callback(move |{0}| {{\n\t    {1}\n\t}});\n",
+                                "\t{0}.set_callback(move |{0}| {{\n\t    {1}\n\t}});\n",
                                 &elem.ident,
                                 utils::unbracket(&props[i + 1])
                             );
