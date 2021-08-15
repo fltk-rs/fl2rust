@@ -262,14 +262,26 @@ pub fn generate(ast: &[parser::Token]) -> String {
                             );
                         }
                         "value" => {
-                            imp += &format!(
-                                "\t{}.set_value({});\n",
-                                &elem.ident,
+                            let val = if t.contains("Button") {
+                                let b = utils::unbracket(&props[i + 1]).parse::<i32>().expect("Buttons should have integral values");
+                                if b != 0 {
+                                    "true".to_string()
+                                } else {
+                                    "false".to_string()
+                                }
+                            } else if (t.contains("Input") || t.contains("Output")) && !t.contains("Value") {
                                 if unsafe { crate::parser::PROGRAM.i18n } {
                                     format!("&tr!(\"{}\")", utils::unbracket(&props[i + 1]))
                                 } else {
                                     format!("\"{}\"", utils::unbracket(&props[i + 1]))
                                 }
+                            } else {
+                                format!("{} as _", utils::unbracket(&props[i + 1]))
+                            };
+                            imp += &format!(
+                                "\t{}.set_value({});\n",
+                                &elem.ident,
+                                val
                             );
                         }
                         "type" => {
@@ -328,16 +340,6 @@ pub fn generate(ast: &[parser::Token]) -> String {
                                 utils::unbracket(&props[i + 1].replace(" ", ", "))
                             );
                         }
-                        "callback" => {
-                            imp += &format!(
-                                "\t{0}.set_callback(move |{0}| {{\n\t    {1}\n\t}});\n",
-                                &elem.ident,
-                                utils::unbracket(&props[i + 1])
-                            );
-                        },
-                        "code0" | "code1" | "code2" | "code3" | "code4" => {
-                            imp += &format!("\t{}\n", utils::unbracket(&props[i + 1]));
-                        },
                         _ => (),
                     }
                 }

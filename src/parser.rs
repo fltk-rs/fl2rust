@@ -44,17 +44,10 @@ pub fn parse(file: &str) -> Vec<Token> {
     let mut parent: Vec<String> = vec![];
     let mut curr_widget: Option<String> = None;
     let lines = file.lines();
-    let mut temp = vec![];
     for line in lines {
         let words: Vec<&str> = line.split_whitespace().collect();
         let words = utils::sanitize_words(words);
-        temp.push(words);
-    }
-    let count = temp.len();
-    let mut i = 0;
-    while i < count {
         let mut ast = Token::new("".to_string(), TokenType::Global);
-        let words = temp.get(i).unwrap();
         if let Some(first) = words.get(0) {
             match first.as_str() {
                 // comment
@@ -127,15 +120,10 @@ pub fn parse(file: &str) -> Vec<Token> {
                         ast.ident = temp.clone();
                         ast.typ = TokenType::Member(utils::de_fl(first), vec![]);
                     } else if reserved::is_widget_prop(first) {
-                        let mut props = vec![];
                         if let Some(curr) = curr_widget.clone() {
                             ast.ident = curr.clone();
+                            ast.typ = TokenType::Property(words);
                         }
-                        while temp.get(i).unwrap().get(0).unwrap() != "}" {
-                            props.append(&mut temp.get(i).unwrap().to_vec());
-                            i += 1;
-                        }
-                        ast.typ = TokenType::Property(props);
                     } else {
                         //
                     }
@@ -150,12 +138,8 @@ pub fn parse(file: &str) -> Vec<Token> {
                 typ: TokenType::Scope(true, parent.clone()),
             })
         }
-        i += 1;
     }
-    tok_vec.push(Token::new(String::new(), TokenType::Scope(false, vec![])));
-    let v = add_props(tok_vec);
-    // dbg!(&v);
-    v
+    add_props(tok_vec)
 }
 
 /// Adds properties to the widgets
@@ -184,6 +168,7 @@ pub fn add_props(mut tokens: Vec<Token>) -> Vec<Token> {
                     elem.ident = v[label.unwrap() + 1].to_string();
                 }
                 elem.typ = TokenType::Member(parent_typ.clone(), v.clone());
+                tok_vec.pop();
                 tok_vec.push(elem);
             }
         } else {
@@ -209,17 +194,11 @@ pub fn add_props(mut tokens: Vec<Token>) -> Vec<Token> {
         } else if let TokenType::Scope(true, vec) = &tok_vec[i].typ {
             let len = vec.len();
             if vec.len() > 2 {
-                let mut vec = vec.clone();
-                let parent = &vec[len - 1];
-                match parent.as_str() {
-                    "Fl_Window" | "Fl_Group" | "Fl_Pack" | "Fl_Tabs" | "Fl_Scroll" | "Fl_Table"
-                    | "Fl_Tile" | "Fl_Wizard" | "Fl_Menu_Bar" | "Fl_Menu_Button" | "Fl_Choice"
-                    | "Fl_Input_Choice" => (),
-                    _ => {
-                        vec.pop();
-                    }
+                if vec[len - 1] == vec[len - 2] {
+                    //
+                } else {
+                    tok_vec2.push(tok_vec[i].clone());
                 }
-                tok_vec2.push(Token::new(tok_vec[i].ident.clone(), TokenType::Scope(true, vec)));
             } else {
                 tok_vec2.push(tok_vec[i].clone());
             }
