@@ -6,7 +6,7 @@ class UserInterface {open
 } {
   Function {make_window()} {open
   } {
-    Fl_Window {} {open selected
+    Fl_Window {} {open
       xywh {317 271 352 371} type Double visible
     } {
       Fl_Menu_Bar {} {open
@@ -21,8 +21,8 @@ class UserInterface {open
             xywh {0 0 31 20}
           }
           MenuItem {} {
-            label item2
-            xywh {0 0 36 21}
+            label item2 selected
+            xywh {0 0 36 21} shortcut 0x40073
           }
           Submenu {} {
             label subsub1 open

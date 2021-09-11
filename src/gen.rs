@@ -309,11 +309,13 @@ pub fn generate(ast: &[parser::Token]) -> String {
                             );
                         }
                         "shortcut" => {
-                            imp += &format!(
-                                "\t{}.set_shortcut(unsafe {{std::mem::transmute({})}});\n",
-                                &elem.ident,
-                                utils::unbracket(&props[i + 1])
-                            );
+                            if t != "MenuItem" && t != "Submenu" {
+                                imp += &format!(
+                                    "\t{}.set_shortcut(unsafe {{std::mem::transmute({})}});\n",
+                                    &elem.ident,
+                                    utils::unbracket(&props[i + 1])
+                                );
+                            }
                         }
                         "image" => {
                             imp += &format!(
@@ -365,8 +367,13 @@ pub fn generate(ast: &[parser::Token]) -> String {
                         }
                         let parent: Vec<&str> = menu_parent.split_whitespace().collect();
                         let parent = parent[1];
+                        let shortcut = if props.contains(&"shortcut".to_string()) {
+                            Some(props[props.iter().position(|r| r == "shortcut").unwrap() + 1].clone())
+                        } else {
+                            None
+                        };
                         imp += &format!(
-                            "\t{}.add({}, Shortcut::None, MenuFlag::{}, |_| {{}});\n",
+                            "\t{}.add({}, {}, MenuFlag::{}, |_| {{}});\n",
                             parent,
                             if let Some(l) = label {
                                 if unsafe { crate::parser::PROGRAM.i18n } {
@@ -384,6 +391,11 @@ pub fn generate(ast: &[parser::Token]) -> String {
                                 }
                             } else {
                                 "\"\"".to_string()
+                            },
+                            if let Some(shortcut) = shortcut {
+                                format!("unsafe {{std::mem::transmute({})}}", shortcut)
+                            } else {
+                                "Shortcut::None".to_string()
                             },
                             if let Some(ty) = typ {
                                 &props[ty + 1]
