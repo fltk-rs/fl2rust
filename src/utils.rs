@@ -84,7 +84,7 @@ pub fn global_to_pascal(input: &str) -> String {
 pub fn vec2menu(v: &[&str]) -> String {
     let mut s: String = String::new();
     for elem in v {
-        s += elem;
+        s += unbracket(elem);
         s += "/";
     }
     s
