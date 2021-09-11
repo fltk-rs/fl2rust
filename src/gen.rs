@@ -144,6 +144,9 @@ pub fn generate(ast: &[parser::Token]) -> String {
                 }
                 for i in 0..props.len() {
                     match props[i].as_str() {
+                        "comment" => {
+                            imp += &format!("\t// {}\n", utils::unbracket(&props[i + 1]));
+                        }
                         "visible" => {
                             imp += &format!("\t{}.show();\n", &elem.ident,);
                         }
@@ -342,6 +345,19 @@ pub fn generate(ast: &[parser::Token]) -> String {
                                 utils::unbracket(&props[i + 1].replace(" ", ", "))
                             );
                         }
+                        "callback" => {
+                            if t != "MenuItem" && t != "Submenu" {
+                                imp += &format!(
+                                    "\t{}.set_callback(move |{}| {{ \n\t\t{} \n\t}});\n",
+                                    &elem.ident,
+                                    &elem.ident,
+                                    utils::unbracket(&props[i + 1])
+                                );
+                            }
+                        }
+                        "code0" | "code1" | "code2" | "code3" => {
+                            imp += &format!("\t{}\n", utils::unbracket(&props[i + 1]));
+                        }
                         _ => (),
                     }
                 }
@@ -372,8 +388,13 @@ pub fn generate(ast: &[parser::Token]) -> String {
                         } else {
                             None
                         };
+                        let cb = if props.contains(&"callback".to_string()) {
+                            Some(props[props.iter().position(|r| r == "callback").unwrap() + 1].clone())
+                        } else {
+                            None
+                        };
                         imp += &format!(
-                            "\t{}.add({}, {}, MenuFlag::{}, |_| {{}});\n",
+                            "\t{}.add({}, {}, MenuFlag::{}, {});\n",
                             parent,
                             if let Some(l) = label {
                                 if unsafe { crate::parser::PROGRAM.i18n } {
@@ -401,6 +422,15 @@ pub fn generate(ast: &[parser::Token]) -> String {
                                 &props[ty + 1]
                             } else {
                                 "Normal"
+                            },
+                            if let Some(cb) = cb {
+                                format!(
+                                    "move |{}| {{ \n\t\t{} \n\t}}",
+                                    &parent,
+                                    utils::unbracket(&cb)
+                                )
+                            } else {
+                                "|_| {}".to_string()
                             }
                         );
                     } else if t == "Submenu" {

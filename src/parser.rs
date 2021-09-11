@@ -43,9 +43,9 @@ pub fn parse(file: &str) -> Vec<Token> {
     let mut tok_vec: Vec<Token> = vec![];
     let mut parent: Vec<String> = vec![];
     let mut curr_widget: Option<String> = None;
-    let lines = file.lines();
-    for line in lines {
-        let words: Vec<&str> = line.split_whitespace().collect();
+    let lines: Vec<&str> = file.lines().collect();
+    for mut i in 0..lines.len() {
+        let words: Vec<&str> = lines[i].split_whitespace().collect();
         let words = utils::sanitize_words(words);
         let mut ast = Token::new("".to_string(), TokenType::Global);
         if let Some(first) = words.get(0) {
@@ -120,9 +120,19 @@ pub fn parse(file: &str) -> Vec<Token> {
                         ast.ident = temp.clone();
                         ast.typ = TokenType::Member(utils::de_fl(first), vec![]);
                     } else if reserved::is_widget_prop(first) {
+                        let mut props = words.clone();
+                        while let Some(w) = lines.get(i + 1) {
+                            let w = w.split_whitespace().collect();
+                            let mut w = utils::sanitize_words(w);
+                            if w.first().unwrap() == "}" {
+                                break;
+                            }
+                            props.append(&mut w);
+                            i += 1;
+                        }
                         if let Some(curr) = curr_widget.clone() {
                             ast.ident = curr.clone();
-                            ast.typ = TokenType::Property(words);
+                            ast.typ = TokenType::Property(props);
                         }
                     } else {
                         //
@@ -143,21 +153,9 @@ pub fn parse(file: &str) -> Vec<Token> {
 }
 
 /// Adds properties to the widgets
-pub fn add_props(mut tokens: Vec<Token>) -> Vec<Token> {
+pub fn add_props(tokens: Vec<Token>) -> Vec<Token> {
     let mut tok_vec: Vec<Token> = vec![];
-    // appends token lines
-    for i in 0..tokens.len() {
-        if let TokenType::Property(v) = &tokens[i].typ {
-            if let Some(p) = tokens.get(i + 1) {
-                if let TokenType::Property(v1) = &p.typ {
-                    let mut v = v.clone();
-                    v.append(&mut v1.clone());
-                    tokens[i].typ = TokenType::Property(v.to_vec());
-                }
-            }
-        }
-    }
-    // add props to Member token, remove property tokens
+    // // add props to Member token, remove property tokens
     for i in 0..tokens.len() {
         if let TokenType::Property(v) = &tokens[i].typ {
             let mut elem = Token::new("".to_string(), TokenType::Global);
@@ -175,6 +173,7 @@ pub fn add_props(mut tokens: Vec<Token>) -> Vec<Token> {
             tok_vec.push(tokens[i].clone());
         }
     }
+    // remove duplication
     let mut tok_vec2: Vec<Token> = vec![];
     let mut i = 0;
     while i < tok_vec.len() {
