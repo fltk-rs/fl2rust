@@ -13,7 +13,7 @@ class UserInterface {open
         label button
         user_data hello
         callback {println!("Works");}
-        comment {Hello workd} selected
+        comment {Hello world}
         xywh {25 25 220 145} box BORDER_BOX color 87 labeltype SHADOW_LABEL labelfont 11 when 1 resizable
         code3 {println!("Works");}
       }

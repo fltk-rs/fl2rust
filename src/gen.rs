@@ -53,6 +53,14 @@ pub fn generate(ast: &[parser::Token]) -> String {
             }
             Member(t, props) => {
                 if t != "MenuItem" && t != "Submenu" && !elem.ident.contains("fl2rust_widget_") {
+                    if props.contains(&"comment".to_string()) {
+                        s += &format!(
+                            "    // {}\n",
+                            utils::unbracket(
+                                &props[props.iter().position(|x| x == "comment").unwrap() + 1]
+                            )
+                        );
+                    }
                     s += &format!("    pub {}: {},\n", &elem.ident, t);
                     ctor += &elem.ident;
                     ctor += ", ";
@@ -76,7 +84,10 @@ pub fn generate(ast: &[parser::Token]) -> String {
                                 utils::unbracket(&props[xywh + 1].replace(" ", ", ")),
                                 if let Some(l) = label {
                                     if unsafe { crate::parser::PROGRAM.i18n } {
-                                        format!("None).with_label(&tr!(\"{}\"));\n", utils::unbracket(&props[l + 1]))
+                                        format!(
+                                            "None).with_label(&tr!(\"{}\"));\n",
+                                            utils::unbracket(&props[l + 1])
+                                        )
                                     } else {
                                         format!("\"{}\");", utils::unbracket(&props[l + 1]))
                                     }
@@ -115,7 +126,10 @@ pub fn generate(ast: &[parser::Token]) -> String {
                         utils::unbracket(&props[xywh + 1].replace(" ", ", ")),
                         if let Some(l) = label {
                             if unsafe { crate::parser::PROGRAM.i18n } {
-                                format!("None).with_label(&tr!(\"{}\"));", utils::unbracket(&props[l + 1]))
+                                format!(
+                                    "None).with_label(&tr!(\"{}\"));",
+                                    utils::unbracket(&props[l + 1])
+                                )
                             } else {
                                 format!("\"{}\");", utils::unbracket(&props[l + 1]))
                             }
@@ -144,9 +158,6 @@ pub fn generate(ast: &[parser::Token]) -> String {
                 }
                 for i in 0..props.len() {
                     match props[i].as_str() {
-                        "comment" => {
-                            imp += &format!("\t// {}\n", utils::unbracket(&props[i + 1]));
-                        }
                         "visible" => {
                             imp += &format!("\t{}.show();\n", &elem.ident,);
                         }
@@ -266,13 +277,17 @@ pub fn generate(ast: &[parser::Token]) -> String {
                         }
                         "value" => {
                             let val = if t.contains("Button") {
-                                let b = utils::unbracket(&props[i + 1]).parse::<i32>().expect("Buttons should have integral values");
+                                let b = utils::unbracket(&props[i + 1])
+                                    .parse::<i32>()
+                                    .expect("Buttons should have integral values");
                                 if b != 0 {
                                     "true".to_string()
                                 } else {
                                     "false".to_string()
                                 }
-                            } else if (t.contains("Input") || t.contains("Output")) && !t.contains("Value") {
+                            } else if (t.contains("Input") || t.contains("Output"))
+                                && !t.contains("Value")
+                            {
                                 if unsafe { crate::parser::PROGRAM.i18n } {
                                     format!("&tr!(\"{}\")", utils::unbracket(&props[i + 1]))
                                 } else {
@@ -281,11 +296,7 @@ pub fn generate(ast: &[parser::Token]) -> String {
                             } else {
                                 format!("{} as _", utils::unbracket(&props[i + 1]))
                             };
-                            imp += &format!(
-                                "\t{}.set_value({});\n",
-                                &elem.ident,
-                                val
-                            );
+                            imp += &format!("\t{}.set_value({});\n", &elem.ident, val);
                         }
                         "type" => {
                             if props[i + 1] != "Double" && t != "MenuItem" && t != "Submenu" {
@@ -347,12 +358,18 @@ pub fn generate(ast: &[parser::Token]) -> String {
                         }
                         "callback" => {
                             if t != "MenuItem" && t != "Submenu" {
-                                imp += &format!(
-                                    "\t{}.set_callback(move |{}| {{ \n\t\t{} \n\t}});\n",
-                                    &elem.ident,
-                                    &elem.ident,
-                                    utils::unbracket(&props[i + 1])
-                                );
+                                let cb = utils::unbracket(&props[i + 1]);
+                                if cb.starts_with("{")
+                                    || cb.starts_with("move")
+                                    || cb.starts_with("|")
+                                {
+                                    imp += &format!("\t{}.set_callback({});\n", &elem.ident, cb);
+                                } else {
+                                    imp += &format!(
+                                        "\t{}.set_callback(move |{}| {{ \n\t    {} \n\t}});\n",
+                                        &elem.ident, &elem.ident, cb
+                                    );
+                                };
                             }
                         }
                         "code0" | "code1" | "code2" | "code3" => {
@@ -384,12 +401,18 @@ pub fn generate(ast: &[parser::Token]) -> String {
                         let parent: Vec<&str> = menu_parent.split_whitespace().collect();
                         let parent = parent[1];
                         let shortcut = if props.contains(&"shortcut".to_string()) {
-                            Some(props[props.iter().position(|r| r == "shortcut").unwrap() + 1].clone())
+                            Some(
+                                props[props.iter().position(|r| r == "shortcut").unwrap() + 1]
+                                    .clone(),
+                            )
                         } else {
                             None
                         };
                         let cb = if props.contains(&"callback".to_string()) {
-                            Some(props[props.iter().position(|r| r == "callback").unwrap() + 1].clone())
+                            Some(
+                                props[props.iter().position(|r| r == "callback").unwrap() + 1]
+                                    .clone(),
+                            )
                         } else {
                             None
                         };
@@ -424,11 +447,15 @@ pub fn generate(ast: &[parser::Token]) -> String {
                                 "Normal"
                             },
                             if let Some(cb) = cb {
-                                format!(
-                                    "move |{}| {{ \n\t\t{} \n\t}}",
-                                    &parent,
-                                    utils::unbracket(&cb)
-                                )
+                                let cb = utils::unbracket(&cb);
+                                if cb.starts_with("{")
+                                    || cb.starts_with("move")
+                                    || cb.starts_with("|")
+                                {
+                                    format!("{}", cb)
+                                } else {
+                                    format!("move |{}| {{ \n\t\t{} \n\t}}", &parent, cb)
+                                }
                             } else {
                                 "|_| {}".to_string()
                             }
