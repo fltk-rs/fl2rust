@@ -88,7 +88,8 @@ pub const WIDGET_PROPS: &[&str] = &[
     "code3",
     "code4",
     "user_data",
-    "comment"
+    "comment",
+    "class"
 ];
 
 pub const RUST_RESERVED: &[&str] = &[

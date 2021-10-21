@@ -23,7 +23,7 @@ pub fn de_fl(word: &str) -> String {
 
 pub fn sanitize_words(words: Vec<&str>) -> Vec<String> {
     let mut v = vec![];
-    let mut s = "".to_string();
+    let mut s = String::new();
     let mut i = 0;
     while i < words.len() {
         if words[i].starts_with('{') && !words[i].ends_with('}') {
@@ -120,7 +120,7 @@ pub fn fix_type(s: &str) -> &str {
 }
 
 pub fn fix_long_props(s: &str) -> String {
-    let mut temp = "".to_string();
+    let mut temp = String::new();
     let lines: Vec<&str> = s.lines().collect();
     let mut i = 0;
     while i < lines.len() - 1 {

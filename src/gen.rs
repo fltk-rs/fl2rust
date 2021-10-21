@@ -23,9 +23,10 @@ use fltk::window::*;"#;
 
 /// Generate the output Rust string/file
 pub fn generate(ast: &[parser::Token]) -> String {
-    let mut s = "".to_string();
-    let mut ctor = "".to_string();
-    let mut imp = "".to_string();
+    let mut decls = String::new();
+    let mut s = String::new();
+    let mut ctor = String::new();
+    let mut imp = String::new();
     let mut subs = vec![];
     let mut last_scope = None;
     let mut last_ast = parser::TokenType::Global;
@@ -33,6 +34,17 @@ pub fn generate(ast: &[parser::Token]) -> String {
     for elem in ast {
         use parser::TokenType::*;
         match &elem.typ {
+            Decl => {
+                let temp: String = elem.ident.clone();
+                let temp = temp.strip_prefix("decl {").unwrap();
+                let temp = if let Some(close) = temp.rfind('}') {
+                    temp.split_at(close).0
+                } else {
+                    temp
+                };                
+                decls += &temp;
+                decls += "\n";
+            },
             Class => {
                 s += "#[derive(Debug, Clone, Default)]\n";
                 s += "pub struct ";
@@ -52,6 +64,11 @@ pub fn generate(ast: &[parser::Token]) -> String {
                 ctor += "\tSelf { ";
             }
             Member(t, props) => {
+                let t = if props.contains(&"class".to_string()) {
+                    &props[props.iter().position(|x| x == "class").unwrap() + 1]
+                } else {
+                    t
+                };
                 if t != "MenuItem" && t != "Submenu" && !elem.ident.contains("fl2rust_widget_") {
                     if props.contains(&"comment".to_string()) {
                         s += &format!(
@@ -61,6 +78,7 @@ pub fn generate(ast: &[parser::Token]) -> String {
                             )
                         );
                     }
+                    
                     s += &format!("    pub {}: {},\n", &elem.ident, t);
                     ctor += &elem.ident;
                     ctor += ", ";
@@ -113,7 +131,7 @@ pub fn generate(ast: &[parser::Token]) -> String {
                                         )
                                     }
                                 } else {
-                                    "".to_string()
+                                    String::new()
                                 }
                             );
                         }
@@ -152,7 +170,7 @@ pub fn generate(ast: &[parser::Token]) -> String {
                                 format!(".with_label(\"{}\");", utils::unbracket(&props[l + 1]))
                             }
                         } else {
-                            "".to_string()
+                            String::new()
                         }
                     );
                 }
@@ -304,7 +322,7 @@ pub fn generate(ast: &[parser::Token]) -> String {
                                     imp += &format!(
                                         "\t{}.set_type({}Type::{});\n",
                                         &elem.ident,
-                                        utils::fix_type(t),
+                                        utils::fix_type(&t),
                                         utils::global_to_pascal(utils::unbracket(&props[i + 1]))
                                     );
                                 } else {
@@ -391,7 +409,7 @@ pub fn generate(ast: &[parser::Token]) -> String {
                             imp += &format!("\t{}.hotspot(&{});\n", parent, &elem.ident);
                         }
                     } else if t == "MenuItem" {
-                        let mut menu_parent = "".to_string();
+                        let mut menu_parent = String::new();
                         for p in gparent.iter().rev() {
                             if !p.contains("Submenu") {
                                 menu_parent = p.clone();
@@ -501,5 +519,5 @@ pub fn generate(ast: &[parser::Token]) -> String {
         }
         last_ast = elem.typ.clone();
     }
-    format!("{}\n\n{}\n{}\n", HEADER, s, imp)
+    format!("{}\n\n{}\n\n{}\n{}\n", HEADER, decls, s, imp)
 }

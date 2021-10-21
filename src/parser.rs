@@ -47,7 +47,7 @@ pub fn parse(file: &str) -> Vec<Token> {
     for mut i in 0..lines.len() {
         let words: Vec<&str> = lines[i].split_whitespace().collect();
         let words = utils::sanitize_words(words);
-        let mut ast = Token::new("".to_string(), TokenType::Global);
+        let mut ast = Token::new(String::new(), TokenType::Global);
         if let Some(first) = words.get(0) {
             match first.as_str() {
                 // comment
@@ -56,9 +56,9 @@ pub fn parse(file: &str) -> Vec<Token> {
                     PROGRAM.i18n = true;
                 },
                 "decl" => {
+                    ast.ident = words.join(" ");
                     ast.typ = TokenType::Decl;
                     parent.push(format!("decl {}", ast.ident.clone()));
-                    ast.typ = TokenType::Scope(true, parent.clone());
                 }
                 "}" => {
                     if let Some(w) = words.get(1) {
@@ -158,7 +158,7 @@ pub fn add_props(tokens: Vec<Token>) -> Vec<Token> {
     // // add props to Member token, remove property tokens
     for i in 0..tokens.len() {
         if let TokenType::Property(v) = &tokens[i].typ {
-            let mut elem = Token::new("".to_string(), TokenType::Global);
+            let mut elem = Token::new(String::new(), TokenType::Global);
             elem.ident = tokens[i - 2].ident.clone();
             let label = v.iter().position(|x| x == "label");
             if let TokenType::Member(parent_typ, _) = &tokens[i - 2].typ {
