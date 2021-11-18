@@ -16,4 +16,6 @@ name = "fl2rust"
 path = "src/lib.rs"
 
 [dev-dependencies]
-fltk = "1"
+fltk = "1"]
+fltk-form = "0.1"
+fltk-form-derive = "0.1"
