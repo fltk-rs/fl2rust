@@ -116,3 +116,12 @@ extern crate tr;
 
 ## Tutorial
 - [Use FLUID (RAD tool) with Rust](https://www.youtube.com/watch?v=k_P0wG3-dNk)
+
+## Fltk Form
+
+Use [fltk-form](https://crates.io/crates/fltk-form) to quickly build UI elements.
+
+To test this feature:
+`cargo run --example fltkform`
+
+See the [source code](https://github.com/fltk-rs/fl2rust/) for the example.

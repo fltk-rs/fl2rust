@@ -17,3 +17,7 @@ path = "src/lib.rs"
 
 [dev-dependencies]
 fltk = "1"
+
+[dependencies]
+fltk-form = "0.1"
+fltk-form-derive = "0.1"
