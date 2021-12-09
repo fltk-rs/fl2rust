@@ -41,10 +41,10 @@ pub fn generate(ast: &[parser::Token]) -> String {
                     temp.split_at(close).0
                 } else {
                     temp
-                };                
+                };
                 decls += &temp;
                 decls += "\n";
-            },
+            }
             Class => {
                 s += "#[derive(Debug, Clone, Default)]\n";
                 s += "pub struct ";
@@ -78,7 +78,7 @@ pub fn generate(ast: &[parser::Token]) -> String {
                             )
                         );
                     }
-                    
+
                     s += &format!("    pub {}: {},\n", &elem.ident, t);
                     ctor += &elem.ident;
                     ctor += ", ";
@@ -177,221 +177,281 @@ pub fn generate(ast: &[parser::Token]) -> String {
                 for i in 0..props.len() {
                     match props[i].as_str() {
                         "visible" => {
-                            imp += &format!("\t{}.show();\n", &elem.ident,);
-                        }
-                        "color" => {
-                            imp += &format!(
-                                "\t{}.set_color(Color::by_index({}));\n",
-                                &elem.ident,
-                                utils::unbracket(&props[i + 1])
-                            );
-                        }
-                        "selection_color" => {
-                            imp += &format!(
-                                "\t{}.set_selection_color(Color::by_index({}));\n",
-                                &elem.ident,
-                                utils::global_to_pascal(utils::unbracket(&props[i + 1]))
-                            );
-                        }
-                        "labelsize" => {
-                            imp += &format!(
-                                "\t{}.set_label_size({});\n",
-                                &elem.ident,
-                                utils::unbracket(&props[i + 1])
-                            );
-                        }
-                        "textsize" => {
-                            imp += &format!(
-                                "\t{}.set_text_size({});\n",
-                                &elem.ident,
-                                utils::unbracket(&props[i + 1])
-                            );
-                        }
-                        "labeltype" => {
-                            let temp = utils::global_to_pascal(utils::unbracket(&props[i + 1]));
-                            let temp = if temp == "No" { "None" } else { temp.as_str() };
-                            imp += &format!(
-                                "\t{}.set_label_type(LabelType::{});\n",
-                                &elem.ident, temp,
-                            );
-                        }
-                        "labelcolor" => {
-                            imp += &format!(
-                                "\t{}.set_label_color(Color::by_index({}));\n",
-                                &elem.ident,
-                                utils::unbracket(&props[i + 1])
-                            );
-                        }
-                        "labelfont" => {
-                            imp += &format!(
-                                "\t{}.set_label_font(Font::by_index({}));\n",
-                                &elem.ident,
-                                utils::unbracket(&props[i + 1])
-                            );
-                        }
-                        "textfont" => {
-                            imp += &format!(
-                                "\t{}.set_text_font(Font::by_index({}));\n",
-                                &elem.ident,
-                                utils::unbracket(&props[i + 1])
-                            );
-                        }
-                        "box" => {
-                            let temp = utils::global_to_pascal(utils::unbracket(&props[i + 1]));
-                            let temp = match temp.as_str() {
-                                "OflatBox" => "OFlatFrame",
-                                "OshadowBox" => "OShadowBox",
-                                "RflatBox" => "RFlatBox",
-                                "RshadowBox" => "RShadowBox",
-                                _ => temp.as_str(),
-                            };
-                            imp += &format!("\t{}.set_frame(FrameType::{});\n", &elem.ident, temp,);
-                        }
-                        "down_box" => {
-                            imp += &format!(
-                                "\t{}.set_down_frame(FrameType::{});\n",
-                                &elem.ident,
-                                utils::global_to_pascal(utils::unbracket(&props[i + 1]))
-                            );
-                        }
-                        "when" => {
-                            imp += &format!(
-                                "\t{}.set_trigger(unsafe {{std::mem::transmute({})}});\n",
-                                &elem.ident,
-                                utils::unbracket(&props[i + 1])
-                            );
-                        }
-                        "tooltip" => {
-                            imp += &format!(
-                                "\t{}.set_tooltip({});\n",
-                                &elem.ident,
-                                if unsafe { crate::parser::PROGRAM.i18n } {
-                                    format!("&tr!(\"{}\")", utils::unbracket(&props[i + 1]))
-                                } else {
-                                    format!("\"{}\"", utils::unbracket(&props[i + 1]))
-                                }
-                            );
-                        }
-                        "maximum" => {
-                            imp += &format!(
-                                "\t{}.set_maximum({} as _);\n",
-                                &elem.ident,
-                                utils::unbracket(&props[i + 1])
-                            );
-                        }
-                        "minimum" => {
-                            imp += &format!(
-                                "\t{}.set_minimum({} as _);\n",
-                                &elem.ident,
-                                utils::unbracket(&props[i + 1])
-                            );
-                        }
-                        "step" => {
-                            imp += &format!(
-                                "\t{}.set_step({} as _, 1);\n",
-                                &elem.ident,
-                                utils::unbracket(&props[i + 1])
-                            );
-                        }
-                        "value" => {
-                            let val = if t.contains("Button") {
-                                let b = utils::unbracket(&props[i + 1])
-                                    .parse::<i32>()
-                                    .expect("Buttons should have integral values");
-                                if b != 0 {
-                                    "true".to_string()
-                                } else {
-                                    "false".to_string()
-                                }
-                            } else if (t.contains("Input") || t.contains("Output"))
-                                && !t.contains("Value")
-                            {
-                                if unsafe { crate::parser::PROGRAM.i18n } {
-                                    format!("&tr!(\"{}\")", utils::unbracket(&props[i + 1]))
-                                } else {
-                                    format!("\"{}\"", utils::unbracket(&props[i + 1]))
-                                }
-                            } else {
-                                format!("{} as _", utils::unbracket(&props[i + 1]))
-                            };
-                            imp += &format!("\t{}.set_value({});\n", &elem.ident, val);
-                        }
-                        "type" => {
-                            if props[i + 1] != "Double" && t != "MenuItem" && t != "Submenu" {
-                                if t != "Output" {
-                                    imp += &format!(
-                                        "\t{}.set_type({}Type::{});\n",
-                                        &elem.ident,
-                                        utils::fix_type(&t),
-                                        utils::global_to_pascal(utils::unbracket(&props[i + 1]))
-                                    );
-                                } else {
-                                    imp += &format!(
-                                        "\t{}.set_type(InputType::from_i32(12));\n",
-                                        &elem.ident,
-                                    );
-                                }
+                            if utils::unbracket(&props[i - 1]) != "label" {
+                                imp += &format!("\t{}.show();\n", &elem.ident,);
                             }
                         }
-                        "align" => {
-                            imp += &format!(
-                                "\t{}.set_align(unsafe {{std::mem::transmute({})}});\n",
-                                &elem.ident,
-                                utils::unbracket(&props[i + 1])
-                            );
-                        }
-                        "shortcut" => {
-                            if t != "MenuItem" && t != "Submenu" {
+                        "color" => {
+                            if utils::unbracket(&props[i - 1]) != "label" {
                                 imp += &format!(
-                                    "\t{}.set_shortcut(unsafe {{std::mem::transmute({})}});\n",
+                                    "\t{}.set_color(Color::by_index({}));\n",
                                     &elem.ident,
                                     utils::unbracket(&props[i + 1])
                                 );
                             }
                         }
+                        "selection_color" => {
+                            if utils::unbracket(&props[i - 1]) != "label" {
+                                imp += &format!(
+                                    "\t{}.set_selection_color(Color::by_index({}));\n",
+                                    &elem.ident,
+                                    utils::global_to_pascal(utils::unbracket(&props[i + 1]))
+                                );
+                            }
+                        }
+                        "labelsize" => {
+                            if utils::unbracket(&props[i - 1]) != "label" {
+                                imp += &format!(
+                                    "\t{}.set_label_size({});\n",
+                                    &elem.ident,
+                                    utils::unbracket(&props[i + 1])
+                                );
+                            }
+                        }
+                        "textsize" => {
+                            if utils::unbracket(&props[i - 1]) != "label" {
+                                imp += &format!(
+                                    "\t{}.set_text_size({});\n",
+                                    &elem.ident,
+                                    utils::unbracket(&props[i + 1])
+                                );
+                            }
+                        }
+                        "labeltype" => {
+                            if utils::unbracket(&props[i - 1]) != "label" {
+                                let temp = utils::global_to_pascal(utils::unbracket(&props[i + 1]));
+                                let temp = if temp == "No" { "None" } else { temp.as_str() };
+                                imp += &format!(
+                                    "\t{}.set_label_type(LabelType::{});\n",
+                                    &elem.ident, temp,
+                                );
+                            }
+                        }
+                        "labelcolor" => {
+                            if utils::unbracket(&props[i - 1]) != "label" {
+                                imp += &format!(
+                                    "\t{}.set_label_color(Color::by_index({}));\n",
+                                    &elem.ident,
+                                    utils::unbracket(&props[i + 1])
+                                );
+                            }
+                        }
+                        "labelfont" => {
+                            if utils::unbracket(&props[i - 1]) != "label" {
+                                imp += &format!(
+                                    "\t{}.set_label_font(Font::by_index({}));\n",
+                                    &elem.ident,
+                                    utils::unbracket(&props[i + 1])
+                                );
+                            }
+                        }
+                        "textfont" => {
+                            if utils::unbracket(&props[i - 1]) != "label" {
+                                imp += &format!(
+                                    "\t{}.set_text_font(Font::by_index({}));\n",
+                                    &elem.ident,
+                                    utils::unbracket(&props[i + 1])
+                                );
+                            }
+                        }
+                        "box" => {
+                            if utils::unbracket(&props[i - 1]) != "label" {
+                                let temp = utils::global_to_pascal(utils::unbracket(&props[i + 1]));
+                                let temp = match temp.as_str() {
+                                    "OflatBox" => "OFlatFrame",
+                                    "OshadowBox" => "OShadowBox",
+                                    "RflatBox" => "RFlatBox",
+                                    "RshadowBox" => "RShadowBox",
+                                    _ => temp.as_str(),
+                                };
+                                imp += &format!(
+                                    "\t{}.set_frame(FrameType::{});\n",
+                                    &elem.ident, temp,
+                                );
+                            }
+                        }
+                        "down_box" => {
+                            if utils::unbracket(&props[i - 1]) != "label" {
+                                imp += &format!(
+                                    "\t{}.set_down_frame(FrameType::{});\n",
+                                    &elem.ident,
+                                    utils::global_to_pascal(utils::unbracket(&props[i + 1]))
+                                );
+                            }
+                        }
+                        "when" => {
+                            if utils::unbracket(&props[i - 1]) != "label" {
+                                imp += &format!(
+                                    "\t{}.set_trigger(unsafe {{std::mem::transmute({})}});\n",
+                                    &elem.ident,
+                                    utils::unbracket(&props[i + 1])
+                                );
+                            }
+                        }
+                        "tooltip" => {
+                            if utils::unbracket(&props[i - 1]) != "label" {
+                                imp += &format!(
+                                    "\t{}.set_tooltip({});\n",
+                                    &elem.ident,
+                                    if unsafe { crate::parser::PROGRAM.i18n } {
+                                        format!("&tr!(\"{}\")", utils::unbracket(&props[i + 1]))
+                                    } else {
+                                        format!("\"{}\"", utils::unbracket(&props[i + 1]))
+                                    }
+                                );
+                            }
+                        }
+                        "maximum" => {
+                            if utils::unbracket(&props[i - 1]) != "label" {
+                                imp += &format!(
+                                    "\t{}.set_maximum({} as _);\n",
+                                    &elem.ident,
+                                    utils::unbracket(&props[i + 1])
+                                );
+                            }
+                        }
+                        "minimum" => {
+                            if utils::unbracket(&props[i - 1]) != "label" {
+                                imp += &format!(
+                                    "\t{}.set_minimum({} as _);\n",
+                                    &elem.ident,
+                                    utils::unbracket(&props[i + 1])
+                                );
+                            }
+                        }
+                        "step" => {
+                            if utils::unbracket(&props[i - 1]) != "label" {
+                                imp += &format!(
+                                    "\t{}.set_step({} as _, 1);\n",
+                                    &elem.ident,
+                                    utils::unbracket(&props[i + 1])
+                                );
+                            }
+                        }
+                        "value" => {
+                            if utils::unbracket(&props[i - 1]) != "label" {
+                                let val = if t.contains("Button") {
+                                    let b = utils::unbracket(&props[i + 1])
+                                        .parse::<i32>()
+                                        .expect("Buttons should have integral values");
+                                    if b != 0 {
+                                        "true".to_string()
+                                    } else {
+                                        "false".to_string()
+                                    }
+                                } else if (t.contains("Input") || t.contains("Output"))
+                                    && !t.contains("Value")
+                                {
+                                    if unsafe { crate::parser::PROGRAM.i18n } {
+                                        format!("&tr!(\"{}\")", utils::unbracket(&props[i + 1]))
+                                    } else {
+                                        format!("\"{}\"", utils::unbracket(&props[i + 1]))
+                                    }
+                                } else {
+                                    format!("{} as _", utils::unbracket(&props[i + 1]))
+                                };
+                                imp += &format!("\t{}.set_value({});\n", &elem.ident, val);
+                            }
+                        }
+                        "type" => {
+                            if utils::unbracket(&props[i - 1]) != "label" {
+                                if props[i + 1] != "Double" && t != "MenuItem" && t != "Submenu" {
+                                    if t != "Output" {
+                                        imp += &format!(
+                                            "\t{}.set_type({}Type::{});\n",
+                                            &elem.ident,
+                                            utils::fix_type(&t),
+                                            utils::global_to_pascal(utils::unbracket(
+                                                &props[i + 1]
+                                            ))
+                                        );
+                                    } else {
+                                        imp += &format!(
+                                            "\t{}.set_type(InputType::from_i32(12));\n",
+                                            &elem.ident,
+                                        );
+                                    }
+                                }
+                            }
+                        }
+                        "align" => {
+                            if utils::unbracket(&props[i - 1]) != "label" {
+                                imp += &format!(
+                                    "\t{}.set_align(unsafe {{std::mem::transmute({})}});\n",
+                                    &elem.ident,
+                                    utils::unbracket(&props[i + 1])
+                                );
+                            }
+                        }
+                        "shortcut" => {
+                            if utils::unbracket(&props[i - 1]) != "label" {
+                                if t != "MenuItem" && t != "Submenu" {
+                                    imp += &format!(
+                                        "\t{}.set_shortcut(unsafe {{std::mem::transmute({})}});\n",
+                                        &elem.ident,
+                                        utils::unbracket(&props[i + 1])
+                                    );
+                                }
+                            }
+                        }
                         "image" => {
-                            imp += &format!(
-                                "\t{0}.set_image(Some(SharedImage::load(\"{1}\").expect(\"Could not find image: {1}\")));\n",
-                                &elem.ident,
-                                utils::unbracket(&props[i + 1]),
-                            );
+                            if utils::unbracket(&props[i - 1]) != "label" {
+                                imp += &format!(
+                                    "\t{0}.set_image(Some(SharedImage::load(\"{1}\").expect(\"Could not find image: {1}\")));\n",
+                                    &elem.ident,
+                                    utils::unbracket(&props[i + 1]),
+                                );
+                            }
                         }
                         "hide" => {
-                            imp += &format!("\t{}.hide();\n", &elem.ident,);
+                            if utils::unbracket(&props[i - 1]) != "label" {
+                                imp += &format!("\t{}.hide();\n", &elem.ident,);
+                            }
                         }
                         "modal" => {
-                            imp += &format!("\t{}.make_modal(true);\n", &elem.ident,);
+                            if utils::unbracket(&props[i - 1]) != "label" {
+                                imp += &format!("\t{}.make_modal(true);\n", &elem.ident,);
+                            }
                         }
                         "resizable" => {
-                            if is_parent {
-                                imp += &format!("\t{}.make_resizable(true);\n", &elem.ident,);
+                            if utils::unbracket(&props[i - 1]) != "label" {
+                                if is_parent {
+                                    imp += &format!("\t{}.make_resizable(true);\n", &elem.ident,);
+                                }
                             }
                         }
                         "size_range" => {
-                            imp += &format!(
-                                "\t{}.size_range({});\n",
-                                &elem.ident,
-                                utils::unbracket(&props[i + 1].replace(" ", ", "))
-                            );
+                            if utils::unbracket(&props[i - 1]) != "label" {
+                                imp += &format!(
+                                    "\t{}.size_range({});\n",
+                                    &elem.ident,
+                                    utils::unbracket(&props[i + 1].replace(" ", ", "))
+                                );
+                            }
                         }
                         "callback" => {
-                            if t != "MenuItem" && t != "Submenu" {
-                                let cb = utils::unbracket(&props[i + 1]);
-                                if cb.starts_with("{")
-                                    || cb.starts_with("move")
-                                    || cb.starts_with("|")
-                                {
-                                    imp += &format!("\t{}.set_callback({});\n", &elem.ident, cb);
-                                } else {
-                                    imp += &format!(
-                                        "\t{}.set_callback(move |{}| {{ \n\t    {} \n\t}});\n",
-                                        &elem.ident, &elem.ident, cb
-                                    );
-                                };
+                            if utils::unbracket(&props[i - 1]) != "label" {
+                                if t != "MenuItem" && t != "Submenu" {
+                                    let cb = utils::unbracket(&props[i + 1]);
+                                    if cb.starts_with("{")
+                                        || cb.starts_with("move")
+                                        || cb.starts_with("|")
+                                    {
+                                        imp +=
+                                            &format!("\t{}.set_callback({});\n", &elem.ident, cb);
+                                    } else {
+                                        imp += &format!(
+                                            "\t{}.set_callback(move |{}| {{ \n\t    {} \n\t}});\n",
+                                            &elem.ident, &elem.ident, cb
+                                        );
+                                    };
+                                }
                             }
                         }
                         "code0" | "code1" | "code2" | "code3" => {
-                            imp += &format!("\t{}\n", utils::unbracket(&props[i + 1]));
+                            if utils::unbracket(&props[i - 1]) != "label" {
+                                imp += &format!("\t{}\n", utils::unbracket(&props[i + 1]));
+                            }
                         }
                         _ => (),
                     }
