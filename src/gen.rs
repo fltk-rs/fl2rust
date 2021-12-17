@@ -330,7 +330,7 @@ pub fn generate(ast: &[parser::Token]) -> String {
                                     let temp =
                                         utils::global_to_pascal(utils::unbracket(&props[i + 1]));
                                     let temp = match temp.as_str() {
-                                        "OflatBox" => "OFlatFrame",
+                                        "OflatBox" => "OFlatBox",
                                         "OshadowBox" => "OShadowBox",
                                         "RflatBox" => "RFlatBox",
                                         "RshadowBox" => "RShadowBox",
