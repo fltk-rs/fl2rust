@@ -359,17 +359,32 @@ pub fn generate(ast: &[parser::Token]) -> String {
                         "down_box" => {
                             if let Some(p) = props.get(i.wrapping_sub(1)) {
                                 if p != "label" {
+                                    let temp =
+                                        utils::global_to_pascal(utils::unbracket(&props[i + 1]));
+                                    let temp = match temp.as_str() {
+                                        "OflatBox" => "OFlatBox",
+                                        "OshadowBox" => "OShadowBox",
+                                        "RflatBox" => "RFlatBox",
+                                        "RshadowBox" => "RShadowBox",
+                                        _ => temp.as_str(),
+                                    };
                                     imp += &format!(
                                         "\t{}.set_down_frame(FrameType::{});\n",
-                                        &elem.ident,
-                                        utils::global_to_pascal(utils::unbracket(&props[i + 1]))
+                                        &elem.ident, temp
                                     );
                                 }
                             } else {
+                                let temp = utils::global_to_pascal(utils::unbracket(&props[i + 1]));
+                                let temp = match temp.as_str() {
+                                    "OflatBox" => "OFlatBox",
+                                    "OshadowBox" => "OShadowBox",
+                                    "RflatBox" => "RFlatBox",
+                                    "RshadowBox" => "RShadowBox",
+                                    _ => temp.as_str(),
+                                };
                                 imp += &format!(
                                     "\t{}.set_down_frame(FrameType::{});\n",
-                                    &elem.ident,
-                                    utils::global_to_pascal(utils::unbracket(&props[i + 1]))
+                                    &elem.ident, temp
                                 );
                             }
                         }
