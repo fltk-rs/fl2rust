@@ -42,7 +42,7 @@ pub fn generate(ast: &[parser::Token]) -> String {
                 } else {
                     temp
                 };
-                decls += &temp;
+                decls += temp;
                 decls += "\n";
             }
             Class => {
@@ -86,12 +86,21 @@ pub fn generate(ast: &[parser::Token]) -> String {
                 let xywh = props.iter().position(|x| x == "xywh");
                 let label = props.iter().position(|x| x == "label");
                 let typ = props.iter().position(|x| x == "type");
-                let is_parent = match t.as_str() {
-                    "Window" | "Group" | "Pack" | "Tabs" | "Scroll" | "Table" | "Tile"
-                    | "Wizard" => true,
-                    "MenuBar" | "MenuButton" | "Choice" | "InputChoice" => true,
-                    _ => false,
-                };
+                let is_parent = matches!(
+                    t.as_str(),
+                    "Window"
+                        | "Group"
+                        | "Pack"
+                        | "Tabs"
+                        | "Scroll"
+                        | "Table"
+                        | "Tile"
+                        | "Wizard"
+                        | "MenuBar"
+                        | "MenuButton"
+                        | "Choice"
+                        | "InputChoice"
+                );
                 if !is_parent {
                     if t != "MenuItem" && t != "Submenu" {
                         if let Some(xywh) = xywh {
@@ -532,33 +541,16 @@ pub fn generate(ast: &[parser::Token]) -> String {
                         }
                         "type" => {
                             if let Some(p) = props.get(i.wrapping_sub(1)) {
-                                if p != "label" {
-                                    if props[i + 1] != "Double" && t != "MenuItem" && t != "Submenu"
-                                    {
-                                        if t != "Output" {
-                                            imp += &format!(
-                                                "\t{}.set_type({}Type::{});\n",
-                                                &elem.ident,
-                                                utils::fix_type(&t),
-                                                utils::global_to_pascal(utils::unbracket(
-                                                    &props[i + 1]
-                                                ))
-                                            );
-                                        } else {
-                                            imp += &format!(
-                                                "\t{}.set_type(InputType::from_i32(12));\n",
-                                                &elem.ident,
-                                            );
-                                        }
-                                    }
-                                }
-                            } else {
-                                if props[i + 1] != "Double" && t != "MenuItem" && t != "Submenu" {
+                                if p != "label"
+                                    && props[i + 1] != "Double"
+                                    && t != "MenuItem"
+                                    && t != "Submenu"
+                                {
                                     if t != "Output" {
                                         imp += &format!(
                                             "\t{}.set_type({}Type::{});\n",
                                             &elem.ident,
-                                            utils::fix_type(&t),
+                                            utils::fix_type(t),
                                             utils::global_to_pascal(utils::unbracket(
                                                 &props[i + 1]
                                             ))
@@ -569,6 +561,21 @@ pub fn generate(ast: &[parser::Token]) -> String {
                                             &elem.ident,
                                         );
                                     }
+                                }
+                            } else if props[i + 1] != "Double" && t != "MenuItem" && t != "Submenu"
+                            {
+                                if t != "Output" {
+                                    imp += &format!(
+                                        "\t{}.set_type({}Type::{});\n",
+                                        &elem.ident,
+                                        utils::fix_type(t),
+                                        utils::global_to_pascal(utils::unbracket(&props[i + 1]))
+                                    );
+                                } else {
+                                    imp += &format!(
+                                        "\t{}.set_type(InputType::from_i32(12));\n",
+                                        &elem.ident,
+                                    );
                                 }
                             }
                         }
@@ -591,23 +598,19 @@ pub fn generate(ast: &[parser::Token]) -> String {
                         }
                         "shortcut" => {
                             if let Some(p) = props.get(i.wrapping_sub(1)) {
-                                if p != "label" {
-                                    if t != "MenuItem" && t != "Submenu" {
-                                        imp += &format!(
-                                        "\t{}.set_shortcut(unsafe {{std::mem::transmute({})}});\n",
-                                        &elem.ident,
-                                        utils::unbracket(&props[i + 1])
-                                    );
-                                    }
-                                }
-                            } else {
-                                if t != "MenuItem" && t != "Submenu" {
+                                if p != "label" && t != "MenuItem" && t != "Submenu" {
                                     imp += &format!(
                                         "\t{}.set_shortcut(unsafe {{std::mem::transmute({})}});\n",
                                         &elem.ident,
                                         utils::unbracket(&props[i + 1])
                                     );
                                 }
+                            } else if t != "MenuItem" && t != "Submenu" {
+                                imp += &format!(
+                                    "\t{}.set_shortcut(unsafe {{std::mem::transmute({})}});\n",
+                                    &elem.ident,
+                                    utils::unbracket(&props[i + 1])
+                                );
                             }
                         }
                         "image" => {
@@ -647,16 +650,11 @@ pub fn generate(ast: &[parser::Token]) -> String {
                         }
                         "resizable" => {
                             if let Some(p) = props.get(i.wrapping_sub(1)) {
-                                if p != "label" {
-                                    if is_parent {
-                                        imp +=
-                                            &format!("\t{}.make_resizable(true);\n", &elem.ident,);
-                                    }
-                                }
-                            } else {
-                                if is_parent {
+                                if p != "label" && is_parent {
                                     imp += &format!("\t{}.make_resizable(true);\n", &elem.ident,);
                                 }
+                            } else if is_parent {
+                                imp += &format!("\t{}.make_resizable(true);\n", &elem.ident,);
                             }
                         }
                         "size_range" => {
@@ -678,31 +676,11 @@ pub fn generate(ast: &[parser::Token]) -> String {
                         }
                         "callback" => {
                             if let Some(p) = props.get(i.wrapping_sub(1)) {
-                                if p != "label" {
-                                    if t != "MenuItem" && t != "Submenu" {
-                                        let cb = utils::unbracket(&props[i + 1]);
-                                        if cb.starts_with("{")
-                                            || cb.starts_with("move")
-                                            || cb.starts_with("|")
-                                        {
-                                            imp += &format!(
-                                                "\t{}.set_callback({});\n",
-                                                &elem.ident, cb
-                                            );
-                                        } else {
-                                            imp += &format!(
-                                            "\t{}.set_callback(move |{}| {{ \n\t    {} \n\t}});\n",
-                                            &elem.ident, &elem.ident, cb
-                                        );
-                                        };
-                                    }
-                                }
-                            } else {
-                                if t != "MenuItem" && t != "Submenu" {
+                                if p != "label" && t != "MenuItem" && t != "Submenu" {
                                     let cb = utils::unbracket(&props[i + 1]);
-                                    if cb.starts_with("{")
+                                    if cb.starts_with('{')
                                         || cb.starts_with("move")
-                                        || cb.starts_with("|")
+                                        || cb.starts_with('|')
                                     {
                                         imp +=
                                             &format!("\t{}.set_callback({});\n", &elem.ident, cb);
@@ -713,6 +691,19 @@ pub fn generate(ast: &[parser::Token]) -> String {
                                         );
                                     };
                                 }
+                            } else if t != "MenuItem" && t != "Submenu" {
+                                let cb = utils::unbracket(&props[i + 1]);
+                                if cb.starts_with('{')
+                                    || cb.starts_with("move")
+                                    || cb.starts_with('|')
+                                {
+                                    imp += &format!("\t{}.set_callback({});\n", &elem.ident, cb);
+                                } else {
+                                    imp += &format!(
+                                        "\t{}.set_callback(move |{}| {{ \n\t    {} \n\t}});\n",
+                                        &elem.ident, &elem.ident, cb
+                                    );
+                                };
                             }
                         }
                         "code0" | "code1" | "code2" | "code3" => {
@@ -797,11 +788,11 @@ pub fn generate(ast: &[parser::Token]) -> String {
                             },
                             if let Some(cb) = cb {
                                 let cb = utils::unbracket(&cb);
-                                if cb.starts_with("{")
+                                if cb.starts_with('{')
                                     || cb.starts_with("move")
-                                    || cb.starts_with("|")
+                                    || cb.starts_with('|')
                                 {
-                                    format!("{}", cb)
+                                    cb.to_string()
                                 } else {
                                     format!("move |{}| {{ \n\t\t{} \n\t}}", &parent, cb)
                                 }
@@ -826,13 +817,11 @@ pub fn generate(ast: &[parser::Token]) -> String {
                             ctor.clear();
                         }
                         if let parser::TokenType::Scope(false, _) = last_ast {
-                            if let Some(last_scope) = last_scope {
-                                if let parser::TokenType::Scope(false, last_parent) = last_scope {
-                                    if let Some(l) = last_parent.last() {
-                                        if l.contains("Submenu") || l.contains("Fl_") {
-                                            subs.pop();
-                                            gparent.pop();
-                                        }
+                            if let Some(parser::TokenType::Scope(false, last_parent)) = last_scope {
+                                if let Some(l) = last_parent.last() {
+                                    if l.contains("Submenu") || l.contains("Fl_") {
+                                        subs.pop();
+                                        gparent.pop();
                                     }
                                 }
                             }

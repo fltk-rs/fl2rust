@@ -127,7 +127,7 @@ pub fn fix_long_props(s: &str) -> String {
         temp.push_str(lines[i]);
         let words: Vec<&str> = lines[i + 1].split_whitespace().collect();
         if let Some(first) = words.get(0) {
-            if reserved::is_fluid_reserved(&first)
+            if reserved::is_fluid_reserved(first)
                 || first.starts_with("Fl_")
                 || first.contains("MenuItem")
                 || first.contains("Submenu")
