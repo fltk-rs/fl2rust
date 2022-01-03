@@ -99,7 +99,6 @@ pub fn generate(ast: &[parser::Token]) -> String {
                         | "MenuBar"
                         | "MenuButton"
                         | "Choice"
-                        | "InputChoice"
                 );
                 if !is_parent {
                     if t != "MenuItem" && t != "Submenu" {
