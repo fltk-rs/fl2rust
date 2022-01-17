@@ -24,7 +24,7 @@ use fltk::valuator::*;
 use fltk::widget::*;
 use fltk::window::*;
 
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone)]
 pub struct UserInterface {
     pub win: Window,
     pub tabs: Tabs,

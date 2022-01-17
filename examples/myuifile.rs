@@ -26,7 +26,7 @@ use fltk::window::*;
 
 
 
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone)]
 pub struct UserInterface {
 }
 
