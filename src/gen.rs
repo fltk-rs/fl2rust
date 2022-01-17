@@ -46,7 +46,7 @@ pub fn generate(ast: &[parser::Token]) -> String {
                 decls += "\n";
             }
             Class => {
-                s += "#[derive(Debug, Clone, Default)]\n";
+                s += "#[derive(Debug, Clone)]\n";
                 s += "pub struct ";
                 s += &elem.ident;
                 s += " {\n";
@@ -810,7 +810,7 @@ pub fn generate(ast: &[parser::Token]) -> String {
                 if !*op {
                     if let Some(p) = p.last() {
                         if p.contains("Function") {
-                            ctor += "..Default::default() }";
+                            ctor += "}";
                             imp += &ctor;
                             imp += "\n    }\n";
                             ctor.clear();

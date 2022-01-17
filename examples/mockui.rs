@@ -64,7 +64,7 @@ impl UserInterface {
 	let mut fl2rust_widget_1 = Frame::new(70, 0, 115, 25, "moCKontact");
 	fl2rust_widget_1.set_label_font(Font::by_index(1));
 	win.add(&fl2rust_widget_1);
-	Self { win, tabs, page_1, page_2, ..Default::default() }
+	Self { win, tabs, page_1, page_2, }
     }
 }
 

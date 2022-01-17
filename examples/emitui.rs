@@ -60,7 +60,7 @@ impl UserInterface {
 	scroll.set_frame(FrameType::FlatBox);
 	scroll.set_color(Color::by_index(54));
 	win.add(&scroll);
-	Self { win, open_button, clear_button, filename, scroll, ..Default::default() }
+	Self { win, open_button, clear_button, filename, scroll }
     }
 }
 

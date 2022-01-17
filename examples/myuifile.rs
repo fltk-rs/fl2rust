@@ -93,6 +93,6 @@ impl UserInterface {
         fl2rust_widget_20.end();
         fl2rust_widget_20.hide();
         fl2rust_widget_1.add(&fl2rust_widget_20);
-        Self { ..Default::default() }
+        Self { }
     }
 }
