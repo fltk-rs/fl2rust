@@ -111,6 +111,19 @@ impl Generator {
         )?;
         Ok(())
     }
+
+    /// Takes an input and output files
+    pub fn in_out_with_directives_preamble<P: AsRef<Path>>(
+        &self,
+        inpath: P,
+        outpath: P,
+    ) -> Result<(), Box<dyn error::Error>> {
+        fs::write(
+            outpath,
+            gen::generate_with_directives_preamble(&parser::parse(&fs::read_to_string(inpath)?)),
+        )?;
+        Ok(())
+    }
 }
 
 #[cfg(test)]
