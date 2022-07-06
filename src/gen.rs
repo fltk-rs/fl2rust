@@ -546,6 +546,10 @@ pub fn generate(ast: &[parser::Token]) -> String {
                             }
                         }
                         "type" => {
+                            let mut tmp = utils::global_to_pascal(utils::unbracket(&props[i + 1]));
+                            if tmp == "Single" {
+                                tmp = String::from("Normal");
+                            }
                             if let Some(p) = props.get(i.wrapping_sub(1)) {
                                 if p != "label"
                                     && props[i + 1] != "Double"
@@ -557,9 +561,7 @@ pub fn generate(ast: &[parser::Token]) -> String {
                                             "\t{}.set_type({}Type::{});\n",
                                             &elem.ident,
                                             utils::fix_type(t),
-                                            utils::global_to_pascal(utils::unbracket(
-                                                &props[i + 1]
-                                            ))
+                                            tmp
                                         );
                                     } else {
                                         imp += &format!(
@@ -575,7 +577,7 @@ pub fn generate(ast: &[parser::Token]) -> String {
                                         "\t{}.set_type({}Type::{});\n",
                                         &elem.ident,
                                         utils::fix_type(t),
-                                        utils::global_to_pascal(utils::unbracket(&props[i + 1]))
+                                        tmp
                                     );
                                 } else {
                                     imp += &format!(
