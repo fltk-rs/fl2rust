@@ -51,6 +51,7 @@ pub const FLUID_RESERVED: &[&str] = &[
     "global",
     "}",
     "#",
+    "deactivate",
 ];
 
 pub const WIDGET_PROPS: &[&str] = &[
@@ -89,7 +90,8 @@ pub const WIDGET_PROPS: &[&str] = &[
     "code4",
     "user_data",
     "comment",
-    "class"
+    "class",
+    "deactivate"
 ];
 
 pub const RUST_RESERVED: &[&str] = &[

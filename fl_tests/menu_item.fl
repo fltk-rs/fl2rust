@@ -1,0 +1,54 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0400
+header_name {.h}
+code_name {.cxx}
+class UserInterface {open
+} {
+  Function {make_window()} {open
+  } {
+    Fl_Window my_win {
+      label {My Window} open
+      xywh {60 729 265 190} type Double labelcolor 32 resizable visible
+    } {
+      Fl_Button btn {
+        label button
+        xywh {92 80 80 30}
+      }
+      Fl_Menu_Bar {} {
+        label App open
+        xywh {10 5 240 20} box FLAT_BOX down_box THIN_UP_FRAME
+      } {
+        Submenu {} {
+          label File open
+          xywh {5 5 62 20} labelsize 12
+        } {
+          MenuItem {} {
+            label Open
+            xywh {5 5 30 20}
+          }
+          MenuItem {} {
+            label Save
+            xywh {5 5 30 20}
+          }
+          MenuItem {} {
+            label Exit
+            xywh {5 5 30 20}
+          }
+        }
+        Submenu {} {
+          label Edit open selected
+          xywh {5 5 62 20} labelsize 12
+        } {
+          MenuItem {} {
+            label Copy
+            xywh {0 0 30 20}
+          }
+          MenuItem {} {
+            label Paste
+            xywh {0 0 30 20}
+          }
+        }
+      }
+    }
+  }
+}

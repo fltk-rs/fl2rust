@@ -1,0 +1,29 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0308
+header_name {.h}
+code_name {.cxx}
+class UI {open
+} {
+  Function {make_window()} {open
+  } {
+    Fl_Window {} {open selected
+      xywh {780 238 440 355} type Double resizable visible
+    } {
+      Fl_Button get_countries {
+        label {Get countries}
+        xywh {10 8 95 27} labelsize 12
+      }
+      Fl_Choice countries {
+        label {Countries:} open
+        xywh {177 9 152 25} down_box BORDER_BOX labelsize 12 textsize 12
+      } {}
+      Fl_Button get_trends {
+        label {Get trends} 
+        xywh {335 8 95 27} labelsize 12 deactivate
+      }
+      Fl_Browser trends_ {
+        xywh {12 45 420 295} type Select labelsize 12 textsize 12 resizable
+      }
+    }
+  }
+}

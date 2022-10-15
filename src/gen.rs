@@ -647,6 +647,15 @@ pub fn generate(ast: &[parser::Token]) -> String {
                                 imp += &format!("\t{}.hide();\n", &elem.ident,);
                             }
                         }
+                        "deactivate" => {
+                            if let Some(p) = props.get(i.wrapping_sub(1)) {
+                                if p != "label" {
+                                    imp += &format!("\t{}.deactivate();\n", &elem.ident,);
+                                }
+                            } else {
+                                imp += &format!("\t{}.deactivate();\n", &elem.ident,);
+                            }
+                        }
                         "modal" => {
                             if let Some(p) = props.get(i.wrapping_sub(1)) {
                                 if p != "label" {
