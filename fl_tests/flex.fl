@@ -1,0 +1,55 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0400
+header_name {.h}
+code_name {.cxx}
+class UserInterface {open
+} {
+  Function {make_window()} {open
+  } {
+    Fl_Window {} {open
+      xywh {821 256 400 344} type Double align 80 resizable visible
+    } {
+      Fl_Flex {} {open
+        xywh {5 5 390 335} resizable gap 5 size_set {2  0  2 }
+      } {
+        Fl_Flex {} {open
+          xywh {5 5 390 30} type HORIZONTAL gap 5 size_set {3  0  1  3 }
+        } {
+          Fl_Menu_Button {} {
+            label menu open
+            xywh {5 5 80 30}
+          } {}
+          Fl_Box {} {
+            label {https://}
+            xywh {90 5 60 30}
+          }
+          Fl_Input {} {
+            xywh {155 5 205 30}
+          }
+          Fl_Button {} {
+            label I
+            xywh {365 5 30 30}
+          }
+        }
+        Fl_Flex {} {open
+          xywh {5 40 390 265} type HORIZONTAL gap 5
+        } {
+          Fl_Text_Display {} {selected
+            xywh {5 40 390 265}
+          }
+        }
+        Fl_Flex {} {open
+          xywh {5 310 390 30} type HORIZONTAL gap 5 size_set {1  0 }
+        } {
+          Fl_Box {} {
+            label {Status:}
+            xywh {5 310 80 30}
+          }
+          Fl_Box {} {
+            xywh {90 310 305 30} align 20
+          }
+        }
+      }
+    }
+  }
+}
