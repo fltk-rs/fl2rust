@@ -106,6 +106,7 @@ pub fn generate(ast: &[parser::Token]) -> String {
                         | "MenuBar"
                         | "MenuButton"
                         | "Choice"
+                        | "Flex"
                 );
                 if !is_parent {
                     if t != "MenuItem" && t != "Submenu" {
@@ -188,552 +189,6 @@ pub fn generate(ast: &[parser::Token]) -> String {
                             String::new()
                         }
                     );
-                }
-                for i in 0..props.len() {
-                    match props[i].as_str() {
-                        "visible" => {
-                            if let Some(p) = props.get(i.wrapping_sub(1)) {
-                                if p != "label" {
-                                    imp += &format!("\t{}.show();\n", &elem.ident,);
-                                }
-                            } else {
-                                imp += &format!("\t{}.show();\n", &elem.ident,);
-                            }
-                        }
-                        "color" => {
-                            if let Some(p) = props.get(i.wrapping_sub(1)) {
-                                if p != "label" {
-                                    imp += &format!(
-                                        "\t{}.set_color(Color::by_index({}));\n",
-                                        &elem.ident,
-                                        utils::unbracket(&props[i + 1])
-                                    );
-                                }
-                            } else {
-                                imp += &format!(
-                                    "\t{}.set_color(Color::by_index({}));\n",
-                                    &elem.ident,
-                                    utils::unbracket(&props[i + 1])
-                                );
-                            }
-                        }
-                        "selection_color" => {
-                            if let Some(p) = props.get(i.wrapping_sub(1)) {
-                                if p != "label" {
-                                    imp += &format!(
-                                        "\t{}.set_selection_color(Color::by_index({}));\n",
-                                        &elem.ident,
-                                        utils::global_to_pascal(utils::unbracket(&props[i + 1]))
-                                    );
-                                }
-                            } else {
-                                imp += &format!(
-                                    "\t{}.set_selection_color(Color::by_index({}));\n",
-                                    &elem.ident,
-                                    utils::global_to_pascal(utils::unbracket(&props[i + 1]))
-                                );
-                            }
-                        }
-                        "labelsize" => {
-                            if let Some(p) = props.get(i.wrapping_sub(1)) {
-                                if p != "label" {
-                                    imp += &format!(
-                                        "\t{}.set_label_size({});\n",
-                                        &elem.ident,
-                                        utils::unbracket(&props[i + 1])
-                                    );
-                                }
-                            } else {
-                                imp += &format!(
-                                    "\t{}.set_label_size({});\n",
-                                    &elem.ident,
-                                    utils::unbracket(&props[i + 1])
-                                );
-                            }
-                        }
-                        "textsize" => {
-                            if let Some(p) = props.get(i.wrapping_sub(1)) {
-                                if p != "label" {
-                                    imp += &format!(
-                                        "\t{}.set_text_size({});\n",
-                                        &elem.ident,
-                                        utils::unbracket(&props[i + 1])
-                                    );
-                                }
-                            } else {
-                                imp += &format!(
-                                    "\t{}.set_text_size({});\n",
-                                    &elem.ident,
-                                    utils::unbracket(&props[i + 1])
-                                );
-                            }
-                        }
-                        "labeltype" => {
-                            if let Some(p) = props.get(i.wrapping_sub(1)) {
-                                if p != "label" {
-                                    let temp =
-                                        utils::global_to_pascal(utils::unbracket(&props[i + 1]));
-                                    let temp = if temp == "No" { "None" } else { temp.as_str() };
-                                    imp += &format!(
-                                        "\t{}.set_label_type(LabelType::{});\n",
-                                        &elem.ident, temp,
-                                    );
-                                }
-                            } else {
-                                let temp = utils::global_to_pascal(utils::unbracket(&props[i + 1]));
-                                let temp = if temp == "No" { "None" } else { temp.as_str() };
-                                imp += &format!(
-                                    "\t{}.set_label_type(LabelType::{});\n",
-                                    &elem.ident, temp,
-                                );
-                            }
-                        }
-                        "labelcolor" => {
-                            if let Some(p) = props.get(i.wrapping_sub(1)) {
-                                if p != "label" {
-                                    imp += &format!(
-                                        "\t{}.set_label_color(Color::by_index({}));\n",
-                                        &elem.ident,
-                                        utils::unbracket(&props[i + 1])
-                                    );
-                                }
-                            } else {
-                                imp += &format!(
-                                    "\t{}.set_label_color(Color::by_index({}));\n",
-                                    &elem.ident,
-                                    utils::unbracket(&props[i + 1])
-                                );
-                            }
-                        }
-                        "labelfont" => {
-                            if let Some(p) = props.get(i.wrapping_sub(1)) {
-                                if p != "label" {
-                                    imp += &format!(
-                                        "\t{}.set_label_font(Font::by_index({}));\n",
-                                        &elem.ident,
-                                        utils::unbracket(&props[i + 1])
-                                    );
-                                }
-                            } else {
-                                imp += &format!(
-                                    "\t{}.set_label_font(Font::by_index({}));\n",
-                                    &elem.ident,
-                                    utils::unbracket(&props[i + 1])
-                                );
-                            }
-                        }
-                        "textfont" => {
-                            if let Some(p) = props.get(i.wrapping_sub(1)) {
-                                if p != "label" {
-                                    imp += &format!(
-                                        "\t{}.set_text_font(Font::by_index({}));\n",
-                                        &elem.ident,
-                                        utils::unbracket(&props[i + 1])
-                                    );
-                                }
-                            } else {
-                                imp += &format!(
-                                    "\t{}.set_text_font(Font::by_index({}));\n",
-                                    &elem.ident,
-                                    utils::unbracket(&props[i + 1])
-                                );
-                            }
-                        }
-                        "box" => {
-                            if let Some(p) = props.get(i.wrapping_sub(1)) {
-                                if p != "label" {
-                                    let temp =
-                                        utils::global_to_pascal(utils::unbracket(&props[i + 1]));
-                                    let temp = match temp.as_str() {
-                                        "OflatBox" => "OFlatBox",
-                                        "OshadowBox" => "OShadowBox",
-                                        "RflatBox" => "RFlatBox",
-                                        "RshadowBox" => "RShadowBox",
-                                        _ => temp.as_str(),
-                                    };
-                                    imp += &format!(
-                                        "\t{}.set_frame(FrameType::{});\n",
-                                        &elem.ident, temp,
-                                    );
-                                }
-                            } else {
-                                let temp = utils::global_to_pascal(utils::unbracket(&props[i + 1]));
-                                let temp = match temp.as_str() {
-                                    "OflatBox" => "OFlatFrame",
-                                    "OshadowBox" => "OShadowBox",
-                                    "RflatBox" => "RFlatBox",
-                                    "RshadowBox" => "RShadowBox",
-                                    _ => temp.as_str(),
-                                };
-                                imp += &format!(
-                                    "\t{}.set_frame(FrameType::{});\n",
-                                    &elem.ident, temp,
-                                );
-                            }
-                        }
-                        "down_box" => {
-                            if let Some(p) = props.get(i.wrapping_sub(1)) {
-                                if p != "label" {
-                                    let temp =
-                                        utils::global_to_pascal(utils::unbracket(&props[i + 1]));
-                                    let temp = match temp.as_str() {
-                                        "OflatBox" => "OFlatBox",
-                                        "OshadowBox" => "OShadowBox",
-                                        "RflatBox" => "RFlatBox",
-                                        "RshadowBox" => "RShadowBox",
-                                        _ => temp.as_str(),
-                                    };
-                                    imp += &format!(
-                                        "\t{}.set_down_frame(FrameType::{});\n",
-                                        &elem.ident, temp
-                                    );
-                                }
-                            } else {
-                                let temp = utils::global_to_pascal(utils::unbracket(&props[i + 1]));
-                                let temp = match temp.as_str() {
-                                    "OflatBox" => "OFlatBox",
-                                    "OshadowBox" => "OShadowBox",
-                                    "RflatBox" => "RFlatBox",
-                                    "RshadowBox" => "RShadowBox",
-                                    _ => temp.as_str(),
-                                };
-                                imp += &format!(
-                                    "\t{}.set_down_frame(FrameType::{});\n",
-                                    &elem.ident, temp
-                                );
-                            }
-                        }
-                        "when" => {
-                            if let Some(p) = props.get(i.wrapping_sub(1)) {
-                                if p != "label" {
-                                    imp += &format!(
-                                        "\t{}.set_trigger(unsafe {{std::mem::transmute({})}});\n",
-                                        &elem.ident,
-                                        utils::unbracket(&props[i + 1])
-                                    );
-                                }
-                            } else {
-                                imp += &format!(
-                                    "\t{}.set_trigger(unsafe {{std::mem::transmute({})}});\n",
-                                    &elem.ident,
-                                    utils::unbracket(&props[i + 1])
-                                );
-                            }
-                        }
-                        "tooltip" => {
-                            if let Some(p) = props.get(i.wrapping_sub(1)) {
-                                if p != "label" {
-                                    imp += &format!(
-                                        "\t{}.set_tooltip({});\n",
-                                        &elem.ident,
-                                        if unsafe { crate::parser::PROGRAM.i18n } {
-                                            format!("&tr!(\"{}\")", utils::unbracket(&props[i + 1]))
-                                        } else {
-                                            format!("\"{}\"", utils::unbracket(&props[i + 1]))
-                                        }
-                                    );
-                                }
-                            } else {
-                                imp += &format!(
-                                    "\t{}.set_tooltip({});\n",
-                                    &elem.ident,
-                                    if unsafe { crate::parser::PROGRAM.i18n } {
-                                        format!("&tr!(\"{}\")", utils::unbracket(&props[i + 1]))
-                                    } else {
-                                        format!("\"{}\"", utils::unbracket(&props[i + 1]))
-                                    }
-                                );
-                            }
-                        }
-                        "maximum" => {
-                            if let Some(p) = props.get(i.wrapping_sub(1)) {
-                                if p != "label" {
-                                    imp += &format!(
-                                        "\t{}.set_maximum({} as _);\n",
-                                        &elem.ident,
-                                        utils::unbracket(&props[i + 1])
-                                    );
-                                }
-                            } else {
-                                imp += &format!(
-                                    "\t{}.set_maximum({} as _);\n",
-                                    &elem.ident,
-                                    utils::unbracket(&props[i + 1])
-                                );
-                            }
-                        }
-                        "minimum" => {
-                            if let Some(p) = props.get(i.wrapping_sub(1)) {
-                                if p != "label" {
-                                    imp += &format!(
-                                        "\t{}.set_minimum({} as _);\n",
-                                        &elem.ident,
-                                        utils::unbracket(&props[i + 1])
-                                    );
-                                }
-                            } else {
-                                imp += &format!(
-                                    "\t{}.set_minimum({} as _);\n",
-                                    &elem.ident,
-                                    utils::unbracket(&props[i + 1])
-                                );
-                            }
-                        }
-                        "step" => {
-                            if let Some(p) = props.get(i.wrapping_sub(1)) {
-                                if p != "label" {
-                                    imp += &format!(
-                                        "\t{}.set_step({} as _, 1);\n",
-                                        &elem.ident,
-                                        utils::unbracket(&props[i + 1])
-                                    );
-                                }
-                            } else {
-                                imp += &format!(
-                                    "\t{}.set_step({} as _, 1);\n",
-                                    &elem.ident,
-                                    utils::unbracket(&props[i + 1])
-                                );
-                            }
-                        }
-                        "value" => {
-                            if let Some(p) = props.get(i.wrapping_sub(1)) {
-                                if p != "label" {
-                                    let val = if t.contains("Button") {
-                                        let b = utils::unbracket(&props[i + 1])
-                                            .parse::<i32>()
-                                            .expect("Buttons should have integral values");
-                                        if b != 0 {
-                                            "true".to_string()
-                                        } else {
-                                            "false".to_string()
-                                        }
-                                    } else if (t.contains("Input") || t.contains("Output"))
-                                        && !t.contains("Value")
-                                    {
-                                        if unsafe { crate::parser::PROGRAM.i18n } {
-                                            format!("&tr!(\"{}\")", utils::unbracket(&props[i + 1]))
-                                        } else {
-                                            format!("\"{}\"", utils::unbracket(&props[i + 1]))
-                                        }
-                                    } else {
-                                        format!("{} as _", utils::unbracket(&props[i + 1]))
-                                    };
-                                    imp += &format!("\t{}.set_value({});\n", &elem.ident, val);
-                                }
-                            } else {
-                                let val = if t.contains("Button") {
-                                    let b = utils::unbracket(&props[i + 1])
-                                        .parse::<i32>()
-                                        .expect("Buttons should have integral values");
-                                    if b != 0 {
-                                        "true".to_string()
-                                    } else {
-                                        "false".to_string()
-                                    }
-                                } else if (t.contains("Input") || t.contains("Output"))
-                                    && !t.contains("Value")
-                                {
-                                    if unsafe { crate::parser::PROGRAM.i18n } {
-                                        format!("&tr!(\"{}\")", utils::unbracket(&props[i + 1]))
-                                    } else {
-                                        format!("\"{}\"", utils::unbracket(&props[i + 1]))
-                                    }
-                                } else {
-                                    format!("{} as _", utils::unbracket(&props[i + 1]))
-                                };
-                                imp += &format!("\t{}.set_value({});\n", &elem.ident, val);
-                            }
-                        }
-                        "type" => {
-                            let mut tmp = utils::global_to_pascal(utils::unbracket(&props[i + 1]));
-                            if tmp == "Single" {
-                                tmp = String::from("Normal");
-                            }
-                            if let Some(p) = props.get(i.wrapping_sub(1)) {
-                                if p != "label"
-                                    && props[i + 1] != "Double"
-                                    && t != "MenuItem"
-                                    && t != "Submenu"
-                                {
-                                    if t != "Output" {
-                                        imp += &format!(
-                                            "\t{}.set_type({}Type::{});\n",
-                                            &elem.ident,
-                                            utils::fix_type(t),
-                                            tmp
-                                        );
-                                    } else {
-                                        imp += &format!(
-                                            "\t{}.set_type(InputType::from_i32(12));\n",
-                                            &elem.ident,
-                                        );
-                                    }
-                                }
-                            } else if props[i + 1] != "Double" && t != "MenuItem" && t != "Submenu"
-                            {
-                                if t != "Output" {
-                                    imp += &format!(
-                                        "\t{}.set_type({}Type::{});\n",
-                                        &elem.ident,
-                                        utils::fix_type(t),
-                                        tmp
-                                    );
-                                } else {
-                                    imp += &format!(
-                                        "\t{}.set_type(InputType::from_i32(12));\n",
-                                        &elem.ident,
-                                    );
-                                }
-                            }
-                        }
-                        "align" => {
-                            if let Some(p) = props.get(i.wrapping_sub(1)) {
-                                if p != "label" {
-                                    imp += &format!(
-                                        "\t{}.set_align(unsafe {{std::mem::transmute({})}});\n",
-                                        &elem.ident,
-                                        utils::unbracket(&props[i + 1])
-                                    );
-                                }
-                            } else {
-                                imp += &format!(
-                                    "\t{}.set_align(unsafe {{std::mem::transmute({})}});\n",
-                                    &elem.ident,
-                                    utils::unbracket(&props[i + 1])
-                                );
-                            }
-                        }
-                        "shortcut" => {
-                            if let Some(p) = props.get(i.wrapping_sub(1)) {
-                                if p != "label" && t != "MenuItem" && t != "Submenu" {
-                                    imp += &format!(
-                                        "\t{}.set_shortcut(unsafe {{std::mem::transmute({})}});\n",
-                                        &elem.ident,
-                                        utils::unbracket(&props[i + 1])
-                                    );
-                                }
-                            } else if t != "MenuItem" && t != "Submenu" {
-                                imp += &format!(
-                                    "\t{}.set_shortcut(unsafe {{std::mem::transmute({})}});\n",
-                                    &elem.ident,
-                                    utils::unbracket(&props[i + 1])
-                                );
-                            }
-                        }
-                        "image" => {
-                            if let Some(p) = props.get(i.wrapping_sub(1)) {
-                                if p != "label" {
-                                    imp += &format!(
-                                    "\t{0}.set_image(Some(SharedImage::load(\"{1}\").expect(\"Could not find image: {1}\")));\n",
-                                    &elem.ident,
-                                    utils::unbracket(&props[i + 1]),
-                                );
-                                }
-                            } else {
-                                imp += &format!(
-                                    "\t{0}.set_image(Some(SharedImage::load(\"{1}\").expect(\"Could not find image: {1}\")));\n",
-                                    &elem.ident,
-                                    utils::unbracket(&props[i + 1]),
-                                );
-                            }
-                        }
-                        "hide" => {
-                            if let Some(p) = props.get(i.wrapping_sub(1)) {
-                                if p != "label" {
-                                    imp += &format!("\t{}.hide();\n", &elem.ident,);
-                                }
-                            } else {
-                                imp += &format!("\t{}.hide();\n", &elem.ident,);
-                            }
-                        }
-                        "deactivate" => {
-                            if let Some(p) = props.get(i.wrapping_sub(1)) {
-                                if p != "label" {
-                                    imp += &format!("\t{}.deactivate();\n", &elem.ident,);
-                                }
-                            } else {
-                                imp += &format!("\t{}.deactivate();\n", &elem.ident,);
-                            }
-                        }
-                        "modal" => {
-                            if let Some(p) = props.get(i.wrapping_sub(1)) {
-                                if p != "label" {
-                                    imp += &format!("\t{}.make_modal(true);\n", &elem.ident,);
-                                }
-                            } else {
-                                imp += &format!("\t{}.make_modal(true);\n", &elem.ident,);
-                            }
-                        }
-                        "resizable" => {
-                            if let Some(p) = props.get(i.wrapping_sub(1)) {
-                                if p != "label" && is_parent {
-                                    imp += &format!("\t{}.make_resizable(true);\n", &elem.ident,);
-                                }
-                            } else if is_parent {
-                                imp += &format!("\t{}.make_resizable(true);\n", &elem.ident,);
-                            }
-                        }
-                        "size_range" => {
-                            if let Some(p) = props.get(i.wrapping_sub(1)) {
-                                if p != "label" {
-                                    imp += &format!(
-                                        "\t{}.size_range({});\n",
-                                        &elem.ident,
-                                        utils::unbracket(&props[i + 1].replace(" ", ", "))
-                                    );
-                                }
-                            } else {
-                                imp += &format!(
-                                    "\t{}.size_range({});\n",
-                                    &elem.ident,
-                                    utils::unbracket(&props[i + 1].replace(" ", ", "))
-                                );
-                            }
-                        }
-                        "callback" => {
-                            if let Some(p) = props.get(i.wrapping_sub(1)) {
-                                if p != "label" && t != "MenuItem" && t != "Submenu" {
-                                    let cb = utils::unbracket(&props[i + 1]);
-                                    if cb.starts_with('{')
-                                        || cb.starts_with("move")
-                                        || cb.starts_with('|')
-                                    {
-                                        imp +=
-                                            &format!("\t{}.set_callback({});\n", &elem.ident, cb);
-                                    } else {
-                                        imp += &format!(
-                                            "\t{}.set_callback(move |{}| {{ \n\t    {} \n\t}});\n",
-                                            &elem.ident, &elem.ident, cb
-                                        );
-                                    };
-                                }
-                            } else if t != "MenuItem" && t != "Submenu" {
-                                let cb = utils::unbracket(&props[i + 1]);
-                                if cb.starts_with('{')
-                                    || cb.starts_with("move")
-                                    || cb.starts_with('|')
-                                {
-                                    imp += &format!("\t{}.set_callback({});\n", &elem.ident, cb);
-                                } else {
-                                    imp += &format!(
-                                        "\t{}.set_callback(move |{}| {{ \n\t    {} \n\t}});\n",
-                                        &elem.ident, &elem.ident, cb
-                                    );
-                                };
-                            }
-                        }
-                        "code0" | "code1" | "code2" | "code3" => {
-                            if let Some(p) = props.get(i.wrapping_sub(1)) {
-                                if p != "label" {
-                                    imp += &format!("\t{}\n", utils::unbracket(&props[i + 1]));
-                                }
-                            } else {
-                                imp += &format!("\t{}\n", utils::unbracket(&props[i + 1]));
-                            }
-                        }
-                        _ => (),
-                    }
                 }
                 if !gparent.is_empty() && !gparent.last().unwrap().contains("Function") {
                     if t != "MenuItem" && t != "Submenu" {
@@ -821,6 +276,285 @@ pub fn generate(ast: &[parser::Token]) -> String {
                         subs.push(&elem.ident);
                     } else {
                         //
+                    }
+                }
+                for i in 0..props.len() {
+                    if let Some(p) = props.get(i.wrapping_sub(1)) {
+                        if p == "label" {
+                            continue;
+                        }
+                    }
+                    match props[i].as_str() {
+                        "visible" => {
+                            imp += &format!("\t{}.show();\n", &elem.ident,);
+                        }
+                        "color" => {
+                            imp += &format!(
+                                "\t{}.set_color(Color::by_index({}));\n",
+                                &elem.ident,
+                                utils::unbracket(&props[i + 1])
+                            );
+                        }
+                        "selection_color" => {
+                            imp += &format!(
+                                "\t{}.set_selection_color(Color::by_index({}));\n",
+                                &elem.ident,
+                                utils::global_to_pascal(utils::unbracket(&props[i + 1]))
+                            );
+                        }
+                        "labelsize" => {
+                            imp += &format!(
+                                "\t{}.set_label_size({});\n",
+                                &elem.ident,
+                                utils::unbracket(&props[i + 1])
+                            );
+                        }
+                        "textsize" => {
+                            imp += &format!(
+                                "\t{}.set_text_size({});\n",
+                                &elem.ident,
+                                utils::unbracket(&props[i + 1])
+                            );
+                        }
+                        "labeltype" => {
+                            let temp = utils::global_to_pascal(utils::unbracket(&props[i + 1]));
+                            let temp = if temp == "No" { "None" } else { temp.as_str() };
+                            imp += &format!(
+                                "\t{}.set_label_type(LabelType::{});\n",
+                                &elem.ident, temp,
+                            );
+                        }
+                        "labelcolor" => {
+                            imp += &format!(
+                                "\t{}.set_label_color(Color::by_index({}));\n",
+                                &elem.ident,
+                                utils::unbracket(&props[i + 1])
+                            );
+                        }
+                        "labelfont" => {
+                            imp += &format!(
+                                "\t{}.set_label_font(Font::by_index({}));\n",
+                                &elem.ident,
+                                utils::unbracket(&props[i + 1])
+                            );
+                        }
+                        "textfont" => {
+                            imp += &format!(
+                                "\t{}.set_text_font(Font::by_index({}));\n",
+                                &elem.ident,
+                                utils::unbracket(&props[i + 1])
+                            );
+                        }
+                        "box" => {
+                            let temp = utils::global_to_pascal(utils::unbracket(&props[i + 1]));
+                            let temp = match temp.as_str() {
+                                "OflatBox" => "OFlatFrame",
+                                "OshadowBox" => "OShadowBox",
+                                "RflatBox" => "RFlatBox",
+                                "RshadowBox" => "RShadowBox",
+                                _ => temp.as_str(),
+                            };
+                            imp += &format!("\t{}.set_frame(FrameType::{});\n", &elem.ident, temp,);
+                        }
+                        "down_box" => {
+                            let temp = utils::global_to_pascal(utils::unbracket(&props[i + 1]));
+                            let temp = match temp.as_str() {
+                                "OflatBox" => "OFlatBox",
+                                "OshadowBox" => "OShadowBox",
+                                "RflatBox" => "RFlatBox",
+                                "RshadowBox" => "RShadowBox",
+                                _ => temp.as_str(),
+                            };
+                            imp += &format!(
+                                "\t{}.set_down_frame(FrameType::{});\n",
+                                &elem.ident, temp
+                            );
+                        }
+                        "when" => {
+                            imp += &format!(
+                                "\t{}.set_trigger(unsafe {{std::mem::transmute({})}});\n",
+                                &elem.ident,
+                                utils::unbracket(&props[i + 1])
+                            );
+                        }
+                        "tooltip" => {
+                            imp += &format!(
+                                "\t{}.set_tooltip({});\n",
+                                &elem.ident,
+                                if unsafe { crate::parser::PROGRAM.i18n } {
+                                    format!("&tr!(\"{}\")", utils::unbracket(&props[i + 1]))
+                                } else {
+                                    format!("\"{}\"", utils::unbracket(&props[i + 1]))
+                                }
+                            );
+                        }
+                        "maximum" => {
+                            imp += &format!(
+                                "\t{}.set_maximum({} as _);\n",
+                                &elem.ident,
+                                utils::unbracket(&props[i + 1])
+                            );
+                        }
+                        "minimum" => {
+                            imp += &format!(
+                                "\t{}.set_minimum({} as _);\n",
+                                &elem.ident,
+                                utils::unbracket(&props[i + 1])
+                            );
+                        }
+                        "step" => {
+                            imp += &format!(
+                                "\t{}.set_step({} as _, 1);\n",
+                                &elem.ident,
+                                utils::unbracket(&props[i + 1])
+                            );
+                        }
+                        "value" => {
+                            let val = if t.contains("Button") {
+                                let b = utils::unbracket(&props[i + 1])
+                                    .parse::<i32>()
+                                    .expect("Buttons should have integral values");
+                                if b != 0 {
+                                    "true".to_string()
+                                } else {
+                                    "false".to_string()
+                                }
+                            } else if (t.contains("Input") || t.contains("Output"))
+                                && !t.contains("Value")
+                            {
+                                if unsafe { crate::parser::PROGRAM.i18n } {
+                                    format!("&tr!(\"{}\")", utils::unbracket(&props[i + 1]))
+                                } else {
+                                    format!("\"{}\"", utils::unbracket(&props[i + 1]))
+                                }
+                            } else {
+                                format!("{} as _", utils::unbracket(&props[i + 1]))
+                            };
+                            imp += &format!("\t{}.set_value({});\n", &elem.ident, val);
+                        }
+                        "type" => {
+                            let mut tmp = utils::global_to_pascal(utils::unbracket(&props[i + 1]));
+                            if tmp == "Single" {
+                                tmp = String::from("Normal");
+                            }
+                            if t == "Flex" {
+                                tmp = if tmp == "Horizontal" {
+                                    "Row".to_string()
+                                } else {
+                                    "Column".to_string()
+                                };
+                            }
+                            if props[i + 1] != "Double" && t != "MenuItem" && t != "Submenu" {
+                                if t != "Output" {
+                                    imp += &format!(
+                                        "\t{}.set_type({}Type::{});\n",
+                                        &elem.ident,
+                                        utils::fix_type(t),
+                                        tmp
+                                    );
+                                } else {
+                                    imp += &format!(
+                                        "\t{}.set_type(InputType::from_i32(12));\n",
+                                        &elem.ident,
+                                    );
+                                }
+                            }
+                        }
+                        "align" => {
+                            imp += &format!(
+                                "\t{}.set_align(unsafe {{std::mem::transmute({})}});\n",
+                                &elem.ident,
+                                utils::unbracket(&props[i + 1])
+                            );
+                        }
+                        "gap" => {
+                            imp += &format!(
+                                "\t{}.set_pad({});\n",
+                                &elem.ident,
+                                utils::unbracket(&props[i + 1])
+                            );
+                        }
+                        "size_set" => {
+                            let unbracket = utils::unbracket(&props[i + 1]);
+                            let count: Vec<_> = unbracket.split_ascii_whitespace().collect();
+                            for e in count.iter().skip(1) {
+                                let idx: usize = e.parse().unwrap();
+                                imp += &format!(
+                                    "\tlet child = {}.child({}).unwrap();\n",
+                                    &elem.ident, idx
+                                );
+                                imp += &format!("\tlet sz = if {}.get_type::<FlexType>() == FlexType::Row {{ child.w() }} else {{ child.h() }};\n", &elem.ident);
+                                imp += &format!("\t{}.set_size(&child, sz);\n", &elem.ident);
+                            }
+                        }
+                        "shortcut" => {
+                            imp += &format!(
+                                "\t{}.set_shortcut(unsafe {{std::mem::transmute({})}});\n",
+                                &elem.ident,
+                                utils::unbracket(&props[i + 1])
+                            );
+                        }
+                        "image" => {
+                            imp += &format!(
+                                    "\t{0}.set_image(Some(SharedImage::load(\"{1}\").expect(\"Could not find image: {1}\")));\n",
+                                    &elem.ident,
+                                    utils::unbracket(&props[i + 1]),
+                                );
+                        }
+                        "hide" => {
+                            imp += &format!("\t{}.hide();\n", &elem.ident,);
+                        }
+                        "deactivate" => {
+                            imp += &format!("\t{}.deactivate();\n", &elem.ident,);
+                        }
+                        "modal" => {
+                            imp += &format!("\t{}.make_modal(true);\n", &elem.ident,);
+                        }
+                        "resizable" => {
+                            if is_parent {
+                                imp += &format!("\t{}.make_resizable(true);\n", &elem.ident,);
+                            }
+                        }
+                        "size_range" => {
+                            imp += &format!(
+                                "\t{}.size_range({});\n",
+                                &elem.ident,
+                                utils::unbracket(&props[i + 1].replace(" ", ", "))
+                            );
+                        }
+                        "callback" => {
+                            if t != "MenuItem" && t != "Submenu" {
+                                let cb = utils::unbracket(&props[i + 1]);
+                                if cb.starts_with('{')
+                                    || cb.starts_with("move")
+                                    || cb.starts_with('|')
+                                {
+                                    imp += &format!("\t{}.set_callback({});\n", &elem.ident, cb);
+                                } else {
+                                    imp += &format!(
+                                        "\t{}.set_callback(move |{}| {{ \n\t    {} \n\t}});\n",
+                                        &elem.ident, &elem.ident, cb
+                                    );
+                                };
+                            } else if t != "MenuItem" && t != "Submenu" {
+                                let cb = utils::unbracket(&props[i + 1]);
+                                if cb.starts_with('{')
+                                    || cb.starts_with("move")
+                                    || cb.starts_with('|')
+                                {
+                                    imp += &format!("\t{}.set_callback({});\n", &elem.ident, cb);
+                                } else {
+                                    imp += &format!(
+                                        "\t{}.set_callback(move |{}| {{ \n\t    {} \n\t}});\n",
+                                        &elem.ident, &elem.ident, cb
+                                    );
+                                };
+                            }
+                        }
+                        "code0" | "code1" | "code2" | "code3" => {
+                            imp += &format!("\t{}\n", utils::unbracket(&props[i + 1]));
+                        }
+                        _ => (),
                     }
                 }
             }

@@ -10,7 +10,7 @@ class UserInterface {open
       xywh {190 213 510 360} type Double resizable visible
     } {
       Fl_Box b {
-        label button
+        label hide
         user_data hello
         callback {println!("Works");}
         comment {Hello world}
