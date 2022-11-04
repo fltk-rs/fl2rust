@@ -34,6 +34,7 @@ pub fn generate(ast: &[parser::Token]) -> String {
     let mut s = String::new();
     let mut ctor = String::new();
     let mut imp = String::new();
+    let mut flex = String::new();
     let mut subs = vec![];
     let mut last_scope = None;
     let mut last_ast = parser::TokenType::Global;
@@ -479,12 +480,12 @@ pub fn generate(ast: &[parser::Token]) -> String {
                             let count: Vec<_> = unbracket.split_ascii_whitespace().collect();
                             for e in count.iter().skip(1) {
                                 let idx: usize = e.parse().unwrap();
-                                imp += &format!(
+                                flex += &format!(
                                     "\tlet child = {}.child({}).unwrap();\n",
                                     &elem.ident, idx
                                 );
-                                imp += &format!("\tlet sz = if {}.get_type::<FlexType>() == FlexType::Row {{ child.w() }} else {{ child.h() }};\n", &elem.ident);
-                                imp += &format!("\t{}.set_size(&child, sz);\n", &elem.ident);
+                                flex += &format!("\tlet sz = if {}.get_type::<FlexType>() == FlexType::Row {{ child.w() }} else {{ child.h() }};\n", &elem.ident);
+                                flex += &format!("\t{}.set_size(&child, sz);\n", &elem.ident);
                             }
                         }
                         "shortcut" => {
@@ -563,6 +564,7 @@ pub fn generate(ast: &[parser::Token]) -> String {
                     if let Some(p) = p.last() {
                         if p.contains("Function") {
                             ctor += "}";
+                            imp += &flex;
                             imp += &ctor;
                             imp += "\n    }\n";
                             ctor.clear();
