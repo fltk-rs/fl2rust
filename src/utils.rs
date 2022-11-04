@@ -11,7 +11,7 @@ pub fn unbracket(word: &str) -> &str {
 pub fn de_fl(word: &str) -> String {
     let mut s: String;
     if let Some(stripped) = strip_prefix(word, "Fl_") {
-        s = stripped.replace("_", "");
+        s = stripped.replace('_', "");
     } else {
         s = String::from(word);
     }
@@ -70,7 +70,7 @@ pub fn global_to_pascal(input: &str) -> String {
         }
     }
     let s: String = v.into_iter().collect();
-    let s = s.replace("_", "");
+    let s = s.replace('_', "");
     let ret = match s.as_str() {
         "Vert fill" => "VerticalFill",
         "Horz fill" => "HorizontalFill",
@@ -126,7 +126,7 @@ pub fn fix_long_props(s: &str) -> String {
     while i < lines.len() - 1 {
         temp.push_str(lines[i]);
         let words: Vec<&str> = lines[i + 1].split_whitespace().collect();
-        if let Some(first) = words.get(0) {
+        if let Some(first) = words.first() {
             if reserved::is_fluid_reserved(first)
                 || first.starts_with("Fl_")
                 || first.contains("MenuItem")

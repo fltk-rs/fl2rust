@@ -24,12 +24,8 @@ use fltk::valuator::*;
 use fltk::widget::*;
 use fltk::window::*;
 
-
-
 #[derive(Debug, Clone)]
-pub struct UserInterface {
-}
-
+pub struct UserInterface {}
 
 impl UserInterface {
     pub fn make_window() -> Self {
@@ -60,7 +56,7 @@ impl UserInterface {
         let mut fl2rust_widget_9 = Choice::new(30, 307, 119, 30, "Choice");
         fl2rust_widget_9.end();
         fl2rust_widget_9.set_down_frame(FrameType::BorderBox);
-        fl2rust_widget_9.set_align(unsafe {std::mem::transmute(16)});
+        fl2rust_widget_9.set_align(unsafe { std::mem::transmute(16) });
         fl2rust_widget_2.add(&fl2rust_widget_9);
         let mut fl2rust_widget_10 = Input::new(30, 348, 119, 30, None);
         fl2rust_widget_2.add(&fl2rust_widget_10);
@@ -93,6 +89,6 @@ impl UserInterface {
         fl2rust_widget_20.end();
         fl2rust_widget_20.hide();
         fl2rust_widget_1.add(&fl2rust_widget_20);
-        Self { }
+        Self {}
     }
 }

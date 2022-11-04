@@ -116,7 +116,7 @@ pub fn generate(ast: &[parser::Token]) -> String {
                                 "\tlet mut {} = {}::new({}, {}\n",
                                 &elem.ident,
                                 &t,
-                                utils::unbracket(&props[xywh + 1].replace(" ", ", ")),
+                                utils::unbracket(&props[xywh + 1].replace(' ', ", ")),
                                 if let Some(l) = label {
                                     if unsafe { crate::parser::PROGRAM.i18n } {
                                         format!(
@@ -158,7 +158,7 @@ pub fn generate(ast: &[parser::Token]) -> String {
                         "\tlet mut {0} = {1}::new({2}, {3}\n\t{0}.end();\n",
                         &elem.ident,
                         &t,
-                        utils::unbracket(&props[xywh + 1].replace(" ", ", ")),
+                        utils::unbracket(&props[xywh + 1].replace(' ', ", ")),
                         if let Some(l) = label {
                             if unsafe { crate::parser::PROGRAM.i18n } {
                                 format!(
@@ -475,18 +475,18 @@ pub fn generate(ast: &[parser::Token]) -> String {
                                 utils::unbracket(&props[i + 1])
                             );
                         }
-                        "size_set" => {
+                        "set_size_tuples" => {
                             let unbracket = utils::unbracket(&props[i + 1]);
                             let count: Vec<_> = unbracket.split_ascii_whitespace().collect();
-                            for e in count.iter().skip(1) {
-                                let idx: usize = e.parse().unwrap();
+                            let count: Vec<_> = count.iter().skip(1).collect();
+                            for e in count.chunks_exact(2) {
+                                let idx: usize = e[0].parse().unwrap();
                                 flex += &format!(
-                                    "\tlet child = {}.child({}).unwrap();\n",
-                                    &elem.ident, idx
+                                    "\t{0}.set_size(&{0}.child({1}).unwrap(), {2});\n",
+                                    &elem.ident, idx, e[1]
                                 );
-                                flex += &format!("\tlet sz = if {}.get_type::<FlexType>() == FlexType::Row {{ child.w() }} else {{ child.h() }};\n", &elem.ident);
-                                flex += &format!("\t{}.set_size(&child, sz);\n", &elem.ident);
                             }
+                            flex += &format!("\t{}.recalc();\n", &elem.ident);
                         }
                         "shortcut" => {
                             imp += &format!(
@@ -520,24 +520,11 @@ pub fn generate(ast: &[parser::Token]) -> String {
                             imp += &format!(
                                 "\t{}.size_range({});\n",
                                 &elem.ident,
-                                utils::unbracket(&props[i + 1].replace(" ", ", "))
+                                utils::unbracket(&props[i + 1].replace(' ', ", "))
                             );
                         }
                         "callback" => {
                             if t != "MenuItem" && t != "Submenu" {
-                                let cb = utils::unbracket(&props[i + 1]);
-                                if cb.starts_with('{')
-                                    || cb.starts_with("move")
-                                    || cb.starts_with('|')
-                                {
-                                    imp += &format!("\t{}.set_callback({});\n", &elem.ident, cb);
-                                } else {
-                                    imp += &format!(
-                                        "\t{}.set_callback(move |{}| {{ \n\t    {} \n\t}});\n",
-                                        &elem.ident, &elem.ident, cb
-                                    );
-                                };
-                            } else if t != "MenuItem" && t != "Submenu" {
                                 let cb = utils::unbracket(&props[i + 1]);
                                 if cb.starts_with('{')
                                     || cb.starts_with("move")

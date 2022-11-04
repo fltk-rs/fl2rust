@@ -91,7 +91,7 @@ pub const WIDGET_PROPS: &[&str] = &[
     "user_data",
     "comment",
     "class",
-    "deactivate"
+    "deactivate",
 ];
 
 pub const RUST_RESERVED: &[&str] = &[

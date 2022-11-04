@@ -9,7 +9,7 @@ pub struct Program {
 
 pub static mut PROGRAM: Program = Program { i18n: false };
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum TokenType {
     Global,
     Comment,

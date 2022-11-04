@@ -30,22 +30,22 @@ enum State {
 
 #[derive(Debug, Clone, FltkForm)]
 struct Contact {
-  name:String,
-  phone:u32,
-  address1:String,
-  address2:String,
-  city:City,
-  state:State,
+    name: String,
+    phone: u32,
+    address1: String,
+    address2: String,
+    city: City,
+    state: State,
 }
 impl Contact {
     pub fn new() -> Self {
         Contact {
-            name:String::from(""),
-            phone:0,
-            address1:String::from(""),
-            address2:String::from(""),
-            city:City::None,
-            state:State::None,
+            name: String::from(""),
+            phone: 0,
+            address1: String::from(""),
+            address2: String::from(""),
+            city: City::None,
+            state: State::None,
         }
     }
 }
@@ -70,16 +70,16 @@ fn main() {
     ui.page_2.begin();
     let inner_content = page1.generate();
     ui.page_2.end();
-    while app.wait(){
+    while app.wait() {
         if let Some(button_action) = receive_action.recv() {
             match button_action {
                 Status::Update => {
                     // get tab clicked
                     //TODO
-                },
+                }
                 Status::Quit => {
                     app.quit();
-                },
+                }
             }
         }
     }

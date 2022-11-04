@@ -15,7 +15,6 @@ enum Action {
     Quit,
 }
 
-
 fn main() {
     let app = app::App::default();
     let mut buf = text::TextBuffer::default();
@@ -23,18 +22,18 @@ fn main() {
     let (send_action, receive_action) = app::channel::<Action>();
     let mut ui = emitui::UserInterface::make_window();
     ui.win.show();
-// make  emit ui..emit(send_action, Action::);
+    // make  emit ui..emit(send_action, Action::);
     // make open_button emit Open
     ui.open_button.emit(send_action, Action::Open);
     // make  clear_button emit Clear
     ui.clear_button.emit(send_action, Action::Clear);
-    while app.wait(){
+    while app.wait() {
         if let Some(button_action) = receive_action.recv() {
             match button_action {
                 Action::Open => {
                     let file = match dialog::file_chooser("Choose File", "*", ".", true) {
-                      Some(file) => file,
-                      None => continue,
+                        Some(file) => file,
+                        None => continue,
                     };
                     match buf.load_file(&file) {
                         Ok(_i) => {
@@ -47,20 +46,19 @@ fn main() {
                             editor.set_buffer(Some(buf.clone()));
                             // end the group again
                             ui.scroll.end();
-                            
-                        },
+                        }
                         Err(e) => {
-                            println!("Buffer Error:{}",e);
-                        },
+                            println!("Buffer Error:{}", e);
+                        }
                     };
-                },
+                }
                 Action::Clear => {
                     ui.filename.set_value("");
                     ui.scroll.clear();
-                },
+                }
                 Action::Quit => {
                     app.quit();
-                },
+                }
             }
         }
         ui.win.redraw();
