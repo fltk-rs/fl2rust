@@ -1,5 +1,6 @@
 use crate::utils;
 use fluid_parser::ast::*;
+use std::fmt::Write;
 use std::sync::atomic;
 
 static COUNTER: atomic::AtomicUsize = atomic::AtomicUsize::new(0);
@@ -58,7 +59,7 @@ fn is_parent_type(typ: &str) -> bool {
     )
 }
 
-fn add_menus(widgets: &[Widget], w: usize) -> String {
+fn add_menus(_widgets: &[Widget], _w: usize) -> String {
     "\tHeret\n".to_string()
 }
 
@@ -101,16 +102,16 @@ fn add_widgets(
                 wid += "\t";
                 wid += &name;
                 wid += ".set_label(";
-                wid += &i18nize(&label);
+                wid += &i18nize(label);
                 wid += ");\n";
             }
-    
+
             if is_parent_type(&typ) {
                 wid += "\t";
                 wid += &name;
                 wid += ".end();\n";
             }
-    
+
             if let Some(v) = &widgets[w].props.typ {
                 let v = if typ == "Flex" {
                     if v == "HORIZONTAL" {
@@ -121,51 +122,60 @@ fn add_widgets(
                 } else {
                     v
                 };
-                wid += &format!(
-                    "\t{}.set_type({}Type::{});\n",
+                writeln!(
+                    wid,
+                    "\t{}.set_type({}Type::{});",
                     name,
                     utils::fix_type(&typ),
                     utils::global_to_pascal(v)
-                );
+                )
+                .unwrap();
             } else if typ == "Flex" {
-                wid += &format!("\t{}.set_type(FlexType::Column);\n", name,);
+                writeln!(wid, "\t{}.set_type(FlexType::Column);", name,).unwrap();
             }
             if let Some(v) = &widgets[w].props.align {
-                wid += &format!(
-                    "\t{}.set_align(unsafe {{std::mem::transmute({})}});\n",
+                writeln!(
+                    wid,
+                    "\t{}.set_align(unsafe {{std::mem::transmute({})}});",
                     name, v
-                );
+                )
+                .unwrap();
             }
             if widgets[w].props.resizable.is_some() {
                 if parent.is_none() {
-                    wid += &format!("\t{}.make_resizable(true);\n", name);
+                    writeln!(wid, "\t{}.make_resizable(true);", name).unwrap();
                 } else {
-                    wid += &format!("\t{}.resizable(&{});\n", parent.unwrap(), name);
+                    writeln!(wid, "\t{}.resizable(&{});", parent.unwrap(), name).unwrap();
                 }
             }
             if widgets[w].props.visible.is_some() {
-                wid += &format!("\t{}.show();\n", name);
+                writeln!(wid, "\t{}.show();", name).unwrap();
             }
             if widgets[w].props.hide.is_some() {
-                wid += &format!("\t{}.hide();\n", name);
+                writeln!(wid, "\t{}.hide();", name).unwrap();
             }
             if widgets[w].props.deactivate.is_some() {
-                wid += &format!("\t{}.deactivate();\n", name);
+                writeln!(wid, "\t{}.deactivate();", name).unwrap();
             }
             if let Some(v) = &widgets[w].props.color {
-                wid += &format!("\t{}.set_color(Color::by_index({}));\n", name, v);
+                writeln!(wid, "\t{}.set_color(Color::by_index({}));", name, v).unwrap();
             }
             if let Some(v) = &widgets[w].props.selection_color {
-                wid += &format!("\t{}.set_selection_color(Color::by_index({}));\n", name, v);
+                writeln!(
+                    wid,
+                    "\t{}.set_selection_color(Color::by_index({}));",
+                    name, v
+                )
+                .unwrap();
             }
             if let Some(v) = &widgets[w].props.tooltip {
-                wid += &format!("\t{}.set_tooltip({});\n", name, i18nize(v));
+                writeln!(wid, "\t{}.set_tooltip({});", name, i18nize(v)).unwrap();
             }
             if let Some(v) = &widgets[w].props.image {
-                wid += &format!("\t{0}.set_image(Some(SharedImage::load(\"{1}\").expect(\"Could not find image: {1}\")));\n", name, v);
+                writeln!(wid, "\t{0}.set_image(Some(SharedImage::load(\"{1}\").expect(\"Could not find image: {1}\")));", name, v).unwrap();
             }
             if let Some(v) = &widgets[w].props.deimage {
-                wid += &format!("\t{0}.set_deimage(Some(SharedImage::load(\"{1}\").expect(\"Could not find image: {1}\")));\n", name, v);
+                writeln!(wid, "\t{0}.set_deimage(Some(SharedImage::load(\"{1}\").expect(\"Could not find image: {1}\")));", name, v).unwrap();
             }
             if let Some(v) = &widgets[w].props.r#box {
                 let temp = utils::global_to_pascal(v);
@@ -176,7 +186,7 @@ fn add_widgets(
                     "RshadowBox" => "RShadowBox",
                     _ => temp.as_str(),
                 };
-                wid += &format!("\t{}.set_frame(FrameType::{});\n", name, temp);
+                writeln!(wid, "\t{}.set_frame(FrameType::{});", name, temp).unwrap();
             }
             if let Some(v) = &widgets[w].props.down_box {
                 let temp = utils::global_to_pascal(v);
@@ -187,60 +197,64 @@ fn add_widgets(
                     "RshadowBox" => "RShadowBox",
                     _ => temp.as_str(),
                 };
-                wid += &format!("\t{}.set_down_frame(FrameType::{});\n", name, temp);
+                writeln!(wid, "\t{}.set_down_frame(FrameType::{});", name, temp).unwrap();
             }
             if let Some(v) = &widgets[w].props.labeltype {
                 let temp = utils::global_to_pascal(v);
                 let temp = if temp == "No" { "None" } else { temp.as_str() };
-                wid += &format!("\t{}.set_label_type(LabelType::{});\n", name, temp);
+                writeln!(wid, "\t{}.set_label_type(LabelType::{});", name, temp).unwrap();
             }
             if let Some(v) = &widgets[w].props.labelfont {
-                wid += &format!("\t{}.set_label_font(Font::by_index({}));\n", name, v);
+                writeln!(wid, "\t{}.set_label_font(Font::by_index({}));", name, v).unwrap();
             }
             if let Some(v) = &widgets[w].props.labelsize {
-                wid += &format!("\t{}.set_label_size({});\n", name, v);
+                writeln!(wid, "\t{}.set_label_size({});", name, v).unwrap();
             }
             if let Some(v) = &widgets[w].props.labelcolor {
-                wid += &format!("\t{}.set_label_color(Color::by_index({}));\n", name, v);
+                writeln!(wid, "\t{}.set_label_color(Color::by_index({}));", name, v).unwrap();
             }
             if let Some(v) = &widgets[w].props.when {
-                wid += &format!(
-                    "\t{}.set_trigger(unsafe {{std::mem::transmute({})}});\n",
+                writeln!(
+                    wid,
+                    "\t{}.set_trigger(unsafe {{std::mem::transmute({})}});",
                     name, v
-                );
+                )
+                .unwrap();
             }
             if let Some(v) = &widgets[w].props.textfont {
-                wid += &format!("\t{}.set_text_font(Font::by_index({}));\n", name, v);
+                writeln!(wid, "\t{}.set_text_font(Font::by_index({}));", name, v).unwrap();
             }
             if let Some(v) = &widgets[w].props.textsize {
-                wid += &format!("\t{}.set_text_size({});\n", name, v);
+                writeln!(wid, "\t{}.set_text_size({});", name, v).unwrap();
             }
             if let Some(v) = &widgets[w].props.textcolor {
-                wid += &format!("\t{}.set_text_color(Color::by_index({}));\n", name, v);
+                writeln!(wid, "\t{}.set_text_color(Color::by_index({}));", name, v).unwrap();
             }
             if let Some(v) = &widgets[w].props.shortcut {
-                wid += &format!(
-                    "\t{}.set_shortcut(unsafe {{std::mem::transmute({})}});\n",
+                writeln!(
+                    wid,
+                    "\t{}.set_shortcut(unsafe {{std::mem::transmute({})}});",
                     name, v
-                );
+                )
+                .unwrap();
             }
             if let Some(v) = &widgets[w].props.gap {
-                wid += &format!("\t{}.set_pad({});\n", name, v);
+                writeln!(wid, "\t{}.set_pad({});", name, v).unwrap();
             }
             if let Some(v) = &widgets[w].props.minimum {
-                wid += &format!("\t{}.set_minimum({} as _);\n", name, v);
+                writeln!(wid, "\t{}.set_minimum({} as _);", name, v).unwrap();
             }
             if let Some(v) = &widgets[w].props.maximum {
-                wid += &format!("\t{}.set_maximum({} as _);\n", name, v);
+                writeln!(wid, "\t{}.set_maximum({} as _);", name, v).unwrap();
             }
             if let Some(v) = &widgets[w].props.size {
-                wid += &format!("\t{}.set_size({} as _);\n", name, v);
+                writeln!(wid, "\t{}.set_size({} as _);", name, v).unwrap();
             }
             if let Some(v) = &widgets[w].props.slider_size {
-                wid += &format!("\t{}.set_slider_size({} as _);\n", name, v);
+                writeln!(wid, "\t{}.set_slider_size({} as _);", name, v).unwrap();
             }
             if let Some(v) = &widgets[w].props.step {
-                wid += &format!("\t{}.set_step({} as _, 1);\n", name, v);
+                writeln!(wid, "\t{}.set_step({} as _, 1);", name, v).unwrap();
             }
             if let Some(v) = &widgets[w].props.value {
                 let val = if typ.contains("Button") {
@@ -252,12 +266,14 @@ fn add_widgets(
                     } else {
                         "false".to_string()
                     }
-                } else if (typ.contains("Input") || typ.contains("Output")) && !typ.contains("Value") {
+                } else if (typ.contains("Input") || typ.contains("Output"))
+                    && !typ.contains("Value")
+                {
                     i18nize(v)
                 } else {
                     format!("{} as _", v)
                 };
-                wid += &format!("\t{}.set_value({});\n", name, val);
+                writeln!(wid, "\t{}.set_value({});", name, val).unwrap();
             }
             if let Some(v) = &widgets[w].props.code0 {
                 wid += "\t";
@@ -287,27 +303,31 @@ fn add_widgets(
             if let Some(v) = &widgets[w].props.callback {
                 if typ != "MenuItem" && typ != "Submenu" {
                     if v.starts_with('{') || v.starts_with("move") || v.starts_with('|') {
-                        wid += &format!("\t{}.set_callback({});\n", name, v);
+                        writeln!(wid, "\t{}.set_callback({});", name, v).unwrap();
                     } else {
-                        wid += &format!(
-                            "\t{}.set_callback(move |{}| {{ \n\t    {} \n\t}});\n",
+                        writeln!(
+                            wid,
+                            "\t{}.set_callback(move |{}| {{ \n\t    {} \n\t}});",
                             name, name, v
-                        );
+                        )
+                        .unwrap();
                     };
                 }
             }
-    
+
             if let Some(sizes) = &widgets[w].props.size_tuple {
                 let count: Vec<_> = sizes.split_ascii_whitespace().collect();
                 let count: Vec<_> = count.iter().skip(1).collect();
                 for e in count.chunks_exact(2) {
                     let idx: usize = e[0].parse().unwrap();
-                    flex += &format!(
-                        "\t{0}.set_size(&{0}.child({1}).unwrap(), {2});\n",
+                    writeln!(
+                        flex,
+                        "\t{0}.set_size(&{0}.child({1}).unwrap(), {2});",
                         name, idx, e[1]
-                    );
+                    )
+                    .unwrap();
                 }
-                flex += &format!("\t{}.recalc();\n", name);
+                writeln!(flex, "\t{}.recalc();", name).unwrap();
             }
             if let Some(parent) = parent {
                 wid += "\t";
@@ -316,16 +336,14 @@ fn add_widgets(
                 wid += &name;
                 wid += ");\n"
             }
-    
+
             if !widgets[w].children.is_empty() {
                 let ch = add_widgets(Some(&name), &widgets[w].children, named);
                 wid += &ch;
             }
-        } else {
-            if !widgets[w].children.is_empty() {
-                let ch = add_menus(widgets, w);
-                wid += &ch;
-            }
+        } else if !widgets[w].children.is_empty() {
+            let ch = add_menus(widgets, w);
+            wid += &ch;
         }
     }
     wid += &flex;
