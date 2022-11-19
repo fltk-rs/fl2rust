@@ -86,10 +86,10 @@ fn main() {
 #![allow(clippy::needless_doctest_main)]
 
 pub mod gen;
-pub mod parser;
-mod reserved;
 mod utils;
 
+use fluid_parser::lexer::Lexer;
+use fluid_parser::parser::Parser;
 use std::error;
 use std::fs;
 use std::path::*;
@@ -105,22 +105,25 @@ impl Generator {
         inpath: P,
         outpath: P,
     ) -> Result<(), Box<dyn error::Error>> {
-        fs::write(
-            outpath,
-            gen::generate(&parser::parse(&fs::read_to_string(inpath)?)),
-        )?;
+        let content = fs::read_to_string(inpath)?;
+        let lexer = Lexer::new(&content);
+        let mut parser = Parser::new(lexer);
+        fs::write(outpath, gen::generate_with_directives_preamble(&parser.parse()))?;
         Ok(())
     }
 
     /// Takes an input and output files
-    pub fn in_out_with_directives_preamble<P: AsRef<Path>>(
+    pub fn in_out_without_directives_preamble<P: AsRef<Path>>(
         &self,
         inpath: P,
         outpath: P,
     ) -> Result<(), Box<dyn error::Error>> {
+        let content = fs::read_to_string(inpath)?;
+        let lexer = Lexer::new(&content);
+        let mut parser = Parser::new(lexer);
         fs::write(
             outpath,
-            gen::generate_with_directives_preamble(&parser::parse(&fs::read_to_string(inpath)?)),
+            gen::generate(&parser.parse()),
         )?;
         Ok(())
     }

@@ -9,10 +9,10 @@ class UserInterface {open
     Fl_Window {} {open
       xywh {821 256 400 344} type Double align 80 resizable visible
     } {
-      Fl_Flex {} {open
+      Fl_Flex what {open
         xywh {5 5 390 335} resizable gap 5 set_size_tuples {2  0 30  2 30 }
       } {
-        Fl_Flex {} {open
+        Fl_Flex what1 {open
           xywh {5 5 390 30} type HORIZONTAL gap 5 set_size_tuples {3  0 80  1 80  3 30 }
         } {
           Fl_Menu_Button {} {
@@ -31,14 +31,14 @@ class UserInterface {open
             xywh {365 5 30 30}
           }
         }
-        Fl_Flex {} {open
+        Fl_Flex what2 {open
           xywh {5 40 390 265} type HORIZONTAL gap 5
         } {
           Fl_Text_Display {} {
             xywh {5 40 390 265}
           }
         }
-        Fl_Flex {} {open
+        Fl_Flex what3 {open
           xywh {5 310 390 30} type HORIZONTAL gap 5 set_size_tuples {1  0 80 }
         } {
           Fl_Box {} {
