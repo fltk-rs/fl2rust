@@ -16,10 +16,5 @@ name = "fl2rust"
 path = "src/lib.rs"
 
 [dependencies]
-fluid-parser = "0.1.3"
+fluid-parser = "0.1.5"
 
-# used in the examples
-[dev-dependencies]
-fltk = "1"
-fltk-form = "0.1"
-fltk-form-derive = "0.1"

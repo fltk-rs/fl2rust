@@ -108,15 +108,12 @@ impl Generator {
         let content = fs::read_to_string(inpath)?;
         let lexer = Lexer::new(&content);
         let mut parser = Parser::new(lexer);
-        fs::write(
-            outpath,
-            gen::generate_with_directives_preamble(&parser.parse()),
-        )?;
+        fs::write(outpath, gen::generate(&parser.parse()))?;
         Ok(())
     }
 
     /// Takes an input and output files
-    pub fn in_out_without_directives_preamble<P: AsRef<Path>>(
+    pub fn in_out_with_directives_preamble<P: AsRef<Path>>(
         &self,
         inpath: P,
         outpath: P,
@@ -124,7 +121,10 @@ impl Generator {
         let content = fs::read_to_string(inpath)?;
         let lexer = Lexer::new(&content);
         let mut parser = Parser::new(lexer);
-        fs::write(outpath, gen::generate(&parser.parse()))?;
+        fs::write(
+            outpath,
+            gen::generate_with_directives_preamble(&parser.parse()),
+        )?;
         Ok(())
     }
 }

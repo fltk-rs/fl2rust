@@ -1,0 +1,91 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0400
+header_name {.h}
+code_name {.cxx}
+class UserInterface {open
+} {
+  Function {make_window()} {open
+  } {
+    Fl_Window {} {open
+      xywh {616 196 628 505} type Double visible
+    } {
+      Fl_Tabs {} {open
+        xywh {4 10 634 515}
+      } {
+        Fl_Group {} {
+          label Tab1 open selected
+          xywh {5 30 620 480}
+        } {
+          Fl_Button {} {
+            label button
+            xywh {30 56 119 32}
+          }
+          Fl_Round_Button {} {
+            label Round
+            xywh {30 99 119 30} down_box ROUND_DOWN_BOX
+          }
+          Fl_Check_Button {} {
+            label Check
+            xywh {30 141 119 30} down_box DOWN_BOX
+          }
+          Fl_Light_Button {} {
+            label Light
+            xywh {30 182 119 30}
+          }
+          Fl_Menu_Button {} {
+            label menu open
+            xywh {30 224 119 30}
+          } {}
+          Fl_Return_Button {} {
+            label Return
+            xywh {30 265 119 30}
+          }
+          Fl_Choice {} {
+            label Choice open
+            xywh {30 307 119 30} down_box BORDER_BOX align 16
+          } {}
+          Fl_Input {} {
+            xywh {30 348 119 30}
+          }
+          Fl_Output {} {
+            xywh {30 390 119 30}
+          }
+          Fl_Counter {} {
+            label {counter:}
+            xywh {30 438 120 22}
+          }
+          Fl_Slider {} {
+            label {slider:}
+            xywh {180 55 25 331} type {Vert Knob}
+          }
+          Fl_Scrollbar {} {
+            label Scrollbar
+            xywh {253 56 23 331}
+          }
+          Fl_Roller {} {
+            label Roller
+            xywh {315 59 19 331}
+          }
+          Fl_Dial {} {
+            label Dial
+            xywh {405 76 155 139} type Line color 183
+          }
+          Fl_Scrollbar {} {
+            xywh {180 440 415 20} type Horizontal
+          }
+          Fl_File_Browser {} {
+            xywh {390 240 190 150} type Multi
+          }
+        }
+        Fl_Group {} {
+          label Tab2
+          xywh {30 35 600 470} hide
+        } {}
+        Fl_Group {} {
+          label Tab3 open
+          xywh {20 36 605 468} hide
+        } {}
+      }
+    }
+  }
+}

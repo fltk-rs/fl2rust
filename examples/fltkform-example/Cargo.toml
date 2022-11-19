@@ -1,0 +1,14 @@
+[package]
+name = "fltkform-example"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+fltk = "1"
+fltk-form = "0.1"
+fltk-form-derive = "0.1"
+
+[build-dependencies]
+fl2rust = { path = "../.." }

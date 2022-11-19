@@ -4,7 +4,6 @@ use fltk::{prelude::*, *};
 extern crate fltk_form_derive;
 use fltk_form::{FltkForm, HasProps};
 
-#[path = "emitui.rs"]
 mod emitui;
 
 // Emit status

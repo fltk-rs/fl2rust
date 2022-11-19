@@ -4,7 +4,6 @@ use fltk::{prelude::*, *};
 extern crate fltk_form_derive;
 use fltk_form::{FltkForm, HasProps};
 
-#[path = "mockui.rs"]
 mod mockui;
 
 // Emit status
