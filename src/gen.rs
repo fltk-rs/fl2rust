@@ -72,7 +72,7 @@ fn add_menus(widgets: &[Widget], s: &str) -> String {
         if w.typ == "Submenu" {
             sub = w.props.label.as_ref().unwrap_or(&String::new()).to_string();
         } else if w.typ == "MenuItem" {
-            wid += "\t";
+            wid += "\tlet idx = ";
             {
                 wid += &*LAST_MENU.lock().unwrap();
             }
@@ -105,6 +105,21 @@ fn add_menus(widgets: &[Widget], s: &str) -> String {
                 wid += "|_| {}";
             }
             wid += ");\n";
+            let name = &format!("{}.at(idx).unwrap()", *LAST_MENU.lock().unwrap());
+            if let Some(v) = &w.props.labeltype {
+                let temp = utils::global_to_pascal(v);
+                let temp = if temp == "No" { "None" } else { temp.as_str() };
+                writeln!(wid, "\t{}.set_label_type(LabelType::{});", name, temp).unwrap();
+            }
+            if let Some(v) = &w.props.labelfont {
+                writeln!(wid, "\t{}.set_label_font(Font::by_index({}));", name, v).unwrap();
+            }
+            if let Some(v) = &w.props.labelsize {
+                writeln!(wid, "\t{}.set_label_size({});", name, v).unwrap();
+            }
+            if let Some(v) = &w.props.labelcolor {
+                writeln!(wid, "\t{}.set_label_color(Color::by_index({}));", name, v).unwrap();
+            }
         }
 
         if !w.children.is_empty() {
