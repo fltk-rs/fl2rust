@@ -4,6 +4,9 @@
 
 A fluid (fltk ui designer) file to Rust transpiler.
 
+## MSRV
+The minimum supported Rust version for 0.5 is 1.63.
+
 ### As an executable
 
 You can run fl2rust on the command-line by installing using cargo-install:
@@ -27,7 +30,7 @@ To automate things through cargo, you can use fl2rust as a library by adding it 
 fltk = "1"
 
 [build-dependencies]
-fl2rust = "0.4"
+fl2rust = "0.5"
 ```
 
 ```rust
@@ -69,6 +72,7 @@ class UserInterface {open
 #![allow(unused_variables)]
 #![allow(unused_mut)]
 #![allow(unused_imports)]
+#![allow(dead_code)]
 #![allow(clippy::needless_update)]
 
 include!(concat!(env!("OUT_DIR"), "/myuifile.rs"));
@@ -94,7 +98,6 @@ There are several options:
 - `cargo install fltk-fluid`
 - Through a package manager.
 - By building the fltk library yourself using cmake.
-- Fluid is built when building fltk-rs, where it'll be in the OUT_DIR.
 
 ## i18n support
 Version 0.4.4 adds i18n support via the `tr!` macro from the [tr crate](https://crates.io/crates/tr). 

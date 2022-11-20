@@ -27,7 +27,7 @@ class UserInterface {open
         } {
           MenuItem {} {
             label item2
-            xywh {0 0 31 20}
+            xywh {0 0 31 20} labelcolor 255
           }
         }
         MenuItem {} {

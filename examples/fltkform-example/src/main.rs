@@ -1,3 +1,7 @@
+#![allow(unused_imports)]
+#![allow(unused_variables)]
+#![allow(dead_code)]
+
 // this is to build the configuration
 use fltk::{prelude::*, *};
 #[macro_use]
@@ -58,16 +62,16 @@ fn main() {
     // make clicking either tab emit signal
     ui.tabs.emit(send_action, Status::Update);
 
-    let mut page1 = Contact::new();
+    let page1 = Contact::new();
     //update ui page 1
     ui.page_1.begin();
     let inner_content = page1.generate();
     ui.page_1.end();
 
-    let mut page2 = Contact::new();
-    //update ui page 1
+    let page2 = Contact::new();
+    //update ui page 2
     ui.page_2.begin();
-    let inner_content = page1.generate();
+    let inner_content = page2.generate();
     ui.page_2.end();
     while app.wait() {
         if let Some(button_action) = receive_action.recv() {

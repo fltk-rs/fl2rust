@@ -1,0 +1,34 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0400
+header_name {.h}
+code_name {.cxx}
+class UserInterface {open
+} {
+  Function {make_window()} {open
+  } {
+    Fl_Window win {open
+      xywh {386 241 240 400} type Double color 50 visible
+    } {
+      Fl_Tabs tabs {open
+        xywh {0 25 240 375} box FLAT_BOX color 40 selection_color 48
+      } {
+        Fl_Scroll page_1 {
+          label {Page 1} open
+          xywh {0 50 240 350} box FLAT_BOX color 48 selection_color 40 hide
+        } {}
+        Fl_Scroll page_2 {
+          label {Page 2} open selected
+          xywh {0 50 240 350} box FLAT_BOX color 48 selection_color 40
+        } {}
+      }
+      Fl_Box {} {
+        label {@FLTK}
+        xywh {0 0 70 25}
+      }
+      Fl_Box {} {
+        label moCKontact
+        xywh {70 0 115 25} labelfont 1
+      }
+    }
+  }
+}
