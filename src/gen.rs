@@ -66,12 +66,12 @@ fn is_menu_type(typ: &str) -> bool {
     matches!(typ, "MenuBar" | "SysMenuBar" | "MenuButton" | "Choice")
 }
 
-fn add_menus(widgets: &[Widget], s: &str) -> String {
+fn add_menus(widgets: &[Widget], sub: &mut String) -> String {
     let mut wid = String::new();
-    let mut sub = String::new();
     for w in widgets {
         if w.typ == "Submenu" {
-            sub = w.props.label.as_ref().unwrap_or(&String::new()).to_string();
+            *sub += &w.props.label.as_ref().unwrap_or(&String::new()).to_string();
+            *sub += "/";
         } else if w.typ == "MenuItem" {
             wid += "\tlet idx = ";
             {
@@ -79,10 +79,7 @@ fn add_menus(widgets: &[Widget], s: &str) -> String {
             }
             wid += ".add(";
             let mut temp = String::new();
-            if !s.is_empty() {
-                temp += s;
-                temp += "/";
-            }
+            temp += &sub;
             temp += w.props.label.as_ref().unwrap_or(&String::new());
             wid += &i18nize(&temp);
             wid += ", ";
@@ -122,9 +119,13 @@ fn add_menus(widgets: &[Widget], s: &str) -> String {
                 writeln!(wid, "\t{}.set_label_color(Color::by_index({}));", name, v).unwrap();
             }
         }
-
         if !w.children.is_empty() {
-            wid += &add_menus(&w.children, &sub);
+            wid += &add_menus(&w.children, sub);
+        }
+        if let Some(last) = w.children.last() {
+            if last.children.is_empty() {
+                sub.clear();
+            }
         }
     }
     wid
@@ -406,7 +407,7 @@ fn add_widgets(
                 {
                     *LAST_MENU.lock().unwrap() = name.to_string();
                 }
-                let ch = add_menus(&w.children, "");
+                let ch = add_menus(&w.children, &mut String::new());
                 wid += &ch;
             } else if !w.children.is_empty() {
                 let ch = add_widgets(Some(&name), &w.children, named);
