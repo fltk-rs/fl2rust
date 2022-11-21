@@ -13,7 +13,7 @@ class UserInterface {open
         xywh {0 0 352 20}
       } {
         Submenu {} {
-          label {&sub1} open
+          label {&sub1} open labelcolor 25
           xywh {0 0 62 20}
         } {
           MenuItem {} {
