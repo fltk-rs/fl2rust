@@ -132,13 +132,23 @@ fn add_menus(widgets: &[Widget], sub: &mut String) -> String {
                 writeln!(substyle, "\t{}.set_label_type(LabelType::{});", name, temp).unwrap();
             }
             if let Some(v) = &w.props.labelfont {
-                writeln!(substyle, "\t{}.set_label_font(Font::by_index({}));", name, v).unwrap();
+                writeln!(
+                    substyle,
+                    "\t{}.set_label_font(Font::by_index({}));",
+                    name, v
+                )
+                .unwrap();
             }
             if let Some(v) = &w.props.labelsize {
                 writeln!(substyle, "\t{}.set_label_size({});", name, v).unwrap();
             }
             if let Some(v) = &w.props.labelcolor {
-                writeln!(substyle, "\t{}.set_label_color(Color::by_index({}));", name, v).unwrap();
+                writeln!(
+                    substyle,
+                    "\t{}.set_label_color(Color::by_index({}));",
+                    name, v
+                )
+                .unwrap();
             }
             *sub += "/";
         }
