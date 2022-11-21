@@ -68,30 +68,9 @@ fn is_menu_type(typ: &str) -> bool {
 
 fn add_menus(widgets: &[Widget], sub: &mut String) -> String {
     let mut wid = String::new();
+    let mut substyle = String::new();
     for w in widgets {
-        if w.typ == "Submenu" {
-            *sub += &w.props.label.as_ref().unwrap_or(&String::new()).to_string();
-            let name = &format!(
-                "{}.find_item(\"{}\").unwrap()",
-                *LAST_MENU.lock().unwrap(),
-                *sub
-            );
-            if let Some(v) = &w.props.labeltype {
-                let temp = utils::global_to_pascal(v);
-                let temp = if temp == "No" { "None" } else { temp.as_str() };
-                writeln!(wid, "\t{}.set_label_type(LabelType::{});", name, temp).unwrap();
-            }
-            if let Some(v) = &w.props.labelfont {
-                writeln!(wid, "\t{}.set_label_font(Font::by_index({}));", name, v).unwrap();
-            }
-            if let Some(v) = &w.props.labelsize {
-                writeln!(wid, "\t{}.set_label_size({});", name, v).unwrap();
-            }
-            if let Some(v) = &w.props.labelcolor {
-                writeln!(wid, "\t{}.set_label_color(Color::by_index({}));", name, v).unwrap();
-            }
-            *sub += "/";
-        } else if w.typ == "MenuItem" {
+        if w.typ == "MenuItem" {
             wid += "\tlet idx = ";
             {
                 wid += &*LAST_MENU.lock().unwrap();
@@ -140,6 +119,28 @@ fn add_menus(widgets: &[Widget], sub: &mut String) -> String {
             if let Some(v) = &w.props.labelcolor {
                 writeln!(wid, "\t{}.set_label_color(Color::by_index({}));", name, v).unwrap();
             }
+        } else {
+            *sub += &w.props.label.as_ref().unwrap_or(&String::new()).to_string();
+            let name = &format!(
+                "{}.find_item(\"{}\").unwrap()",
+                *LAST_MENU.lock().unwrap(),
+                *sub
+            );
+            if let Some(v) = &w.props.labeltype {
+                let temp = utils::global_to_pascal(v);
+                let temp = if temp == "No" { "None" } else { temp.as_str() };
+                writeln!(substyle, "\t{}.set_label_type(LabelType::{});", name, temp).unwrap();
+            }
+            if let Some(v) = &w.props.labelfont {
+                writeln!(substyle, "\t{}.set_label_font(Font::by_index({}));", name, v).unwrap();
+            }
+            if let Some(v) = &w.props.labelsize {
+                writeln!(substyle, "\t{}.set_label_size({});", name, v).unwrap();
+            }
+            if let Some(v) = &w.props.labelcolor {
+                writeln!(substyle, "\t{}.set_label_color(Color::by_index({}));", name, v).unwrap();
+            }
+            *sub += "/";
         }
         if !w.children.is_empty() {
             wid += &add_menus(&w.children, sub);
@@ -150,6 +151,7 @@ fn add_menus(widgets: &[Widget], sub: &mut String) -> String {
             }
         }
     }
+    wid += &substyle;
     wid
 }
 
