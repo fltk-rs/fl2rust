@@ -469,16 +469,20 @@ fn add_funcs(functions: &[Function], free: bool, named: &mut Vec<(String, String
         if !c.widgets.is_empty() {
             func += &add_widgets(None, &c.widgets, named);
         }
-        func += "\tSelf {\n";
-        if !named.is_empty() {
+        if !free {
+            func += "\tSelf {\n";
+        } else if let Some(ret) = &c.props.return_type {
+            writeln!(func, "\t{} {{", ret).unwrap();
+        }
+        if !named.is_empty() && (c.props.return_type.is_some() || !free) {
             for n in named.iter() {
                 func += "\t    ";
                 func += &n.0;
                 func += ",\n";
             }
+            func += "\t}\n";
         }
-        func += "\t}";
-        func += "\n    }";
+        func += "    }";
     }
     func
 }
@@ -527,6 +531,7 @@ fn generate_(ast: &Ast) -> String {
                     class += ",\n";
                 }
             }
+            named.clear();
             class += "}\n\n";
             if !c.functions.is_empty() {
                 class += "impl ";
