@@ -469,20 +469,16 @@ fn add_funcs(functions: &[Function], free: bool, named: &mut Vec<(String, String
         if !c.widgets.is_empty() {
             func += &add_widgets(None, &c.widgets, named);
         }
-        if !free {
-            func += "\tSelf {\n";
-        } else if let Some(ret) = &c.props.return_type {
-            writeln!(func, "\t{} {{", ret).unwrap();
-        }
-        if !named.is_empty() && (c.props.return_type.is_some() || !free) {
+        func += "\tSelf {\n";
+        if !named.is_empty() {
             for n in named.iter() {
                 func += "\t    ";
                 func += &n.0;
                 func += ",\n";
             }
-            func += "\t}\n";
         }
-        func += "    }";
+        func += "\t}";
+        func += "\n    }";
     }
     func
 }
