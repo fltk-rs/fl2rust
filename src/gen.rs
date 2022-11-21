@@ -71,7 +71,11 @@ fn add_menus(widgets: &[Widget], sub: &mut String) -> String {
     for w in widgets {
         if w.typ == "Submenu" {
             *sub += &w.props.label.as_ref().unwrap_or(&String::new()).to_string();
-            let name = &format!("{}.find_item(\"{}\").unwrap()", *LAST_MENU.lock().unwrap(), *sub);
+            let name = &format!(
+                "{}.find_item(\"{}\").unwrap()",
+                *LAST_MENU.lock().unwrap(),
+                *sub
+            );
             if let Some(v) = &w.props.labeltype {
                 let temp = utils::global_to_pascal(v);
                 let temp = if temp == "No" { "None" } else { temp.as_str() };
@@ -94,7 +98,7 @@ fn add_menus(widgets: &[Widget], sub: &mut String) -> String {
             }
             wid += ".add(";
             let mut temp = String::new();
-            temp += &sub;
+            temp += sub;
             temp += w.props.label.as_ref().unwrap_or(&String::new());
             wid += &i18nize(&temp);
             wid += ", ";
@@ -105,9 +109,12 @@ fn add_menus(widgets: &[Widget], sub: &mut String) -> String {
             }
             if let Some(v) = &w.props.typ {
                 write!(wid, "MenuFlag::{}, ", v).unwrap();
+            } else if w.props.divider.is_some() {
+                wid += "MenuFlag::MenuDivider, ";
             } else {
                 wid += "MenuFlag::Normal, ";
             }
+
             if let Some(v) = &w.props.callback {
                 if v.starts_with('{') || v.starts_with("move") || v.starts_with('|') {
                     wid += v;

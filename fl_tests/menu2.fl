@@ -6,19 +6,19 @@ class UserInterface {open
 } {
   Function {make_window()} {open
   } {
-    Fl_Window {} {open selected
-      xywh {317 271 352 371} type Double visible
+    Fl_Window {} {open
+      xywh {317 271 352 371} type Double hide
     } {
       Fl_Menu_Bar {} {open
         xywh {0 0 352 20}
       } {
         Submenu {} {
-          label {&sub1} open labelcolor 25
-          xywh {0 0 62 20}
+          label {&sub1} open
+          xywh {0 0 62 20} labelcolor 25
         } {
           MenuItem {} {
             label {&item1}
-            xywh {0 0 31 20}
+            xywh {0 0 31 20} divider
           }
           MenuItem {} {
             label item2
@@ -41,7 +41,7 @@ class UserInterface {open
         } {
           MenuItem {} {
             label item2
-            xywh {0 0 31 20}
+            xywh {0 0 31 20} divider
           }
         }
         MenuItem {} {
