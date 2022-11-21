@@ -18,3 +18,19 @@ class UserInterface {open
     }
   }
 }
+class UserInterface2 {open
+} {
+  Function {make_window2()} {open
+  } {
+    Fl_Window {} {open selected
+      xywh {138 161 440 355} type Double visible
+      tooltip {this is a long text
+      example}
+    } {
+      Fl_Button but {
+        label {Click me}
+        xywh {175 230 95 45}
+      }
+    }
+  }
+}

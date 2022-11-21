@@ -66,7 +66,7 @@ fn is_menu_type(typ: &str) -> bool {
     matches!(typ, "MenuBar" | "SysMenuBar" | "MenuButton" | "Choice")
 }
 
-fn add_menus(widgets: &[Widget], sub: &mut String) -> String {
+fn add_menus(widgets: &[Widget], sub: &mut Vec<String>) -> String {
     let mut wid = String::new();
     let mut substyle = String::new();
     for w in widgets {
@@ -77,7 +77,7 @@ fn add_menus(widgets: &[Widget], sub: &mut String) -> String {
             }
             wid += ".add(";
             let mut temp = String::new();
-            temp += sub;
+            temp += &sub.iter().map(|x| x.to_owned() + "/").collect::<String>();
             temp += w.props.label.as_ref().unwrap_or(&String::new());
             wid += &i18nize(&temp);
             wid += ", ";
@@ -120,11 +120,15 @@ fn add_menus(widgets: &[Widget], sub: &mut String) -> String {
                 writeln!(wid, "\t{}.set_label_color(Color::by_index({}));", name, v).unwrap();
             }
         } else {
-            *sub += &w.props.label.as_ref().unwrap_or(&String::new()).to_string();
+            sub.push(w.props.label.as_ref().unwrap_or(&String::new()).to_string());
             let name = &format!(
                 "{}.find_item(\"{}\").unwrap()",
                 *LAST_MENU.lock().unwrap(),
-                *sub
+                {
+                    let mut s = sub.iter().map(|x| x.to_owned() + "/").collect::<String>();
+                    s.pop();
+                    s
+                }
             );
             if let Some(v) = &w.props.labeltype {
                 let temp = utils::global_to_pascal(v);
@@ -150,15 +154,12 @@ fn add_menus(widgets: &[Widget], sub: &mut String) -> String {
                 )
                 .unwrap();
             }
-            *sub += "/";
         }
         if !w.children.is_empty() {
             wid += &add_menus(&w.children, sub);
         }
-        if let Some(last) = w.children.last() {
-            if last.children.is_empty() {
-                sub.clear();
-            }
+        if w.children.last().is_some() {
+            sub.pop();
         }
     }
     wid += &substyle;
@@ -441,7 +442,7 @@ fn add_widgets(
                 {
                     *LAST_MENU.lock().unwrap() = name.to_string();
                 }
-                let ch = add_menus(&w.children, &mut String::new());
+                let ch = add_menus(&w.children, &mut vec![]);
                 wid += &ch;
             } else if !w.children.is_empty() {
                 let ch = add_widgets(Some(&name), &w.children, named);
