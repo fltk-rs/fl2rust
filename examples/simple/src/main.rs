@@ -1,9 +1,12 @@
 use fltk::{prelude::*, *};
 
-mod myuifile;
+mod ui {
+    fl2rust_macro::include_ui!("src/myui.fl");
+}
 
 fn main() {
-    let app = app::App::default();
-    let _ui = myuifile::UserInterface::make_window();
-    app.run().unwrap();
+    let a = app::App::default();
+    let mut ui = ui::UserInterface::make_window();
+    ui.but.set_callback(|b| println!("Button clicked!"));
+    a.run().unwrap();
 }
