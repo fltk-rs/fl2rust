@@ -54,7 +54,7 @@ In our main source file:
 use fltk::{prelude::*, *};
 
 mod ui {
-    fl2rust_macro::include_ui!("src/myui.fl");
+    fl2rust_macro::include_ui!("src/myuifile.fl");
 }
 
 fn main() {
