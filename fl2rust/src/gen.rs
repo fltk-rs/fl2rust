@@ -75,36 +75,30 @@ fn add_menus(widgets: &[Widget], sub: &mut Vec<String>) -> String {
             {
                 wid += &*LAST_MENU.lock().unwrap();
             }
-            wid += ".add(";
+            wid += ".add_choice(";
             let mut temp = String::new();
             temp += &sub.iter().map(|x| x.to_owned() + "/").collect::<String>();
             temp += w.props.label.as_ref().unwrap_or(&String::new());
             wid += &i18nize(&temp);
-            wid += ", ";
+            wid += ");\n";
+
+            let name = &format!("{}.at(idx).unwrap()", *LAST_MENU.lock().unwrap());
             if let Some(v) = &w.props.shortcut {
-                write!(wid, "unsafe {{std::mem::transmute({})}}, ", v).unwrap();
-            } else {
-                wid += "Shortcut::None, ";
+                writeln!(
+                    wid,
+                    "\t{}.set_shortcut(unsafe {{std::mem::transmute({})}});",
+                    name, v
+                )
+                .unwrap();
             }
             if let Some(v) = &w.props.typ {
-                write!(wid, "MenuFlag::{}, ", v).unwrap();
+                writeln!(wid, "\t{}.set_flag(MenuFlag::{});", name, v).unwrap();
             } else if w.props.divider.is_some() {
-                wid += "MenuFlag::MenuDivider, ";
-            } else {
-                wid += "MenuFlag::Normal, ";
+                writeln!(wid, "\t{}.set_flag(MenuFlag::MenuDivider);", name).unwrap();
             }
-
             if let Some(v) = &w.props.callback {
-                if v.starts_with('{') || v.starts_with("move") || v.starts_with('|') {
-                    wid += v;
-                } else {
-                    write!(wid, "move |m| {{ \n\t    {} \n\t}}", v).unwrap();
-                };
-            } else {
-                wid += "|_| {}";
+                writeln!(wid, "\t{}.set_callback({});", name, v).unwrap();
             }
-            wid += ");\n";
-            let name = &format!("{}.at(idx).unwrap()", *LAST_MENU.lock().unwrap());
             if let Some(v) = &w.props.labeltype {
                 let temp = utils::global_to_pascal(v);
                 let temp = if temp == "No" { "None" } else { temp.as_str() };
@@ -404,16 +398,7 @@ fn add_widgets(
                 wid += "\n";
             }
             if let Some(v) = &w.props.callback {
-                if v.starts_with('{') || v.starts_with("move") || v.starts_with('|') {
-                    writeln!(wid, "\t{}.set_callback({});", name, v).unwrap();
-                } else {
-                    writeln!(
-                        wid,
-                        "\t{}.set_callback(move |{}| {{ \n\t    {} \n\t}});",
-                        name, name, v
-                    )
-                    .unwrap();
-                };
+                writeln!(wid, "\t{}.set_callback({});", name, v).unwrap();
             }
 
             if let Some(sizes) = &w.props.size_tuple {
@@ -497,6 +482,7 @@ fn generate_(ast: &Ast) -> String {
             s += &decl.decl;
             s += "\n";
         }
+        s += "\n";
     }
     if !ast.comments.is_empty() {
         for comment in &ast.comments {
