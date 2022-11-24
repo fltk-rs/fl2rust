@@ -1,0 +1,97 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0400
+header_name {.h}
+code_name {.cxx}
+class UserInterface {open
+} {
+  Function {make_window()} {open
+  } {
+    Fl_Window {} {
+      label SvgBob open
+      xywh {615 263 450 364} type Double color 58 resizable visible
+    } {
+      Fl_Flex {} {open
+        xywh {25 70 395 265} resizable gap 10 set_size_tuples {2  0 40  2 40 }
+      } {
+        Fl_Flex {} {open
+          xywh {25 70 395 40} type HORIZONTAL gap 5 set_size_tuples {4  0 40  1 40  3 40  4 40 }
+        } {
+          Fl_Button {} {
+            label fg
+            xywh {25 70 40 40} color 60 labelcolor 7
+          }
+          Fl_Box col_label {
+            xywh {70 70 40 40} box FLAT_BOX color 0
+          }
+          Fl_Box {} {
+            label SvgBob
+            xywh {115 70 215 40} labelcolor 7
+          }
+          Fl_Button bg_btn {
+            label bg
+            xywh {335 70 40 40} color 60 labelcolor 7
+          }
+          Fl_Box {} {
+            xywh {380 70 40 40} box FLAT_BOX color 7
+          }
+        }
+        Fl_Flex {} {open
+          xywh {25 120 395 165} type HORIZONTAL gap 5
+        } {
+          Fl_Text_Editor editor {
+            xywh {25 120 195 165} box FLAT_BOX
+          }
+          Fl_Box {} {
+            xywh {225 120 195 165} box FLAT_BOX color 7
+          }
+        }
+        Fl_Flex {} {open
+          xywh {25 295 395 40} type HORIZONTAL set_size_tuples {1  1 80 }
+        } {
+          Fl_Box {} {
+            xywh {25 295 158 40}
+          }
+          Fl_Button {} {
+            label Generate
+            xywh {183 295 80 40} color 59 labelcolor 7
+          }
+          Fl_Box {} {
+            xywh {263 295 157 40}
+          }
+        }
+      }
+      Fl_Menu_Bar {} {open
+        xywh {0 0 450 35} box FLAT_BOX color 61
+      } {
+        Submenu {} {
+          label File open
+          xywh {0 0 100 20} labelcolor 7
+        } {
+          MenuItem {} {
+            label Save
+            xywh {0 0 100 20} shortcut 0x40073 labelcolor 7
+          }
+          MenuItem {} {
+            label Open
+            xywh {0 0 100 20} shortcut 0x4006f labelcolor 7 divider
+          }
+          MenuItem {} {
+            label Quit
+            callback {|_| fltk::app::quit()}
+            xywh {0 0 37 22} shortcut 0x40071 labelcolor 88
+          }
+        }
+        Submenu {} {
+          label Help open
+          xywh {0 0 71 22} labelcolor 7
+        } {
+          MenuItem {} {
+            label About
+            callback {|_| fltk::dialog::message_default("SvgBob gui app!")}
+            xywh {0 0 100 20} labelcolor 7
+          }
+        }
+      }
+    }
+  }
+}
