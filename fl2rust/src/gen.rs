@@ -268,6 +268,18 @@ fn add_widgets(
             if let Some(v) = &w.props.tooltip {
                 writeln!(wid, "\t{}.set_tooltip({});", name, i18nize(v)).unwrap();
             }
+            if let Some(v) = &w.props.xclass {
+                writeln!(wid, "\t{}.set_xclass({});", name, i18nize(v)).unwrap();
+            }
+            if w.props.noborder.is_some() {
+                writeln!(wid, "\t{}.set_border(false);", name).unwrap();
+            }
+            if w.props.modal.is_some() {
+                writeln!(wid, "\t{}.make_modal(true);", name).unwrap();
+            }
+            if w.props.non_modal.is_some() {
+                writeln!(wid, "\t{}.make_modal(false);", name).unwrap();
+            }
             if let Some(v) = &w.props.image {
                 writeln!(wid, "\t{0}.set_image(Some(SharedImage::load(\"{1}\").expect(\"Could not find image: {1}\")));", name, v).unwrap();
             }
@@ -414,6 +426,21 @@ fn add_widgets(
                     .unwrap();
                 }
                 writeln!(flex, "\t{}.recalc();", name).unwrap();
+            }
+
+            if let Some(sizes) = &w.props.size_range {
+                let count: Vec<_> = sizes.split_ascii_whitespace().collect();
+                write!(
+                    wid,
+                    "\t{0}.size_range(",
+                    name
+                )
+                .unwrap();
+                for e in count {
+                    wid += e;
+                    wid += ", ";
+                }
+                wid += ");\n";
             }
             if let Some(parent) = parent {
                 wid += "\t";

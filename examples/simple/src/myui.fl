@@ -7,7 +7,7 @@ class UserInterface {open
   Function {make_window()} {open
   } {
     Fl_Window {} {open selected
-    xywh {138 161 440 355} type Double visible
+    xywh {138 161 440 355} type Double visible size_range {100 100 400 300} resizable
     } {
       Fl_Button but {
         label {Click me}
