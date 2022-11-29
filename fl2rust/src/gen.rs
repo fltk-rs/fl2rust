@@ -509,25 +509,46 @@ fn add_funcs(functions: &[Function], free: bool, named: &mut Vec<(String, String
     func
 }
 
-fn add_widget_class_ctor(widget: &Widget, named: &mut Vec<(String, String)>) -> String {
-    let mut func = String::new();
-    func += "\n    pub fn new<L: Into<Option<&'static str>>>(x: i32, y: i32, w: i32, h: i32, label: L) -> Self {\n";
-    func += "\tlet mut base_group = Group::new(x, y, w, h, label);\n";
-    if !widget.children.is_empty() {
-        func += &add_widgets(None, &widget.children, named, true);
+fn add_widget_class_ctor(w: &Widget, named: &mut Vec<(String, String)>) -> String {
+    let mut wid = String::new();
+    wid += "\n    pub fn new<L: Into<Option<&'static str>>>(x: i32, y: i32, w: i32, h: i32, label: L) -> Self {\n";
+    wid += "\tlet mut base_group = Group::new(x, y, w, h, label);\n";
+    let name = "base_group";
+    if w.props.resizable.is_some() {
+        writeln!(wid, "\t{}.make_resizable(true);", name).unwrap();
     }
-    func += "\tbase_group.end();\n";
-    func += "\tSelf {\n\t    base_group,\n";
+    if let Some(v) = &w.props.labeltype {
+        let temp = utils::global_to_pascal(v);
+        let temp = if temp == "No" { "None" } else { temp.as_str() };
+        writeln!(wid, "\t{}.set_label_type(LabelType::{});", name, temp).unwrap();
+    }
+    if let Some(v) = &w.props.labelfont {
+        writeln!(wid, "\t{}.set_label_font(Font::by_index({}));", name, v).unwrap();
+    }
+    if let Some(v) = &w.props.labelsize {
+        writeln!(wid, "\t{}.set_label_size({});", name, v).unwrap();
+    }
+    if let Some(v) = &w.props.labelcolor {
+        writeln!(wid, "\t{}.set_label_color(Color::by_index({}));", name, v).unwrap();
+    }
+    if let Some(v) = &w.props.color {
+        writeln!(wid, "\t{}.set_color(Color::by_index({}));", name, v).unwrap();
+    }
+    if !w.children.is_empty() {
+        wid += &add_widgets(Some(&name), &w.children, named, true);
+    }
+    wid += "\tbase_group.end();\n";
+    wid += "\tSelf {\n\t    base_group,\n";
     if !named.is_empty() {
         for n in named.iter() {
-            func += "\t    ";
-            func += &n.0;
-            func += ",\n";
+            wid += "\t    ";
+            wid += &n.0;
+            wid += ",\n";
         }
     }
-    func += "\t}";
-    func += "\n    }";
-    func
+    wid += "\t}";
+    wid += "\n    }";
+    wid
 }
 
 /// Generate the output Rust string/file
