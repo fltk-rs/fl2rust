@@ -164,6 +164,7 @@ fn add_widgets(
     parent: Option<&str>,
     widgets: &[Widget],
     named: &mut Vec<(String, String)>,
+    part_of_widget_class: bool,
 ) -> String {
     let mut wid = String::new();
     let mut flex = String::new();
@@ -173,7 +174,7 @@ fn add_widgets(
         let typ = if let Some(class) = &w.props.class {
             class.to_owned()
         } else {
-            utils::de_fl(&w.typ) 
+            utils::de_fl(&w.typ)
         };
         if typ != "MenuItem" && typ != "Submenu" {
             if let Some(comment) = &w.props.comment {
@@ -201,9 +202,16 @@ fn add_widgets(
             wid += " = ";
             wid += &typ;
             wid += "::new(";
+            let mut i = 0;
+            let d = ["x", "y", "w", "h"];
             for coord in w.props.xywh.split_ascii_whitespace() {
                 wid += coord;
-                wid += ", "
+                if part_of_widget_class {
+                    wid += " + ";
+                    wid += d[i];
+                }
+                wid += ", ";
+                i+= 1;
             }
             wid += "None);\n";
             if let Some(label) = &w.props.label {
@@ -441,12 +449,7 @@ fn add_widgets(
 
             if let Some(sizes) = &w.props.size_range {
                 let count: Vec<_> = sizes.split_ascii_whitespace().collect();
-                write!(
-                    wid,
-                    "\t{0}.size_range(",
-                    name
-                )
-                .unwrap();
+                write!(wid, "\t{0}.size_range(", name).unwrap();
                 for e in count {
                     wid += e;
                     wid += ", ";
@@ -468,7 +471,7 @@ fn add_widgets(
                 let ch = add_menus(&w.children, &mut vec![]);
                 wid += &ch;
             } else if !w.children.is_empty() {
-                let ch = add_widgets(Some(&name), &w.children, named);
+                let ch = add_widgets(Some(&name), &w.children, named, part_of_widget_class);
                 wid += &ch;
             }
         }
@@ -490,7 +493,7 @@ fn add_funcs(functions: &[Function], free: bool, named: &mut Vec<(String, String
         }
         func += " {\n";
         if !c.widgets.is_empty() {
-            func += &add_widgets(None, &c.widgets, named);
+            func += &add_widgets(None, &c.widgets, named, false);
         }
         func += "\tSelf {\n";
         if !named.is_empty() {
@@ -506,6 +509,27 @@ fn add_funcs(functions: &[Function], free: bool, named: &mut Vec<(String, String
     func
 }
 
+fn add_widget_class_ctor(widget: &Widget, named: &mut Vec<(String, String)>) -> String {
+    let mut func = String::new();
+    func += "\n    pub fn new<L: Into<Option<&'static str>>>(x: i32, y: i32, w: i32, h: i32, label: L) -> Self {\n";
+    func += "\tlet mut base_group = Group::new(x, y, w, h, label);\n";
+    if !widget.children.is_empty() {
+        func += &add_widgets(None, &widget.children, named, true);
+    }
+    func += "\tbase_group.end();\n";
+    func += "\tSelf {\n\t    base_group,\n";
+    if !named.is_empty() {
+        for n in named.iter() {
+            func += "\t    ";
+            func += &n.0;
+            func += ",\n";
+        }
+    }
+    func += "\t}";
+    func += "\n    }";
+    func
+}
+
 /// Generate the output Rust string/file
 fn generate_(ast: &Ast) -> String {
     let mut s = String::new();
@@ -514,6 +538,7 @@ fn generate_(ast: &Ast) -> String {
     }
     s += "\n";
     let mut classes = vec![];
+    let mut widget_classes = vec![];
     let mut funcs = vec![];
     if !ast.decls.is_empty() {
         for decl in &ast.decls {
@@ -532,6 +557,38 @@ fn generate_(ast: &Ast) -> String {
         let mut local_named = vec![];
         let func = add_funcs(&ast.functions, true, &mut local_named);
         funcs.push(func);
+    }
+    if !ast.widget_classes.is_empty() {
+        let mut named: Vec<(String, String)> = vec![];
+        let mut class = String::new();
+        for c in &ast.widget_classes {
+            class += "#[derive(Debug, Clone)]\n";
+            class += "pub struct ";
+            class += &c.name;
+            class += " {\n";
+            class += "    pub base_group: Group,\n";
+            let fns = add_widget_class_ctor(&c, &mut named);
+            if !named.is_empty() {
+                for n in &named {
+                    class += "    pub ";
+                    class += &n.0;
+                    class += ": ";
+                    class += &n.1;
+                    class += ",\n";
+                }
+            }
+            named.clear();
+            class += "}\n\n";
+            class += "impl ";
+            class += &c.name;
+            class += " {";
+            class += &fns;
+            class += "\n}\n\n";
+            class += "fltk::widget_extends!(";
+            class += &c.name;
+            class += ", Group, base_group);\n\n";
+        }
+        widget_classes.push(class);
     }
     if !ast.classes.is_empty() {
         let mut named: Vec<(String, String)> = vec![];
@@ -565,6 +622,10 @@ fn generate_(ast: &Ast) -> String {
     }
     for f in funcs {
         s += &f;
+        s += "\n";
+    }
+    for c in widget_classes {
+        s += &c;
         s += "\n";
     }
     for c in classes {
