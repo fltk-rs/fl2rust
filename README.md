@@ -65,6 +65,13 @@ fn main() {
 }
 ```
 
+In our build.rs file:
+```rust
+fn main() {
+    println!("cargo:rerun-if-changed=src/myuifile.fl");
+}
+```
+
 ### As a dev-dependency
 
 (A template repo usable via [cargo-generate](https://crates.io/crates/cargo-generate) can be found [here](https://github.com/fltk-rs/fl2rust-template))
