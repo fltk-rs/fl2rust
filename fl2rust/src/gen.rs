@@ -169,7 +169,12 @@ fn add_widgets(
     let mut flex = String::new();
     for w in widgets {
         let mut name = String::new();
-        let typ = utils::de_fl(&w.typ);
+        let mut refname = String::new();
+        let typ = if let Some(class) = &w.props.class {
+            class.to_owned()
+        } else {
+            utils::de_fl(&w.typ) 
+        };
         if typ != "MenuItem" && typ != "Submenu" {
             if let Some(comment) = &w.props.comment {
                 wid += "\t// ";
@@ -185,6 +190,12 @@ fn add_widgets(
             } else {
                 name += &w.name;
                 named.push((name.clone(), typ.clone()));
+            }
+            if w.props.class.is_some() {
+                refname += "*";
+                refname += &name;
+            } else {
+                refname = name.clone();
             }
             wid += &name;
             wid += " = ";
@@ -242,7 +253,7 @@ fn add_widgets(
                 if parent.is_none() {
                     writeln!(wid, "\t{}.make_resizable(true);", name).unwrap();
                 } else {
-                    writeln!(wid, "\t{}.resizable(&{});", parent.unwrap(), name).unwrap();
+                    writeln!(wid, "\t{}.resizable(&{});", parent.unwrap(), refname).unwrap();
                 }
             }
             if w.props.visible.is_some() {
@@ -446,7 +457,7 @@ fn add_widgets(
                 wid += "\t";
                 wid += parent;
                 wid += ".add(&";
-                wid += &name;
+                wid += &refname;
                 wid += ");\n"
             }
 
