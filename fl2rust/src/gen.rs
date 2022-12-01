@@ -509,6 +509,9 @@ fn add_funcs(functions: &[Function], free: bool, named: &mut Vec<(String, String
             func += "\n";
         }
         if free {
+            named.clear();
+        }
+        if free {
             func += "\t)";
         } else {
             func += "\t}";
