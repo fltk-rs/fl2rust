@@ -497,12 +497,16 @@ fn add_funcs(functions: &[Function], free: bool, named: &mut Vec<(String, String
         } else {
             func += "\tSelf {\n";
         }
-        if !named.is_empty() {
+        if !named.is_empty() && named.len() > 1 {
             for n in named.iter() {
                 func += "\t    ";
                 func += &n.0;
                 func += ",\n";
             }
+        } else if !named.is_empty() && named.len() == 1 {
+            func += "\t    ";
+            func += &named[0].0;
+            func += "\n";
         }
         if free {
             func += "\t)";
