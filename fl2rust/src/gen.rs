@@ -164,7 +164,6 @@ fn add_widgets(
     parent: Option<&str>,
     widgets: &[Widget],
     named: &mut Vec<(String, String)>,
-    part_of_widget_class: bool,
 ) -> String {
     let mut wid = String::new();
     let mut flex = String::new();
@@ -202,16 +201,9 @@ fn add_widgets(
             wid += " = ";
             wid += &typ;
             wid += "::new(";
-            let mut i = 0;
-            let d = ["x", "y", "w", "h"];
             for coord in w.props.xywh.split_ascii_whitespace() {
                 wid += coord;
-                if part_of_widget_class {
-                    wid += " + ";
-                    wid += d[i];
-                }
                 wid += ", ";
-                i+= 1;
             }
             wid += "None);\n";
             if let Some(label) = &w.props.label {
@@ -476,7 +468,7 @@ fn add_widgets(
                 let ch = add_menus(&w.children, &mut vec![]);
                 wid += &ch;
             } else if !w.children.is_empty() {
-                let ch = add_widgets(Some(&name), &w.children, named, part_of_widget_class);
+                let ch = add_widgets(Some(&name), &w.children, named);
                 wid += &ch;
             }
         }
@@ -498,7 +490,7 @@ fn add_funcs(functions: &[Function], free: bool, named: &mut Vec<(String, String
         }
         func += " {\n";
         if !c.widgets.is_empty() {
-            func += &add_widgets(None, &c.widgets, named, false);
+            func += &add_widgets(None, &c.widgets, named);
         }
         func += "\tSelf {\n";
         if !named.is_empty() {
@@ -517,7 +509,16 @@ fn add_funcs(functions: &[Function], free: bool, named: &mut Vec<(String, String
 fn add_widget_class_ctor(w: &Widget, named: &mut Vec<(String, String)>) -> String {
     let mut wid = String::new();
     wid += "\n    pub fn new<L: Into<Option<&'static str>>>(x: i32, y: i32, w: i32, h: i32, label: L) -> Self {\n";
-    wid += "\tlet mut base_group = Group::new(x, y, w, h, label);\n";
+    wid += "\tlet mut base_group = Group::new(0, 0, ";
+    let mut i=0;
+    for coord in w.props.xywh.split_ascii_whitespace() {
+        if i>1 {
+            wid += coord;
+            wid += ", ";
+        }
+        i+=1;
+    }
+    wid += "label);\n";
     let name = "base_group";
     if w.props.resizable.is_some() {
         writeln!(wid, "\t{}.make_resizable(true);", name).unwrap();
@@ -541,8 +542,9 @@ fn add_widget_class_ctor(w: &Widget, named: &mut Vec<(String, String)>) -> Strin
     }
     wid += "\tbase_group.end();\n";
     if !w.children.is_empty() {
-        wid += &add_widgets(Some(&name), &w.children, named, true);
+        wid += &add_widgets(Some(&name), &w.children, named);
     }
+    wid += "\tbase_group.resize(x,y,w,h);\n";
     wid += "\tSelf {\n\t    base_group,\n";
     if !named.is_empty() {
         for n in named.iter() {
