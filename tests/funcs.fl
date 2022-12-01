@@ -2,7 +2,7 @@
 version 1.0400
 header_name {.h}
 code_name {.cxx}
-Function {make_window2()} {open
+Function {make_window2()} {open return_type Button
 } {
   Fl_Window {} {open selected
     tooltip {this is a long text

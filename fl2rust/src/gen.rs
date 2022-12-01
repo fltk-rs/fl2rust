@@ -492,7 +492,11 @@ fn add_funcs(functions: &[Function], free: bool, named: &mut Vec<(String, String
         if !c.widgets.is_empty() {
             func += &add_widgets(None, &c.widgets, named);
         }
-        func += "\tSelf {\n";
+        if free {
+            func += "\t(\n";
+        } else {
+            func += "\tSelf {\n";
+        }
         if !named.is_empty() {
             for n in named.iter() {
                 func += "\t    ";
@@ -500,7 +504,11 @@ fn add_funcs(functions: &[Function], free: bool, named: &mut Vec<(String, String
                 func += ",\n";
             }
         }
-        func += "\t}";
+        if free {
+            func += "\t)";
+        } else {
+            func += "\t}";
+        }
         func += "\n    }";
     }
     func
