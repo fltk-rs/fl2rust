@@ -385,7 +385,9 @@ fn add_widgets(
                 writeln!(wid, "\t{}.set_step({} as _, 1);", name, v).unwrap();
             }
             if let Some(v) = &w.props.user_data {
-                writeln!(wid, "\t{}.set_id(\"{}\");", name, v).unwrap();
+                if v.starts_with("id:") {
+                    writeln!(wid, "\t{}.set_id(\"{}\");", name, &v[3..]).unwrap();
+                }
             }
             if let Some(v) = &w.props.value {
                 let val = if typ.contains("Button") {

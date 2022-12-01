@@ -6,14 +6,14 @@ class UserInterface {open
 } {
   Function {make_window()} {open
   } {
-    Fl_Window w {open selected
+    Fl_Window w {open
       xywh {190 213 510 360} type Double resizable size_range {510 360 510 360} visible
     } {
       Fl_Button b {
         label hide
-        user_data hello
+        user_data {id:my_butto}
         callback {println!("Works");}
-        comment {Hello world}
+        comment {Hello world} selected
         xywh {25 25 220 145} box BORDER_BOX color 87 labeltype SHADOW_LABEL labelfont 11 when 1 resizable
         code3 {println!("Works");}
         class MyButton
