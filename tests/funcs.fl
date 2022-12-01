@@ -2,11 +2,11 @@
 version 1.0400
 header_name {.h}
 code_name {.cxx}
-Function {make_window1()} {open return_type {(Window, Button)}
+Function {make_window1(x: i32, y: i32)} {open selected return_type {(Window, Button)}
 } {
-  Fl_Window w {open selected
+  Fl_Window w {open
     tooltip {this is a long text
-    example} xywh {138 161 440 355} type Double visible
+    example} xywh {473 281 440 355} type Double visible
   } {
     Fl_Button but {
       label {Click me}
@@ -14,11 +14,12 @@ Function {make_window1()} {open return_type {(Window, Button)}
     }
   }
 }
+
 Function {make_window2()} {open return_type Button
 } {
-  Fl_Window {} {open selected
+  Fl_Window {} {open
     tooltip {this is a long text
-    example} xywh {138 161 440 355} type Double visible
+    example} xywh {504 359 440 355} type Double visible
   } {
     Fl_Button but {
       label {Click me}
