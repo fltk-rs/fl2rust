@@ -485,16 +485,21 @@ fn add_funcs(functions: &[Function], free: bool, named: &mut Vec<(String, String
         if let Some(ret) = &c.props.return_type {
             func += " -> ";
             func += ret;
-        } else if !free {
+        } else if !free && !c.name.contains("self") {
             func += " -> Self";
         }
         func += " {\n";
+        if let Some(code) = &c.code {
+            func += "\t";
+            func += code;
+            func += "\n";
+        }
         if !c.widgets.is_empty() {
             func += &add_widgets(None, &c.widgets, named);
         }
         if free {
             func += "\t(\n";
-        } else {
+        } else if !c.name.contains("self") {
             func += "\tSelf {\n";
         }
         if !named.is_empty() && named.len() > 1 {
@@ -513,7 +518,7 @@ fn add_funcs(functions: &[Function], free: bool, named: &mut Vec<(String, String
         }
         if free {
             func += "\t)";
-        } else {
+        } else if !c.name.contains("self") {
             func += "\t}";
         }
         func += "\n    }";

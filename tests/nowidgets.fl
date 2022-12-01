@@ -1,0 +1,13 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0400
+header_name {.h}
+code_name {.cxx}
+class UserInterface {open
+} {
+  Function {make_window(&self)} {open return_type i32
+  } {
+    code {printf("Hello, World!\\n");
+32} {selected
+    }
+  }
+}
