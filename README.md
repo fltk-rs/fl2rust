@@ -19,6 +19,8 @@ $ fl2rust <fl file>.fl > <output file>.rs
 ```
 
 ### As a proc-macro
+
+(A template repo usable via [cargo-generate](https://crates.io/crates/cargo-generate) can be found [here](https://github.com/fltk-rs/fl2rust-template))
 Add fl2rust-macro to your list of dependencies:
 ```toml
 # Cargo.toml
@@ -72,9 +74,7 @@ fn main() {
 }
 ```
 
-### As a dev-dependency
-
-(A template repo usable via [cargo-generate](https://crates.io/crates/cargo-generate) can be found [here](https://github.com/fltk-rs/fl2rust-template))
+### As a build-dependency
 
 To automate things through cargo, you can use fl2rust as a library by adding it to your build-dependencies:
 
