@@ -377,8 +377,8 @@ fn add_widgets(
                 writeln!(wid, "\t{}.set_step({} as _, 1);", name, v).unwrap();
             }
             if let Some(v) = &w.props.user_data {
-                if v.starts_with("id:") {
-                    writeln!(wid, "\t{}.set_id(\"{}\");", name, &v[3..]).unwrap();
+                if let Some(stripped) = v.strip_prefix("id:") {
+                    writeln!(wid, "\t{}.set_id(\"{}\");", name, stripped).unwrap();
                 }
             }
             if let Some(v) = &w.props.value {
@@ -510,13 +510,9 @@ fn add_widget_class_ctor(w: &Widget, named: &mut Vec<(String, String)>) -> Strin
     let mut wid = String::new();
     wid += "\n    pub fn new<L: Into<Option<&'static str>>>(x: i32, y: i32, w: i32, h: i32, label: L) -> Self {\n";
     wid += "\tlet mut base_group = Group::new(0, 0, ";
-    let mut i=0;
-    for coord in w.props.xywh.split_ascii_whitespace() {
-        if i>1 {
-            wid += coord;
-            wid += ", ";
-        }
-        i+=1;
+    for coord in w.props.xywh.split_ascii_whitespace().skip(2) {
+        wid += coord;
+        wid += ", ";
     }
     wid += "label);\n";
     let name = "base_group";
@@ -542,9 +538,9 @@ fn add_widget_class_ctor(w: &Widget, named: &mut Vec<(String, String)>) -> Strin
     }
     wid += "\tbase_group.end();\n";
     if !w.children.is_empty() {
-        wid += &add_widgets(Some(&name), &w.children, named);
+        wid += &add_widgets(Some(name), &w.children, named);
     }
-    wid += "\tbase_group.resize(x,y,w,h);\n";
+    wid += "\tbase_group.resize(x, y, w, h);\n";
     wid += "\tSelf {\n\t    base_group,\n";
     if !named.is_empty() {
         for n in named.iter() {
@@ -595,7 +591,7 @@ fn generate_(ast: &Ast) -> String {
             class += &c.name;
             class += " {\n";
             class += "    pub base_group: Group,\n";
-            let fns = add_widget_class_ctor(&c, &mut named);
+            let fns = add_widget_class_ctor(c, &mut named);
             if !named.is_empty() {
                 for n in &named {
                     class += "    pub ";

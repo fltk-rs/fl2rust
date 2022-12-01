@@ -1,5 +1,4 @@
 #![doc = include_str!("../README.md")]
-
 #![allow(clippy::needless_doctest_main)]
 
 use fluid_parser::lexer::Lexer;
