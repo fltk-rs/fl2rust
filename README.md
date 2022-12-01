@@ -5,7 +5,7 @@
 A fluid (fltk ui designer) file to Rust transpiler.
 
 ## MSRV
-The minimum supported Rust version for 0.5 is 1.63 and fltk-rs 1.3.21.
+The minimum supported Rust version for 0.5 is 1.63 and fltk-rs > 1.3.21.
 
 ### As an executable
 
