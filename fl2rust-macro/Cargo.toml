@@ -17,4 +17,4 @@ proc-macro = true
 
 [dependencies]
 fl2rust = { path = "../fl2rust", version = "0.5.10" }
-fluid-parser = "0.1.10"
+fluid-parser = "0.1.11"

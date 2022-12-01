@@ -2,6 +2,18 @@
 version 1.0400
 header_name {.h}
 code_name {.cxx}
+Function {make_window1()} {open return_type (Window, Button)
+} {
+  Fl_Window w {open selected
+    tooltip {this is a long text
+    example} xywh {138 161 440 355} type Double visible
+  } {
+    Fl_Button but {
+      label {Click me}
+      xywh {175 230 95 45}
+    }
+  }
+}
 Function {make_window2()} {open return_type Button
 } {
   Fl_Window {} {open selected

@@ -11,7 +11,7 @@ class UserInterface {open
       tooltip {this is a long text
       example}
     } {
-      Fl_Button but {
+      Fl_Button but1 {
         label {Click me}
         xywh {175 230 95 45}
       }
@@ -27,7 +27,7 @@ class UserInterface2 {open
       tooltip {this is a long text
       example}
     } {
-      Fl_Button but {
+      Fl_Button but2 {
         label {Click me}
         xywh {175 230 95 45}
       }
