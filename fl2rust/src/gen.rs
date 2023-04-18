@@ -256,6 +256,12 @@ fn add_widgets(
                     writeln!(wid, "\t{}.resizable(&{});", parent.unwrap(), refname).unwrap();
                 }
             }
+            if w.props.modal.is_some() {
+                writeln!(wid, "\t{}.make_modal(true);", name).unwrap();
+            }
+            if w.props.non_modal.is_some() {
+                writeln!(wid, "\t{}.make_modal(false);", name).unwrap();
+            }
             if w.props.visible.is_some() {
                 writeln!(wid, "\t{}.show();", name).unwrap();
             }
@@ -284,12 +290,6 @@ fn add_widgets(
             }
             if w.props.noborder.is_some() {
                 writeln!(wid, "\t{}.set_border(false);", name).unwrap();
-            }
-            if w.props.modal.is_some() {
-                writeln!(wid, "\t{}.make_modal(true);", name).unwrap();
-            }
-            if w.props.non_modal.is_some() {
-                writeln!(wid, "\t{}.make_modal(false);", name).unwrap();
             }
             if let Some(v) = &w.props.image {
                 writeln!(wid, "\t{0}.set_image(Some(SharedImage::load(\"{1}\").expect(\"Could not find image: {1}\")));", name, v).unwrap();
