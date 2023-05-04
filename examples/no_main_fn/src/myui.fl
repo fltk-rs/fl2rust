@@ -1,0 +1,36 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0400
+header_name {.h}
+code_name {.cxx}
+decl {
+  use fltk::app;
+} { private local }
+class UserInterface {open
+} {
+  Function {make_window()} {open
+  } {
+    Fl_Window win {open selected
+    xywh {138 161 440 355} type Double visible size_range {100 100 400 300} resizable
+    } {
+      Fl_Button but {
+        label {Click me}
+        xywh {175 230 95 45} color 25
+      }
+    }
+  }
+}
+Function {main()} {open
+} {
+  code {
+    let a = app::App::default();
+    let w = UserInterface::make_window();
+    let s = main_string();
+    a.run().unwrap();
+  } {}
+}
+Function {main_string()} {open return_type String
+} {
+  code {
+    String::new()
+  } {}
+}

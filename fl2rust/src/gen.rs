@@ -497,9 +497,9 @@ fn add_funcs(functions: &[Function], free: bool, named: &mut Vec<(String, String
         if !c.widgets.is_empty() {
             func += &add_widgets(None, &c.widgets, named);
         }
-        if free {
+        if free && c.props.return_type.is_none() {
             func += "\t(\n";
-        } else if !c.name.contains("self") {
+        } else if !c.name.contains("self") && !free {
             func += "\tSelf {\n";
         }
         if !named.is_empty() && named.len() > 1 {
@@ -516,9 +516,9 @@ fn add_funcs(functions: &[Function], free: bool, named: &mut Vec<(String, String
         if free {
             named.clear();
         }
-        if free {
+        if free && c.props.return_type.is_none() {
             func += "\t)";
-        } else if !c.name.contains("self") {
+        } else if !c.name.contains("self") && !free {
             func += "\t}";
         }
         func += "\n    }";
