@@ -1,6 +1,6 @@
 [package]
 name = "fl2rust-macro"
-version = "0.5.13"
+version = "0.5.14"
 authors = ["Mohammed Alyousef <mohammed.alyousef@neurosrg.com>"]
 edition = "2021"
 description = "A fluid (fltk ui designer) file to Rust transpiler"
@@ -16,5 +16,5 @@ rust-version = "1.63"
 proc-macro = true
 
 [dependencies]
-fl2rust = { path = "../fl2rust", version = "0.5.13" }
-fluid-parser = "0.1.12"
+fl2rust = { path = "../fl2rust", version = "0.5.14" }
+fluid-parser = "0.1.14"

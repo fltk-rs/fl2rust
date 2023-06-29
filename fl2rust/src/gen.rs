@@ -443,7 +443,15 @@ fn add_widgets(
                 }
                 writeln!(flex, "\t{}.recalc();", name).unwrap();
             }
-
+            if let Some(sizes) = &w.props.margins {
+                let count: Vec<_> = sizes.split_ascii_whitespace().collect();
+                write!(wid, "\t{0}.set_margins(", name).unwrap();
+                for e in count {
+                    wid += e;
+                    wid += ", ";
+                }
+                wid += ");\n";
+            }
             if let Some(sizes) = &w.props.size_range {
                 let count: Vec<_> = sizes.split_ascii_whitespace().collect();
                 write!(wid, "\t{0}.size_range(", name).unwrap();
