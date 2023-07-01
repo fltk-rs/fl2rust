@@ -214,12 +214,6 @@ fn add_widgets(
                 wid += ");\n";
             }
 
-            if is_parent_type(&typ) {
-                wid += "\t";
-                wid += &name;
-                wid += ".end();\n";
-            }
-
             if let Some(v) = &w.props.typ {
                 let v = if typ == "Flex" {
                     if v == "HORIZONTAL" {
@@ -261,9 +255,6 @@ fn add_widgets(
             }
             if w.props.non_modal.is_some() {
                 writeln!(wid, "\t{}.make_modal(false);", name).unwrap();
-            }
-            if w.props.visible.is_some() {
-                writeln!(wid, "\t{}.show();", name).unwrap();
             }
             if w.props.hide.is_some() {
                 writeln!(wid, "\t{}.hide();", name).unwrap();
@@ -461,13 +452,6 @@ fn add_widgets(
                 }
                 wid += ");\n";
             }
-            if let Some(parent) = parent {
-                wid += "\t";
-                wid += parent;
-                wid += ".add(&";
-                wid += &refname;
-                wid += ");\n"
-            }
 
             if is_menu_type(&typ) {
                 {
@@ -478,6 +462,14 @@ fn add_widgets(
             } else if !w.children.is_empty() {
                 let ch = add_widgets(Some(&name), &w.children, named);
                 wid += &ch;
+            }
+            if is_parent_type(&typ) {
+                wid += "\t";
+                wid += &name;
+                wid += ".end();\n";
+            }
+            if w.props.visible.is_some() {
+                writeln!(wid, "\t{}.show();", name).unwrap();
             }
         }
     }
