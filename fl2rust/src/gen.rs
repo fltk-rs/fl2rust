@@ -427,7 +427,7 @@ fn add_widgets(
                     let idx: usize = e[0].parse().unwrap();
                     writeln!(
                         flex,
-                        "\t{0}.set_size(&{0}.child({1}).unwrap(), {2});",
+                        "\t{0}.fixed(&{0}.child({1}).unwrap(), {2});",
                         name, idx, e[1]
                     )
                     .unwrap();
