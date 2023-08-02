@@ -556,10 +556,10 @@ fn add_widget_class_ctor(w: &Widget, named: &mut Vec<(String, String)>) -> Strin
     if let Some(v) = &w.props.color {
         writeln!(wid, "\t{}.set_color(Color::by_index({}));", name, v).unwrap();
     }
-    wid += "\tbase_group.end();\n";
     if !w.children.is_empty() {
         wid += &add_widgets(Some(name), &w.children, named);
     }
+    wid += "\tbase_group.end();\n";
     wid += "\tbase_group.resize(x, y, w, h);\n";
     wid += "\tSelf {\n\t    base_group,\n";
     if !named.is_empty() {
