@@ -38,9 +38,9 @@ use fltk::window::*;"#;
 
 fn i18nize(s: &str) -> String {
     if I18N.load(atomic::Ordering::Relaxed) {
-        format!("&tr!(\"{}\")", s)
+        format!("&tr!(r#\"{}\"#)", s)
     } else {
-        format!("\"{}\"", s)
+        format!("r#\"{}\"#", s)
     }
 }
 
