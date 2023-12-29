@@ -1,6 +1,6 @@
 [package]
 name = "fl2rust"
-version = "0.5.18"
+version = "0.5.19"
 authors = ["Mohammed Alyousef <mohammed.alyousef@neurosrg.com>"]
 edition = "2021"
 description = "A fluid (fltk ui designer) file to Rust transpiler"
@@ -17,5 +17,5 @@ name = "fl2rust"
 path = "src/lib.rs"
 
 [dependencies]
-fluid-parser = "0.1.14"
+fluid-parser = "0.1.15"
 

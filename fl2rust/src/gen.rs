@@ -23,6 +23,7 @@ use fltk::dialog::*;
 use fltk::enums::*;
 use fltk::frame::*;
 use fltk::group::*;
+use fltk::group::experimental::*;
 use fltk::image::*;
 use fltk::input::*;
 use fltk::menu::*;
@@ -350,7 +351,17 @@ fn add_widgets(
                 .unwrap();
             }
             if let Some(v) = &w.props.gap {
-                writeln!(wid, "\t{}.set_pad({});", name, v).unwrap();
+                if v.contains(' ') {
+                    let count: Vec<_> = v.split_ascii_whitespace().collect();
+                    write!(wid, "\t{}.set_gap(", name).unwrap();
+                    for e in count {
+                        wid += e;
+                        wid += ", ";
+                    }
+                    wid += ");\n";
+                } else {
+                    writeln!(wid, "\t{}.set_pad({});", name, v).unwrap();
+                }
             }
             if let Some(v) = &w.props.minimum {
                 writeln!(wid, "\t{}.set_minimum({} as _);", name, v).unwrap();
@@ -434,9 +445,27 @@ fn add_widgets(
                 }
                 writeln!(flex, "\t{}.recalc();", name).unwrap();
             }
+            if let Some(sizes) = &w.props.dimensions {
+                let count: Vec<_> = sizes.split_ascii_whitespace().collect();
+                write!(wid, "\t{0}.set_layout(", name).unwrap();
+                for e in count {
+                    wid += e;
+                    wid += ", ";
+                }
+                wid += ");\n";
+            }
             if let Some(sizes) = &w.props.margins {
                 let count: Vec<_> = sizes.split_ascii_whitespace().collect();
                 write!(wid, "\t{0}.set_margins(", name).unwrap();
+                for e in count {
+                    wid += e;
+                    wid += ", ";
+                }
+                wid += ");\n";
+            }
+            if let Some(sizes) = &w.props.margin {
+                let count: Vec<_> = sizes.split_ascii_whitespace().collect();
+                write!(wid, "\t{0}.set_margin(", name).unwrap();
                 for e in count {
                     wid += e;
                     wid += ", ";
@@ -452,7 +481,18 @@ fn add_widgets(
                 }
                 wid += ");\n";
             }
-
+            if let Some(parent_props) = &w.props.parent_properties {
+                if let Some(loc) = &parent_props.location {
+                    let count: Vec<_> = loc.split_ascii_whitespace().collect();
+                    write!(wid, "\tlet mut p_grid = Grid::from_dyn_widget(&{}.parent().unwrap()).unwrap();\n", name,).unwrap();
+                    write!(wid, "\tp_grid.set_widget(&mut {}, ", name, ).unwrap();
+                    for e in count {
+                        wid += e;
+                        wid += ", ";
+                    }
+                    wid += ");\n";
+                }
+            }
             if is_menu_type(&typ) {
                 {
                     *LAST_MENU.lock().unwrap() = name.to_string();
