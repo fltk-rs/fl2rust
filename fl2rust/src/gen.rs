@@ -284,10 +284,12 @@ fn add_widgets(
                 writeln!(wid, "\t{}.set_border(false);", name).unwrap();
             }
             if let Some(v) = &w.props.image {
-                writeln!(wid, "\t{0}.set_image(Some(SharedImage::load(\"{1}\").expect(\"Could not find image: {1}\")));", name, v).unwrap();
+                writeln!(wid, "\tlet image_data = &{:?};", utils::gen_image(v)).unwrap();
+                writeln!(wid, "\t{0}.set_image(Some({1}::from_data(image_data).expect(\"Could not load image: {2}\")));", name, utils::get_image_type(v), v).unwrap();
             }
             if let Some(v) = &w.props.deimage {
-                writeln!(wid, "\t{0}.set_deimage(Some(SharedImage::load(\"{1}\").expect(\"Could not find image: {1}\")));", name, v).unwrap();
+                writeln!(wid, "\tlet image_data = &{:?};", utils::gen_image(v)).unwrap();
+                writeln!(wid, "\t{0}.set_deimage(Some({1}::from_data(image_data).expect(\"Could not load image: {2}\")));", name, utils::get_image_type(v), v).unwrap();
             }
             if let Some(v) = &w.props.r#box {
                 let temp = utils::global_to_pascal(v);

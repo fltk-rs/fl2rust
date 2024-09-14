@@ -1,6 +1,6 @@
 [package]
 name = "fl2rust"
-version = "0.5.19"
+version = "0.5.20"
 authors = ["Mohammed Alyousef <mohammed.alyousef@neurosrg.com>"]
 edition = "2021"
 description = "A fluid (fltk ui designer) file to Rust transpiler"

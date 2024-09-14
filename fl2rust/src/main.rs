@@ -12,6 +12,7 @@ fn main() -> Result<(), Box<dyn error::Error>> {
     let lexer = Lexer::new(&f);
     let mut parser = Parser::new(lexer);
     let ast = parser.parse();
+    let _ = std::env::set_current_dir(std::path::PathBuf::from(&args[1]).parent().unwrap()).unwrap();
     println!("{}", fl2rust::gen::generate_with_directives_preamble(&ast));
     if args.contains(&"--print-ast".to_string()) {
         println!("{:#?}", ast);

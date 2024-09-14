@@ -21,9 +21,10 @@ impl Generator {
         inpath: P,
         outpath: P,
     ) -> Result<(), Box<dyn error::Error>> {
-        let content = fs::read_to_string(inpath)?;
+        let content = fs::read_to_string(&inpath)?;
         let lexer = Lexer::new(&content);
         let mut parser = Parser::new(lexer);
+        let _ = std::env::set_current_dir(inpath.as_ref().parent().unwrap()).unwrap();
         fs::write(outpath, gen::generate(&parser.parse()))?;
         Ok(())
     }
@@ -34,9 +35,10 @@ impl Generator {
         inpath: P,
         outpath: P,
     ) -> Result<(), Box<dyn error::Error>> {
-        let content = fs::read_to_string(inpath)?;
+        let content = fs::read_to_string(&inpath)?;
         let lexer = Lexer::new(&content);
         let mut parser = Parser::new(lexer);
+        let _ = std::env::set_current_dir(inpath.as_ref().parent().unwrap()).unwrap();
         fs::write(
             outpath,
             gen::generate_with_directives_preamble(&parser.parse()),

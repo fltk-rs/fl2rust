@@ -6,12 +6,12 @@ class UserInterface {open
 } {
   Function {make_window()} {open
   } {
-    Fl_Window {} {open selected
-      xywh {190 213 510 360} type Double resizable visible
+    Fl_Window {} {open
+      xywh {0 0 510 360} type Double resizable visible
     } {
       Fl_Button b {
-        label button
-        image {../fltk-rs/screenshots/calc.jpg} xywh {25 25 220 145} box BORDER_BOX shortcut 0x4006e color 87 labeltype SHADOW_LABEL labelfont 11 when 1 resizable
+        label button selected
+        image {../../fltk-rs/screenshots/calc.jpg} compress_image 1 xywh {25 25 220 145} box BORDER_BOX shortcut 0x4006e color 87 labeltype SHADOW_LABEL labelfont 11 when 1 resizable
       }
     }
   }

@@ -72,3 +72,19 @@ pub fn fix_type(s: &str) -> &str {
     }
     s
 }
+
+pub fn gen_image(path: &str) -> Vec<u8> {
+    std::fs::read(path).unwrap()
+}
+
+pub fn get_image_type(s: &str) -> &str {
+    let p = std::path::PathBuf::from(s);
+    match p.extension().unwrap().to_ascii_lowercase().to_str().unwrap() {
+        "jpg" | "jpeg" => "JpegImage",
+        "png" => "PngImage",
+        "svg" => "SvgImage",
+        "bmp" => "BmpImage",
+        "gif" => "GifImage",
+        _ => unreachable!(),
+    }
+}
