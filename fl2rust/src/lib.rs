@@ -24,8 +24,11 @@ impl Generator {
         let content = fs::read_to_string(&inpath)?;
         let lexer = Lexer::new(&content);
         let mut parser = Parser::new(lexer);
+        let old_cwd = std::env::current_dir().unwrap();
         let _ = std::env::set_current_dir(inpath.as_ref().parent().unwrap()).unwrap();
-        fs::write(outpath, gen::generate(&parser.parse()))?;
+        let out = gen::generate(&parser.parse());
+        let _ = std::env::set_current_dir(old_cwd);
+        fs::write(outpath, out)?;
         Ok(())
     }
 
@@ -38,10 +41,13 @@ impl Generator {
         let content = fs::read_to_string(&inpath)?;
         let lexer = Lexer::new(&content);
         let mut parser = Parser::new(lexer);
+        let old_cwd = std::env::current_dir().unwrap();
         let _ = std::env::set_current_dir(inpath.as_ref().parent().unwrap()).unwrap();
+        let out = gen::generate_with_directives_preamble(&parser.parse());
+        let _ = std::env::set_current_dir(old_cwd);
         fs::write(
             outpath,
-            gen::generate_with_directives_preamble(&parser.parse()),
+            out,
         )?;
         Ok(())
     }

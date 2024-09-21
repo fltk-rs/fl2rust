@@ -13,8 +13,10 @@ pub fn include_ui(input: TokenStream) -> TokenStream {
     let lexer = Lexer::new(&input);
     let mut parser = Parser::new(lexer);
     let ast = parser.parse();
+    let old_cwd = std::env::current_dir().unwrap();
     let _ = std::env::set_current_dir(std::path::PathBuf::from(&path).parent().unwrap()).unwrap();
     let out = fl2rust::gen::generate(&ast);
+    let _ = std::env::set_current_dir(old_cwd);
     out.parse().unwrap()
 }
 
