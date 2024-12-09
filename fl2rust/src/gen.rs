@@ -23,7 +23,6 @@ use fltk::dialog::*;
 use fltk::enums::*;
 use fltk::frame::*;
 use fltk::group::*;
-use fltk::group::experimental::*;
 use fltk::image::*;
 use fltk::input::*;
 use fltk::menu::*;
