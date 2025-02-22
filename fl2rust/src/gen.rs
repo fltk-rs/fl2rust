@@ -466,12 +466,20 @@ fn add_widgets(
             }
             if let Some(sizes) = &w.props.margin {
                 let count: Vec<_> = sizes.split_ascii_whitespace().collect();
-                write!(wid, "\t{0}.set_margin(", name).unwrap();
-                for e in count {
-                    wid += e;
-                    wid += ", ";
+                if count.len() == 1 {
+                    write!(wid, "\t{0}.set_margin(", name).unwrap();
+                    for e in count {
+                        wid += e;
+                    }
+                    wid += ");\n";
+                } else {
+                    write!(wid, "\t{0}.set_margins(", name).unwrap();
+                    for e in count {
+                        wid += e;
+                        wid += ", ";
+                    }
+                    wid += ");\n";
                 }
-                wid += ");\n";
             }
             if let Some(sizes) = &w.props.size_range {
                 let count: Vec<_> = sizes.split_ascii_whitespace().collect();

@@ -1,0 +1,17 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0401
+header_name {.h}
+code_name {.cxx}
+class UserInterface {open
+} {
+  Function {make_window()} {open
+  } {
+    Fl_Window win {open
+      xywh {483 231 611 572} type Double visible
+    } {
+      Fl_Flex {} {open selected
+        xywh {30 25 555 520} margin {8 8 8 8} gap 8
+      } {}
+    }
+  }
+}
