@@ -11,7 +11,7 @@ fn main() -> Result<(), Box<dyn error::Error>> {
     let f = fs::read_to_string(&args[1])?;
     let lexer = Lexer::new(&f);
     let mut parser = Parser::new(lexer);
-    let ast = parser.parse();
+    let ast = parser.parse()?;
     let old_cwd = std::env::current_dir().unwrap();
     let _ = std::env::set_current_dir(std::path::PathBuf::from(&args[1]).parent().unwrap()).unwrap();
     let out = fl2rust::gen::generate_with_directives_preamble(&ast);

@@ -26,7 +26,7 @@ impl Generator {
         let mut parser = Parser::new(lexer);
         let old_cwd = std::env::current_dir().unwrap();
         let _ = std::env::set_current_dir(inpath.as_ref().parent().unwrap()).unwrap();
-        let out = gen::generate(&parser.parse());
+        let out = gen::generate(&parser.parse()?);
         let _ = std::env::set_current_dir(old_cwd);
         fs::write(outpath, out)?;
         Ok(())
@@ -43,7 +43,7 @@ impl Generator {
         let mut parser = Parser::new(lexer);
         let old_cwd = std::env::current_dir().unwrap();
         let _ = std::env::set_current_dir(inpath.as_ref().parent().unwrap()).unwrap();
-        let out = gen::generate_with_directives_preamble(&parser.parse());
+        let out = gen::generate_with_directives_preamble(&parser.parse()?);
         let _ = std::env::set_current_dir(old_cwd);
         fs::write(
             outpath,
